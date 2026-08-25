@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.4 MS</title>
+<title>Pani Regulamin v3.5 MS</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -11,7 +11,7 @@ body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;
 h1{color:#ff66cc;text-align:center;font-size:1.2rem;margin-bottom:6px}
 .sub{text-align:center;color:#cc99ff;font-size:.85rem;margin-bottom:12px}
 .tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
-.tab{padding:12px 12px;border:1px solid #ff00aa;background:#220022;color:#ffccff;border-radius:8px;font-size:.9rem;touch-action:manipulation}
+.tab{padding:12px;border:1px solid #ff00aa;background:#220022;color:#ffccff;border-radius:8px;font-size:.9rem;touch-action:manipulation}
 .tab.active{background:#ff00aa;color:#fff}
 .panel{display:none}.panel.active{display:block}
 .box{background:#1a1a1a;border:1px solid #ff00aa;border-radius:8px;padding:10px;margin-bottom:10px;text-align:center}
@@ -41,8 +41,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.4 MS</h1>
-  <p class="sub">Mobile Safe</p>
+  <h1>Pani Regulamin v3.5 MS</h1>
+  <p class="sub">Wersja dyscyplinarna</p>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
 
@@ -65,6 +65,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     </div>
     <div class="box">Punkty: <span class="points" id="pkt">0</span> / 12<div id="pktInfo" class="small"></div></div>
     <div class="box">Passa: <strong id="passa">0</strong> dni</div>
+    <div class="box small" id="askInfo">Pytania o zgode: 0/2</div>
 
     <div id="areaLos">
       <input type="number" id="temp" placeholder="Temperatura C" step="0.1" inputmode="decimal">
@@ -101,30 +102,31 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     <div class="meldunek"><strong>12:00</strong><div id="st1200" class="small">Status: brak</div><button type="button" class="main-btn" id="btn1200">Zamelduj 12:00</button></div>
     <div class="meldunek"><strong>15:00</strong><div id="st1500" class="small">Status: brak</div><button type="button" class="main-btn" id="btn1500">Zamelduj 15:00</button></div>
     <button type="button" class="main-btn green" id="btnRozlicz">Rozlicz dzien</button>
-    <p class="small" style="text-align:center">3 punktualne = +2 | brak = -1 | po 17 bez rozliczenia = -2</p>
+    <p class="small" style="text-align:center">3 punktualne = +2 | brak = -1 | po 17 bez rozliczenia = -2<br>Brak potwierdzenia do 10:00 = -2</p>
   </div>
 
   <div id="p-kary" class="panel">
     <div class="box" style="text-align:left">
       <h2 style="color:#ff66cc;text-align:center">Kary</h2>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5"> Rajstopy do wyrzucenia (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2"> Uszkodzenie rajstop lekkie (-2)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="10"> Niezgodny ubior (-10)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5"> Brak wylosowanego ubioru (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5"> Uszkodzenie ubioru gornego (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1"> Zdjecie balerinek (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3"> Brak majtek (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2"> Brak stopkow (-2)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="4"> Zdjecie rajstop bez zgody (-4)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1"> Spozniony raport (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2"> Brak raportu (-2)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1"> Podwiniete rekawy (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5"> Wielokrotne losowanie (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="8"> Klamstwo (-8)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3"> Odmowa jaskrawych rajstop (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5"> Podmiana koloru rajstop (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" id="karaInne" data-pkt="2"> Inne (-2)</label></div>
-      <div class="kara-suma">Suma: <strong id="sumaKar">0</strong></div>
+      <p class="small" style="text-align:center">Powtorzka tej samej kary: 2. raz x1.5, 3. raz x2</p>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="wyrzut"> Rajstopy do wyrzucenia (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="uszk_lek"> Uszkodzenie rajstop lekkie (-2)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="10" data-key="niezgodny"> Niezgodny ubior (-10)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="brak_ubior"> Brak wylosowanego ubioru (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="uszk_gora"> Uszkodzenie ubioru gornego (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="balerinki"> Zdjecie balerinek (-1)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="majtki"> Brak majtek (-3)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="stopki"> Brak stopkow (-2)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="4" data-key="zdjecie_raj"> Zdjecie rajstop bez zgody (-4)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="spoz_rap"> Spozniony raport (-1)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="brak_rap"> Brak raportu (-2)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="rekawy"> Podwiniete rekawy (-1)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="wielo_los"> Wielokrotne losowanie (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="8" data-key="klamstwo"> Klamstwo (-8)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="odmowa_jask"> Odmowa jaskrawych rajstop (-3)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="podmiana_kol"> Podmiana koloru rajstop (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" id="karaInne" data-pkt="2" data-key="inne"> Inne (-2)</label></div>
+      <div class="kara-suma">Suma bazowa: <strong id="sumaKar">0</strong></div>
       <button type="button" class="main-btn red" id="btnKary">Naloz kary</button>
     </div>
   </div>
@@ -152,7 +154,7 @@ function hour(){var n=new Date();return n.getHours()+n.getMinutes()/60}
 function fmt(h){return (h%1===0)?(h+':00'):String(h.toFixed(1)).replace('.5',':30')}
 function weekNum(){var n=new Date(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 
-var sezon,tryb,punkty,week,hist,last,lastAsk,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,blokada,rajstopyOn;
+var sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,rajstopyOn;
 
 function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
 
@@ -166,7 +168,7 @@ function go(name){
   if(name==='dziennik')showDziennik();
   if(name==='kontrola')showMeldunki();
   if(name==='kary')updateSumaKar();
-  if(name==='losowanie'){pokazOstatniStroj();updateDayGuards()}
+  if(name==='losowanie'){pokazOstatniStroj();updateDayGuards();updateAskInfo()}
 }
 
 function setSeason(s){
@@ -192,6 +194,10 @@ function updatePkt(){
   $('passa').innerHTML=passa;
   $('passa2').innerHTML=passa;
 }
+function updateAskInfo(){
+  if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
+  $('askInfo').innerHTML='Pytania o zgode: <strong>'+askCount+'/2</strong>';
+}
 
 function addPkt(p,powod){
   punkty+=p;save('r_pkt',punkty);updatePkt();
@@ -215,13 +221,14 @@ function checkWeek(){
     if(punkty>=0&&punkty<12&&week!=='')save('r_karny','1');
     if(punkty>=0)punkty=0;
     save('r_pkt',punkty);save('r_week',w);week=w;
+    karaCount={};saveJSON('r_karac',karaCount);
   }
   updatePkt();
 }
 
 function ensureMeldunki(){
   if(meldunki.date!==todayStr()){
-    meldunki={date:todayStr(),h9:null,h12:null,h15:null,rozliczone:false,kara17:false};
+    meldunki={date:todayStr(),h9:null,h12:null,h15:null,rozliczone:false,kara17:false,karaPotw:false};
     saveJSON('r_meld',meldunki);
   }
 }
@@ -229,12 +236,28 @@ function ensureMeldunki(){
 function updateDayGuards(){
   ensureMeldunki();
   var h=hour(), box=$('alertBox'), msg='';
-  $('btnLosuj').disabled=(h>=17);
+
+  // 1 losowanie / dzien + blokada po 17
+  $('btnLosuj').disabled=(h>=17 || losDate===todayStr());
+
+  // kara za brak potwierdzenia do 10:00
+  if(h>=10 && losDate===todayStr() && !potwierdzone && !meldunki.karaPotw){
+    meldunki.karaPotw=true;saveJSON('r_meld',meldunki);
+    addPkt(-2,'Brak potwierdzenia stroju do 10:00');
+    msg='Brak potwierdzenia do 10:00 = -2';
+  }
+
+  // kara za brak rozliczenia po 17
   if(h>=17&&!meldunki.rozliczone&&!meldunki.kara17){
     meldunki.kara17=true;saveJSON('r_meld',meldunki);
     addPkt(-2,'Brak rozliczenia dnia po 17:00');
-    msg='Po 17:00 bez rozliczenia = -2';
-  }else if(h>=17) msg='Po 17:00 - losowanie zablokowane';
+    msg=(msg?msg+' | ':'')+'Po 17 bez rozliczenia = -2';
+  }else if(h>=17){
+    msg=(msg?msg+' | ':'')+'Po 17:00 - losowanie zablokowane';
+  }else if(losDate===todayStr()){
+    msg=(msg?msg+' | ':'')+'Dzis juz losowano';
+  }
+
   $('btnPotwierdz').style.display=(last&&losDate===todayStr()&&!potwierdzone)?'block':'none';
   if(msg){box.style.display='block';box.innerHTML=msg}else box.style.display='none';
 }
@@ -251,8 +274,7 @@ function pokazOstatniStroj(){
   }else if(last.det&&last.det!=='-'&&last.det!==''){
     var jask=String(last.det).indexOf('jaskrawe')>=0;
     html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+(jask?'!!! ':'')+last.det+' | do '+(last.godz||'-')+'</p>';
-    if(jask)html+='<p class="red">KOLOR JASKRAWY - bez podmiany</p>';
-    else html+='<p class="small">Kolor jest ustalony - bez podmiany</p>';
+    html+='<p class="small">Kolor ustalony - bez podmiany</p>';
     res.className='mandatory';
   }else res.className='mandatory';
   html+='<p class="small">Wylosowano: '+last.t+'</p>';
@@ -309,27 +331,23 @@ function losujGorna(){
 }
 
 function losujRaj(temp){
-  // 5% - grubsze jaskrawe kolory
   if(Math.random()<0.05){
     var j=['biale','rozowe','zolte','blekit krolewski','czerwone'];
-    var k=j[Math.floor(Math.random()*j.length)];
-    return '40 den — jaskrawe '+k.toUpperCase();
+    return '40 den — jaskrawe '+j[Math.floor(Math.random()*j.length)].toUpperCase();
   }
-
-  // zawsze jeden konkretny kolor
-  var kolor = Math.random()<0.5 ? 'CZARNE' : 'TRANSPARENTNE';
-
+  var kolor=Math.random()<0.5?'CZARNE':'TRANSPARENTNE';
   if(sezon==='zimowa'){
-    if(temp<=-2) return '60+ den — '+kolor;
-    if(temp<=12) return '40-60 den — '+kolor;
+    if(temp<=-2)return '60+ den — '+kolor;
+    if(temp<=12)return '40-60 den — '+kolor;
     return '15-20 den — '+kolor;
   }
-  if(temp<=10 && Math.random()<0.3) return '30-60 den — '+kolor;
+  if(temp<=10&&Math.random()<0.3)return '30-60 den — '+kolor;
   return '15-20 den — '+kolor;
 }
 
 function losuj(){
   if(hour()>=17){alert('Po 17:00 nie wolno losowac');return}
+  if(losDate===todayStr()){alert('Dzis juz bylo losowanie. Raz i dosc.');return}
   var temp=parseFloat($('temp').value);
   var res=$('result'),ask=$('askBtn');
   if(isNaN(temp)){res.innerHTML='<p class="red">Podaj temperature</p>';res.className='mandatory';return}
@@ -341,7 +359,7 @@ function losuj(){
     last={gorna:'DZIEN KARNY',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,t:now()};
     saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
     potwierdzone=false;save('r_potw','');$('btnPotwierdz').style.display='block';
-    addPkt(0,'Dzien karny');showStatus();return;
+    addPkt(0,'Dzien karny');showStatus();updateDayGuards();return;
   }
 
   var gorna=losujGorna(),det='',godz='-',stopki=false,komb=false,pkt=0;
@@ -359,8 +377,7 @@ function losuj(){
     if(Math.random()<0.10){
       det=losujRaj(temp);godz=fmt(12+Math.random()*5);rajstopyOn=true;pkt+=1;
       html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';
-      if(String(det).indexOf('jaskrawe')>=0){html+='<p class="red">KOLOR JASKRAWY - bez podmiany</p>';pkt+=0.5}
-      else html+='<p class="small">Kolor ustalony - bez podmiany</p>';
+      if(String(det).indexOf('jaskrawe')>=0){html+='<p class="red">KOLOR JASKRAWY</p>';pkt+=0.5}
       res.className='mandatory';
     }else{
       stopki=true;rajstopyOn=false;
@@ -369,12 +386,11 @@ function losuj(){
   }else{
     det=losujRaj(temp);godz=fmt(12+Math.random()*5);rajstopyOn=true;pkt+=1;
     html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';
-    if(String(det).indexOf('jaskrawe')>=0){html+='<p class="red">KOLOR JASKRAWY - bez podmiany</p>';pkt+=0.5}
-    else html+='<p class="small">Kolor ustalony - bez podmiany</p>';
+    if(String(det).indexOf('jaskrawe')>=0){html+='<p class="red">KOLOR JASKRAWY</p>';pkt+=0.5}
     res.className='mandatory';
   }
   if(blokada)html+='<p class="red">Kostium/Romper - brak zgody przed 17</p>';
-  else if(rajstopyOn)html+='<p class="small">Po 10:00 mozesz blagac</p>';
+  else if(rajstopyOn)html+='<p class="small">Po 10:00 mozesz blagac (max 2/dzien)</p>';
   html+='<p class="green">Punkty: +'+pkt+'</p>';
   res.innerHTML=html;
 
@@ -390,16 +406,21 @@ function potwierdzStroj(){
   potwierdzone=true;save('r_potw',todayStr());
   addHist('Potwierdzenie','Zalozono stroj');
   $('btnPotwierdz').style.display='none';
-  alert('Potwierdzono');pokazOstatniStroj();showStatus();
+  alert('Potwierdzono');pokazOstatniStroj();showStatus();updateDayGuards();
 }
 
 function pytaj(){
   var res=$('result');
   if(blokada){res.innerHTML='<p class="red">Przy kostiumie/romperze nie wolno</p>';res.className='mandatory';return}
+  if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
+  if(askCount>=2){res.innerHTML='<p class="red">Limit 2 pytan na dzien</p>';res.className='mandatory';return}
   var t=Date.now();
   if(t-lastAsk<3600000){res.innerHTML='<p class="red">Raz na godzine</p>';res.className='mandatory';return}
   if(hour()<10){res.innerHTML='<p class="red">Przed 10:00 nie</p>';res.className='mandatory';return}
-  lastAsk=t;save('r_ask',lastAsk);addPkt(-1,'Pytanie o zgode');
+  lastAsk=t;save('r_ask',lastAsk);
+  askCount++;save('r_askc',String(askCount));
+  updateAskInfo();
+  addPkt(-1,'Pytanie o zgode ('+askCount+'/2)');
   if(Math.random()<(sezon==='zimowa'?0.3:0.35)){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
   else{res.innerHTML='<p class="red">NIE</p>';res.className='mandatory'}
   setTimeout(pokazOstatniStroj,4000);
@@ -430,17 +451,27 @@ function nalozKary(){
   var list=document.querySelectorAll('.kara'),suma=0,opis=[];
   for(var i=0;i<list.length;i++){
     if(!list[i].checked)continue;
-    var p=parseInt(list[i].getAttribute('data-pkt'),10);
+    var base=parseInt(list[i].getAttribute('data-pkt'),10);
+    var key=list[i].getAttribute('data-key')||('k'+i);
     var n=list[i].parentNode.textContent.replace(/\s+/g,' ').trim();
     if(list[i].id==='karaInne'){
-      var pow=prompt('Powod:');if(!pow||!pow.trim())continue;n='Inne: '+pow.trim();
+      var pow=prompt('Powod:');if(!pow||!pow.trim())continue;n='Inne: '+pow.trim();key='inne:'+pow.trim().toLowerCase();
     }
-    suma+=p;opis.push(n);
+    if(!karaCount[key])karaCount[key]=0;
+    karaCount[key]+=1;
+    var ile=karaCount[key];
+    var mult=1;
+    if(ile===2)mult=1.5;
+    if(ile>=3)mult=2;
+    var p=Math.ceil(base*mult);
+    suma+=p;
+    opis.push(n+' [x'+ile+' -> -'+p+']');
   }
   if(!suma){alert('Nic nie zaznaczono');return}
+  saveJSON('r_karac',karaCount);
   addPkt(-suma,'Kary: '+opis.join('; '));
   passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
-  alert('Kary -'+suma+' | Saldo '+punkty.toFixed(1));
+  alert('Kary -'+suma+' | Saldo '+punkty.toFixed(1)+'\nEskalacja powtorek aktywna');
   for(var j=0;j<list.length;j++)list[j].checked=false;updateSumaKar();
 }
 
@@ -477,9 +508,9 @@ function showDziennik(){
 }
 function pobierz(){
   if(!hist.length){alert('Brak historii');return}
-  var c='=== v3.4 MS ===\nPkt: '+punkty.toFixed(1)+'\nPassa: '+passa+'\n'+now()+'\n\n';
+  var c='=== v3.5 MS ===\nPkt: '+punkty.toFixed(1)+'\nPassa: '+passa+'\n'+now()+'\n\n';
   for(var i=0;i<hist.length;i++)c+=(i+1)+'. '+hist[i].t+' | '+hist[i].g+' | '+hist[i].d+'\n';
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v34ms.txt';a.click();
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v35ms.txt';a.click();
 }
 
 function bind(){
@@ -518,19 +549,22 @@ function init(){
     hist=loadJSON('r_hist',[]);
     last=loadJSON('r_last',null);
     lastAsk=parseInt(load('r_ask','0'),10)||0;
+    askCount=parseInt(load('r_askc','0'),10)||0;
+    askDate=load('r_askd','');
     passa=parseInt(load('r_passa','0'),10)||0;
     lastViol=load('r_viol','');
     dziennik=loadJSON('r_dz',[]);
     meldunki=loadJSON('r_meld',{});
     potwierdzone=(load('r_potw','')===todayStr());
     losDate=load('r_losd','');
+    karaCount=loadJSON('r_karac',{});
     blokada=false;rajstopyOn=false;
     bind();
     setSeason(sezon);setMode(tryb);
-    checkWeek();showHist();updatePkt();
+    checkWeek();showHist();updatePkt();updateAskInfo();
     pokazOstatniStroj();showStatus();updateDayGuards();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.4 MS</span>');
+    bootMsg('<span class="green">Gotowe v3.5 MS</span>');
   }catch(e){
     bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>');
     alert('Blad startu: '+(e&&e.message?e.message:e));
