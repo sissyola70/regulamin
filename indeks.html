@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.3 MS</title>
+<title>Pani Regulamin v3.4 MS</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -41,7 +41,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.3 MS</h1>
+  <h1>Pani Regulamin v3.4 MS</h1>
   <p class="sub">Mobile Safe</p>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
@@ -122,7 +122,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="5"> Wielokrotne losowanie (-5)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="8"> Klamstwo (-8)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="3"> Odmowa jaskrawych rajstop (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5"> Podmiana jaskrawych na czarne (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5"> Podmiana koloru rajstop (-5)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" id="karaInne" data-pkt="2"> Inne (-2)</label></div>
       <div class="kara-suma">Suma: <strong id="sumaKar">0</strong></div>
       <button type="button" class="main-btn red" id="btnKary">Naloz kary</button>
@@ -252,6 +252,7 @@ function pokazOstatniStroj(){
     var jask=String(last.det).indexOf('jaskrawe')>=0;
     html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+(jask?'!!! ':'')+last.det+' | do '+(last.godz||'-')+'</p>';
     if(jask)html+='<p class="red">KOLOR JASKRAWY - bez podmiany</p>';
+    else html+='<p class="small">Kolor jest ustalony - bez podmiany</p>';
     res.className='mandatory';
   }else res.className='mandatory';
   html+='<p class="small">Wylosowano: '+last.t+'</p>';
@@ -314,13 +315,17 @@ function losujRaj(temp){
     var k=j[Math.floor(Math.random()*j.length)];
     return '40 den — jaskrawe '+k.toUpperCase();
   }
+
+  // zawsze jeden konkretny kolor
+  var kolor = Math.random()<0.5 ? 'CZARNE' : 'TRANSPARENTNE';
+
   if(sezon==='zimowa'){
-    if(temp<=-2)return '60+ den — czarne/transparentne';
-    if(temp<=12)return '40-60 den — ciemne';
-    return '15-20 den — czarne/transparentne';
+    if(temp<=-2) return '60+ den — '+kolor;
+    if(temp<=12) return '40-60 den — '+kolor;
+    return '15-20 den — '+kolor;
   }
-  if(temp<=10&&Math.random()<0.3)return '30-60 den — czarne/biale/niebieskie';
-  return '15-20 den — czarne/transparentne';
+  if(temp<=10 && Math.random()<0.3) return '30-60 den — '+kolor;
+  return '15-20 den — '+kolor;
 }
 
 function losuj(){
@@ -333,7 +338,7 @@ function losuj(){
     save('r_karny','');
     res.innerHTML='<h2>DZIEN KARNY</h2><p class="red">Kostium + biale rajstopy + male biale baletki</p>';
     res.className='mandatory';blokada=true;ask.disabled=true;
-    last={gorna:'DZIEN KARNY',det:'kostium + biale rajstopy',godz:'17:00',stopki:false,komb:false,t:now()};
+    last={gorna:'DZIEN KARNY',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,t:now()};
     saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
     potwierdzone=false;save('r_potw','');$('btnPotwierdz').style.display='block';
     addPkt(0,'Dzien karny');showStatus();return;
@@ -355,6 +360,7 @@ function losuj(){
       det=losujRaj(temp);godz=fmt(12+Math.random()*5);rajstopyOn=true;pkt+=1;
       html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';
       if(String(det).indexOf('jaskrawe')>=0){html+='<p class="red">KOLOR JASKRAWY - bez podmiany</p>';pkt+=0.5}
+      else html+='<p class="small">Kolor ustalony - bez podmiany</p>';
       res.className='mandatory';
     }else{
       stopki=true;rajstopyOn=false;
@@ -364,6 +370,7 @@ function losuj(){
     det=losujRaj(temp);godz=fmt(12+Math.random()*5);rajstopyOn=true;pkt+=1;
     html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';
     if(String(det).indexOf('jaskrawe')>=0){html+='<p class="red">KOLOR JASKRAWY - bez podmiany</p>';pkt+=0.5}
+    else html+='<p class="small">Kolor ustalony - bez podmiany</p>';
     res.className='mandatory';
   }
   if(blokada)html+='<p class="red">Kostium/Romper - brak zgody przed 17</p>';
@@ -470,9 +477,9 @@ function showDziennik(){
 }
 function pobierz(){
   if(!hist.length){alert('Brak historii');return}
-  var c='=== v3.3 MS ===\nPkt: '+punkty.toFixed(1)+'\nPassa: '+passa+'\n'+now()+'\n\n';
+  var c='=== v3.4 MS ===\nPkt: '+punkty.toFixed(1)+'\nPassa: '+passa+'\n'+now()+'\n\n';
   for(var i=0;i<hist.length;i++)c+=(i+1)+'. '+hist[i].t+' | '+hist[i].g+' | '+hist[i].d+'\n';
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v33ms.txt';a.click();
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v34ms.txt';a.click();
 }
 
 function bind(){
@@ -523,7 +530,7 @@ function init(){
     checkWeek();showHist();updatePkt();
     pokazOstatniStroj();showStatus();updateDayGuards();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.3 MS</span>');
+    bootMsg('<span class="green">Gotowe v3.4 MS</span>');
   }catch(e){
     bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>');
     alert('Blad startu: '+(e&&e.message?e.message:e));
