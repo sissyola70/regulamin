@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.5 MS</title>
+<title>Pani Regulamin v3.6 MS</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -41,8 +41,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.5 MS</h1>
-  <p class="sub">Wersja dyscyplinarna</p>
+  <h1>Pani Regulamin v3.6 MS</h1>
+  <p class="sub">Sezon z temperatury • cel 16 pkt</p>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
 
@@ -55,15 +55,12 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
   </div>
 
   <div id="p-losowanie" class="panel active">
-    <div class="row">
-      <button type="button" class="btn" id="bLetnia">Letnia</button>
-      <button type="button" class="btn" id="bZimowa">Zimowa</button>
-    </div>
+    <div class="box">Sezon: <strong id="sezonTxt">auto z temperatury</strong><div class="small">11 C i wiecej = lato, ponizej 11 = zima</div></div>
     <div class="row">
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
-    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 12<div id="pktInfo" class="small"></div></div>
+    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 16<div id="pktInfo" class="small"></div></div>
     <div class="box">Passa: <strong id="passa">0</strong> dni</div>
     <div class="box small" id="askInfo">Pytania o zgode: 0/2</div>
 
@@ -108,7 +105,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
   <div id="p-kary" class="panel">
     <div class="box" style="text-align:left">
       <h2 style="color:#ff66cc;text-align:center">Kary</h2>
-      <p class="small" style="text-align:center">Powtorzka tej samej kary: 2. raz x1.5, 3. raz x2</p>
+      <p class="small" style="text-align:center">Powtorzka: 2. raz x1.5, 3. raz x2</p>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="wyrzut"> Rajstopy do wyrzucenia (-5)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="uszk_lek"> Uszkodzenie rajstop lekkie (-2)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="10" data-key="niezgodny"> Niezgodny ubior (-10)</label></div>
@@ -153,10 +150,17 @@ function now(){try{return new Date().toLocaleString('pl-PL')}catch(e){return new
 function hour(){var n=new Date();return n.getHours()+n.getMinutes()/60}
 function fmt(h){return (h%1===0)?(h+':00'):String(h.toFixed(1)).replace('.5',':30')}
 function weekNum(){var n=new Date(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 
+var CEL=16;
 var sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,rajstopyOn;
 
 function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
+
+function sezonZTemp(temp){return temp>=11?'letnia':'zimowa'}
+function pokazSezon(){
+  $('sezonTxt').innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA';
+}
 
 function go(name){
   var names=['losowanie','status','kontrola','kary','dziennik'];
@@ -171,11 +175,6 @@ function go(name){
   if(name==='losowanie'){pokazOstatniStroj();updateDayGuards();updateAskInfo()}
 }
 
-function setSeason(s){
-  sezon=s;save('r_sezon',s);
-  $('bLetnia').className='btn'+(s==='letnia'?' active':'');
-  $('bZimowa').className='btn'+(s==='zimowa'?' active':'');
-}
 function setMode(m){
   tryb=m;save('r_tryb',m);
   $('bLos').className='btn'+(m==='los'?' active':'');
@@ -188,9 +187,9 @@ function updatePkt(){
   var el=$('pkt');
   el.innerHTML=punkty.toFixed(1);
   el.style.color=punkty<0?'#ff4444':'#ff66cc';
-  if(punkty>=12)$('pktInfo').innerHTML='<span class="green">Cel osiagniety</span>';
+  if(punkty>=CEL)$('pktInfo').innerHTML='<span class="green">Cel osiagniety</span>';
   else if(punkty<0)$('pktInfo').innerHTML='<span class="red">Saldo ujemne</span>';
-  else $('pktInfo').innerHTML='Brakuje <span class="red">'+(12-punkty).toFixed(1)+'</span>';
+  else $('pktInfo').innerHTML='Brakuje <span class="red">'+(CEL-punkty).toFixed(1)+'</span>';
   $('passa').innerHTML=passa;
   $('passa2').innerHTML=passa;
 }
@@ -218,7 +217,7 @@ function showHist(){
 function checkWeek(){
   var w=weekNum();
   if(week!==w){
-    if(punkty>=0&&punkty<12&&week!=='')save('r_karny','1');
+    if(punkty>=0&&punkty<CEL&&week!=='')save('r_karny','1');
     if(punkty>=0)punkty=0;
     save('r_pkt',punkty);save('r_week',w);week=w;
     karaCount={};saveJSON('r_karac',karaCount);
@@ -236,18 +235,13 @@ function ensureMeldunki(){
 function updateDayGuards(){
   ensureMeldunki();
   var h=hour(), box=$('alertBox'), msg='';
-
-  // 1 losowanie / dzien + blokada po 17
   $('btnLosuj').disabled=(h>=17 || losDate===todayStr());
 
-  // kara za brak potwierdzenia do 10:00
   if(h>=10 && losDate===todayStr() && !potwierdzone && !meldunki.karaPotw){
     meldunki.karaPotw=true;saveJSON('r_meld',meldunki);
     addPkt(-2,'Brak potwierdzenia stroju do 10:00');
     msg='Brak potwierdzenia do 10:00 = -2';
   }
-
-  // kara za brak rozliczenia po 17
   if(h>=17&&!meldunki.rozliczone&&!meldunki.kara17){
     meldunki.kara17=true;saveJSON('r_meld',meldunki);
     addPkt(-2,'Brak rozliczenia dnia po 17:00');
@@ -257,7 +251,6 @@ function updateDayGuards(){
   }else if(losDate===todayStr()){
     msg=(msg?msg+' | ':'')+'Dzis juz losowano';
   }
-
   $('btnPotwierdz').style.display=(last&&losDate===todayStr()&&!potwierdzone)?'block':'none';
   if(msg){box.style.display='block';box.innerHTML=msg}else box.style.display='none';
 }
@@ -274,9 +267,10 @@ function pokazOstatniStroj(){
   }else if(last.det&&last.det!=='-'&&last.det!==''){
     var jask=String(last.det).indexOf('jaskrawe')>=0;
     html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+(jask?'!!! ':'')+last.det+' | do '+(last.godz||'-')+'</p>';
-    html+='<p class="small">Kolor ustalony - bez podmiany</p>';
+    html+='<p class="small">Kolor ustalony przez program - bez podmiany</p>';
     res.className='mandatory';
   }else res.className='mandatory';
+  if(last.sezon)html+='<p class="small">Sezon: '+last.sezon+'</p>';
   html+='<p class="small">Wylosowano: '+last.t+'</p>';
   if(losDate===todayStr())html+='<p class="small">Potwierdzenie: '+(potwierdzone?'<span class="green">TAK</span>':'<span class="red">BRAK</span>')+'</p>';
   res.innerHTML=html;
@@ -322,27 +316,40 @@ function rozliczDzien(){
 }
 
 function losujGorna(){
-  if(sezon==='zimowa')return Math.random()<0.7?'Body z dlugim rekawem':'Kostium gimnastyczny';
   var r=Math.random();
-  if(r<0.65)return 'Body';
-  if(r<0.85)return 'Kostium gimnastyczny';
-  if(r<0.95)return 'Romper';
-  return 'Body z dlugim rekawem';
+  if(sezon==='zimowa'){
+    if(r<0.60)return 'Body z dlugim rekawem';
+    return 'Kostium gimnastyczny';
+  }
+  if(r<0.50)return 'Body';
+  if(r<0.60)return 'Body z dlugim rekawem';
+  if(r<0.80)return 'Kostium gimnastyczny';
+  return 'Romper';
+}
+
+function kolorZima(){
+  return pick(['CZARNE','TRANSPARENTNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE']);
+}
+function kolorLatoZwykly(){
+  return Math.random()<0.5?'CZARNE':'TRANSPARENTNE';
+}
+function kolorJaskrawy(){
+  return pick(['BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE']);
 }
 
 function losujRaj(temp){
-  if(Math.random()<0.05){
-    var j=['biale','rozowe','zolte','blekit krolewski','czerwone'];
-    return '40 den — jaskrawe '+j[Math.floor(Math.random()*j.length)].toUpperCase();
+  if(Math.random()<0.10){
+    return '40 den — jaskrawe '+kolorJaskrawy();
   }
-  var kolor=Math.random()<0.5?'CZARNE':'TRANSPARENTNE';
   if(sezon==='zimowa'){
-    if(temp<=-2)return '60+ den — '+kolor;
-    if(temp<=12)return '40-60 den — '+kolor;
-    return '15-20 den — '+kolor;
+    var kz=kolorZima();
+    if(temp<=-2)return '60+ den — '+kz;
+    if(temp<=12)return '40-60 den — '+kz;
+    return '15-20 den — '+kz;
   }
-  if(temp<=10&&Math.random()<0.3)return '30-60 den — '+kolor;
-  return '15-20 den — '+kolor;
+  var kl=kolorLatoZwykly();
+  if(temp<=10&&Math.random()<0.3)return '30-60 den — '+kl;
+  return '15-20 den — '+kl;
 }
 
 function losuj(){
@@ -352,11 +359,13 @@ function losuj(){
   var res=$('result'),ask=$('askBtn');
   if(isNaN(temp)){res.innerHTML='<p class="red">Podaj temperature</p>';res.className='mandatory';return}
 
+  sezon=sezonZTemp(temp);save('r_sezon',sezon);pokazSezon();
+
   if(load('r_karny','')==='1'){
     save('r_karny','');
     res.innerHTML='<h2>DZIEN KARNY</h2><p class="red">Kostium + biale rajstopy + male biale baletki</p>';
     res.className='mandatory';blokada=true;ask.disabled=true;
-    last={gorna:'DZIEN KARNY',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,t:now()};
+    last={gorna:'DZIEN KARNY',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,sezon:sezon,t:now()};
     saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
     potwierdzone=false;save('r_potw','');$('btnPotwierdz').style.display='block';
     addPkt(0,'Dzien karny');showStatus();updateDayGuards();return;
@@ -365,11 +374,12 @@ function losuj(){
   var gorna=losujGorna(),det='',godz='-',stopki=false,komb=false,pkt=0;
   blokada=(gorna==='Kostium gimnastyczny'||gorna==='Romper');
   ask.disabled=blokada;
-  komb=sezon==='letnia'?Math.random()<0.01:Math.random()<0.30;
+  komb=(sezon==='letnia')?(Math.random()<0.10):(Math.random()<0.40);
   if(gorna==='Body')pkt+=1;else if(gorna==='Body z dlugim rekawem')pkt+=1.5;else pkt+=2.5;
   if(komb)pkt+=(sezon==='letnia'?2:1);
 
   var html='<h2>'+gorna.toUpperCase()+' - DO 17:00</h2>';
+  html+='<p class="small">Sezon: '+(sezon==='zimowa'?'ZIMOWA':'LETNIA')+' ('+temp+' C)</p>';
   if(komb)html+='<h2>KOMBINEZON - OBOWIAZKOWY</h2>';
   html+='<h2>BALERINKI - OBOWIAZKOWE</h2><h2>DAMSKIE MAJTKI - OBOWIAZKOWE</h2>';
 
@@ -395,7 +405,7 @@ function losuj(){
   res.innerHTML=html;
 
   addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':''));
-  last={gorna:gorna+(komb?' + kombinezon':''),det:det,godz:godz,stopki:stopki,komb:komb,t:now()};
+  last={gorna:gorna+(komb?' + kombinezon':''),det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');$('btnPotwierdz').style.display='block';
   showStatus();updateDayGuards();
@@ -471,7 +481,7 @@ function nalozKary(){
   saveJSON('r_karac',karaCount);
   addPkt(-suma,'Kary: '+opis.join('; '));
   passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
-  alert('Kary -'+suma+' | Saldo '+punkty.toFixed(1)+'\nEskalacja powtorek aktywna');
+  alert('Kary -'+suma+' | Saldo '+punkty.toFixed(1));
   for(var j=0;j<list.length;j++)list[j].checked=false;updateSumaKar();
 }
 
@@ -481,6 +491,7 @@ function showStatus(){
     var s='<p><strong>'+last.gorna+'</strong></p><p>'+last.det+'</p><p>Rajstopy do: '+(last.godz||'-')+'</p>';
     if(last.komb)s+='<p class="red">Kombinezon: TAK</p>';
     if(last.stopki)s+='<p class="red">Stopki: TAK</p>';
+    if(last.sezon)s+='<p>Sezon: '+last.sezon+'</p>';
     s+='<p class="small">'+last.t+'</p>';
     $('statusTxt').innerHTML=s;
   }
@@ -508,9 +519,9 @@ function showDziennik(){
 }
 function pobierz(){
   if(!hist.length){alert('Brak historii');return}
-  var c='=== v3.5 MS ===\nPkt: '+punkty.toFixed(1)+'\nPassa: '+passa+'\n'+now()+'\n\n';
+  var c='=== v3.6 MS ===\nPkt: '+punkty.toFixed(1)+'/'+CEL+'\nPassa: '+passa+'\n'+now()+'\n\n';
   for(var i=0;i<hist.length;i++)c+=(i+1)+'. '+hist[i].t+' | '+hist[i].g+' | '+hist[i].d+'\n';
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v35ms.txt';a.click();
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v36ms.txt';a.click();
 }
 
 function bind(){
@@ -519,8 +530,6 @@ function bind(){
   $('t3').onclick=function(){go('kontrola')};
   $('t4').onclick=function(){go('kary')};
   $('t5').onclick=function(){go('dziennik')};
-  $('bLetnia').onclick=function(){setSeason('letnia')};
-  $('bZimowa').onclick=function(){setSeason('zimowa')};
   $('bLos').onclick=function(){setMode('los')};
   $('bTrack').onclick=function(){setMode('track')};
   $('btnLosuj').onclick=losuj;
@@ -560,11 +569,11 @@ function init(){
     karaCount=loadJSON('r_karac',{});
     blokada=false;rajstopyOn=false;
     bind();
-    setSeason(sezon);setMode(tryb);
+    setMode(tryb);pokazSezon();
     checkWeek();showHist();updatePkt();updateAskInfo();
     pokazOstatniStroj();showStatus();updateDayGuards();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.5 MS</span>');
+    bootMsg('<span class="green">Gotowe v3.6 MS</span>');
   }catch(e){
     bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>');
     alert('Blad startu: '+(e&&e.message?e.message:e));
