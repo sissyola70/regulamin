@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.6 MS</title>
+<title>Pani Regulamin v3.7</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -20,29 +20,31 @@ h1{color:#ff66cc;text-align:center;font-size:1.2rem;margin-bottom:6px}
 .btn{padding:12px 14px;border:1px solid #ff00aa;background:#220022;color:#ffccff;border-radius:8px;font-weight:bold;touch-action:manipulation}
 .btn.active{background:#ff00aa;color:#fff}
 .main-btn{width:100%;padding:14px;background:#ff00aa;color:#fff;border:none;border-radius:8px;font-size:1.05rem;font-weight:bold;margin:6px 0;touch-action:manipulation}
-.main-btn.purple{background:#9900cc}.main-btn.red{background:#aa0000}.main-btn.gray{background:#444}.main-btn.green{background:#228822}
+.main-btn.green{background:#228822}.main-btn.red{background:#aa0000}.main-btn.gray{background:#444}
 .main-btn:disabled{background:#555;opacity:.7}
 input[type=number],textarea{width:100%;padding:14px;font-size:16px;text-align:center;background:#220022;border:1px solid #ff00aa;color:#ffccff;border-radius:8px;margin-bottom:8px}
 textarea{text-align:left;min-height:80px}
-#result{margin-top:12px;padding:12px;border-radius:8px;min-height:100px;font-size:.98rem;line-height:1.4;background:#1a1a1a;border:1px solid #777}
+#result{margin-top:12px;padding:12px;border-radius:8px;min-height:100px;line-height:1.4;background:#1a1a1a;border:1px solid #777}
 .mandatory{background:#3a0000;border:2px solid #ff3333}
 .ok{background:#003300;border:2px solid #00aa00}
 .no{background:#1a1a1a;border:2px solid #777}
 .red{color:#ff4444;font-weight:bold}.green{color:#66ff66;font-weight:bold}.orange{color:#ffaa44;font-weight:bold}
 .small{color:#ff99cc;font-size:.88rem;font-style:italic}
 h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
-.check{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:.95rem;text-align:left}
-.check input{width:22px;height:22px;flex-shrink:0}
+.check{display:flex;align-items:center;gap:10px;margin:8px 0;text-align:left}
+.check input{width:22px;height:22px}
 .history{margin-top:12px;padding:10px;background:#1a1a1a;border:1px dashed #ff00aa;border-radius:8px;font-size:.82rem;text-align:left;max-height:150px;overflow-y:auto}
-.kara-suma{text-align:center;font-size:1.1rem;margin:10px 0;color:#ff6666}
+.kara-suma{text-align:center;margin:10px 0;color:#ff6666}
 .meldunek{background:#1a1a1a;border:1px solid #ff00aa;border-radius:8px;padding:10px;margin-bottom:10px;text-align:left}
 .alert{background:#4a0022;border:1px solid #ff4466;border-radius:8px;padding:10px;margin-bottom:10px;text-align:center;display:none}
+#baner{font-style:italic}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.6 MS</h1>
-  <p class="sub">Sezon z temperatury • cel 16 pkt</p>
+  <h1>Pani Regulamin v3.7</h1>
+  <p class="sub">1 losowanie dziennie • sezon z temperatury</p>
+  <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
 
@@ -55,7 +57,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
   </div>
 
   <div id="p-losowanie" class="panel active">
-    <div class="box">Sezon: <strong id="sezonTxt">auto z temperatury</strong><div class="small">11 C i wiecej = lato, ponizej 11 = zima</div></div>
+    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">11 C i wiecej = lato, ponizej 11 = zima</div></div>
     <div class="row">
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
@@ -63,67 +65,55 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     <div class="box">Punkty: <span class="points" id="pkt">0</span> / 16<div id="pktInfo" class="small"></div></div>
     <div class="box">Passa: <strong id="passa">0</strong> dni</div>
     <div class="box small" id="askInfo">Pytania o zgode: 0/2</div>
-
     <div id="areaLos">
       <input type="number" id="temp" placeholder="Temperatura C" step="0.1" inputmode="decimal">
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
-      <button type="button" class="main-btn purple" id="askBtn">Blagaj o zgode</button>
+      <button type="button" class="main-btn" id="askBtn" style="background:#9900cc">Blagaj o zgode</button>
     </div>
-
     <div id="areaTrack" style="display:none">
-      <p class="small" style="text-align:center;margin-bottom:8px">Odhacz wszystko. Brak = -2 pkt</p>
+      <p class="small">Odhacz wszystko. Brak = -2</p>
       <div class="check"><input type="checkbox" id="c1"> Gorna czesc</div>
       <div class="check"><input type="checkbox" id="c2"> Rajstopy / stopki</div>
       <div class="check"><input type="checkbox" id="c3"> Balerinki</div>
-      <div class="check"><input type="checkbox" id="c4"> Damskie majtki</div>
+      <div class="check"><input type="checkbox" id="c4"> Spod (majtki / body)</div>
       <button type="button" class="main-btn" id="btnTrack">Zapisz wykonanie</button>
     </div>
-
     <button type="button" class="main-btn gray" id="btnDorob">Dorob punkty</button>
     <button type="button" class="main-btn gray" id="btnTxt">Pobierz TXT</button>
     <div id="result"></div>
-    <div class="history"><strong>Historia:</strong><br><span id="hist"></span></div>
+    <div class="history"><strong>Historia</strong><br><span id="hist"></span></div>
   </div>
 
   <div id="p-status" class="panel">
-    <div class="box"><h2 style="color:#ff66cc">Dzisiejszy status</h2><div id="statusTxt">Brak danych.</div><p id="czas" style="margin-top:8px"></p></div>
-    <div class="box" style="text-align:left"><strong>Meldunki:</strong><div id="statusMeld" style="margin-top:6px"></div></div>
-    <div class="box" id="statusPotw">Potwierdzenie stroju: -</div>
-    <div class="box">Passa: <strong id="passa2">0</strong> dni</div>
+    <div class="box"><h2 style="color:#ff66cc">Status</h2><div id="statusTxt">Brak danych.</div><p id="czas"></p></div>
+    <div class="box" style="text-align:left"><strong>Meldunki</strong><div id="statusMeld"></div></div>
+    <div class="box" id="statusPotw">Potwierdzenie: -</div>
+    <div class="box">Passa: <strong id="passa2">0</strong></div>
   </div>
 
   <div id="p-kontrola" class="panel">
-    <div class="box"><h2 style="color:#ff66cc">Meldunki</h2><p class="small">+/- 15 min. Spoznienie = -1</p></div>
-    <div class="meldunek"><strong>9:00</strong><div id="st900" class="small">Status: brak</div><button type="button" class="main-btn" id="btn900">Zamelduj 9:00</button></div>
-    <div class="meldunek"><strong>12:00</strong><div id="st1200" class="small">Status: brak</div><button type="button" class="main-btn" id="btn1200">Zamelduj 12:00</button></div>
-    <div class="meldunek"><strong>15:00</strong><div id="st1500" class="small">Status: brak</div><button type="button" class="main-btn" id="btn1500">Zamelduj 15:00</button></div>
+    <div class="box"><h2 style="color:#ff66cc">Meldunki</h2><p class="small">+/- 15 min</p></div>
+    <div class="meldunek"><strong>9:00</strong><div id="st900" class="small">brak</div><button type="button" class="main-btn" id="btn900">Zamelduj 9:00</button></div>
+    <div class="meldunek"><strong>12:00</strong><div id="st1200" class="small">brak</div><button type="button" class="main-btn" id="btn1200">Zamelduj 12:00</button></div>
+    <div class="meldunek"><strong>15:00</strong><div id="st1500" class="small">brak</div><button type="button" class="main-btn" id="btn1500">Zamelduj 15:00</button></div>
     <button type="button" class="main-btn green" id="btnRozlicz">Rozlicz dzien</button>
-    <p class="small" style="text-align:center">3 punktualne = +2 | brak = -1 | po 17 bez rozliczenia = -2<br>Brak potwierdzenia do 10:00 = -2</p>
   </div>
 
   <div id="p-kary" class="panel">
     <div class="box" style="text-align:left">
       <h2 style="color:#ff66cc;text-align:center">Kary</h2>
-      <p class="small" style="text-align:center">Powtorzka: 2. raz x1.5, 3. raz x2</p>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="wyrzut"> Rajstopy do wyrzucenia (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="uszk_lek"> Uszkodzenie rajstop lekkie (-2)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="uszk"> Uszkodzenie rajstop (-2)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="10" data-key="niezgodny"> Niezgodny ubior (-10)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="brak_ubior"> Brak wylosowanego ubioru (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="uszk_gora"> Uszkodzenie ubioru gornego (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="balerinki"> Zdjecie balerinek (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="majtki"> Brak majtek (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="stopki"> Brak stopkow (-2)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="4" data-key="zdjecie_raj"> Zdjecie rajstop bez zgody (-4)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="spoz_rap"> Spozniony raport (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="brak_rap"> Brak raportu (-2)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="rekawy"> Podwiniete rekawy (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="wielo_los"> Wielokrotne losowanie (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="8" data-key="klamstwo"> Klamstwo (-8)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="odmowa_jask"> Odmowa jaskrawych rajstop (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="podmiana_kol"> Podmiana koloru rajstop (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="brak"> Brak wylosowanego ubioru (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="bal"> Zdjecie balerinek (-1)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="spod"> Brak spodu (-3)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="4" data-key="raj"> Zdjecie rajstop bez zgody (-4)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="kolor"> Podmiana koloru (-5)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="wielo"> Wielokrotne losowanie (-5)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" id="karaInne" data-pkt="2" data-key="inne"> Inne (-2)</label></div>
-      <div class="kara-suma">Suma bazowa: <strong id="sumaKar">0</strong></div>
+      <div class="kara-suma">Suma: <strong id="sumaKar">0</strong></div>
       <button type="button" class="main-btn red" id="btnKary">Naloz kary</button>
     </div>
   </div>
@@ -137,9 +127,27 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     </div>
   </div>
 </div>
-
 <script>
 (function(){
+var BANERY=[
+  'Szmato, masz co chcialas. Teraz nos.',
+  'Nie jestes partnerem. Jestes ubraniem na nogach.',
+  'Pluskwa ma wiecej godnosci niz ty.',
+  'Ania mowi. Ty sie wcinasz w rajstopy.',
+  'Glos masz po to, zeby potwierdzic ze jestes ubrana.',
+  'Prosba o wygode to obelga wobec regulaminu.',
+  'Nie wybierasz koloru. Kolor wybiera ciebie.',
+  'Stoisz nizej niz brudne majtki w koszu.',
+  'Jak wypadl romper, to nie ma zgody. Koniec.',
+  'Twoje zdanie nic nie zmienia. Zmieniasz tylko bielizne.',
+  'Meldunek to nie rozmowa. To sprawdzenie czy jeszcze sluchasz.',
+  'Wstyd? Dobrze. To jedyne co ci zostalo.',
+  'Nie zaslugujesz na body krotkie, jak Ania powie dlugie.',
+  'Ubrana i cicho. Reszta cie nie dotyczy.',
+  'To nie stroj. To kaganiec z materialu.',
+  'Raz dziennie. Bez poprawiania wyniku.'
+];
+function losujBaner(){var el=document.getElementById('baner');if(el)el.innerHTML=BANERY[Math.floor(Math.random()*BANERY.length)]}
 function $(id){return document.getElementById(id)}
 function load(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
 function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
@@ -150,23 +158,16 @@ function now(){try{return new Date().toLocaleString('pl-PL')}catch(e){return new
 function hour(){var n=new Date();return n.getHours()+n.getMinutes()/60}
 function fmt(h){return (h%1===0)?(h+':00'):String(h.toFixed(1)).replace('.5',':30')}
 function weekNum(){var n=new Date(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
-function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
-
-var CEL=16;
-var sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,rajstopyOn;
-
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+var CEL=16,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,rajstopyOn;
 function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
-
-function sezonZTemp(temp){return temp>=11?'letnia':'zimowa'}
-function pokazSezon(){
-  $('sezonTxt').innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA';
-}
-
+function sezonZTemp(t){return t>=11?'letnia':'zimowa'}
+function pokazSezon(){$('sezonTxt').innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA'}
 function go(name){
-  var names=['losowanie','status','kontrola','kary','dziennik'];
-  for(var i=0;i<names.length;i++){
-    var p=$('p-'+names[i]); if(p)p.className='panel'+(names[i]===name?' active':'');
-    var t=$('t'+(i+1)); if(t)t.className='tab'+(names[i]===name?' active':'');
+  var n=['losowanie','status','kontrola','kary','dziennik'];
+  for(var i=0;i<n.length;i++){
+    var p=$('p-'+n[i]); if(p)p.className='panel'+(n[i]===name?' active':'');
+    var t=$('t'+(i+1)); if(t)t.className='tab'+(n[i]===name?' active':'');
   }
   if(name==='status')showStatus();
   if(name==='dziennik')showDziennik();
@@ -174,7 +175,6 @@ function go(name){
   if(name==='kary')updateSumaKar();
   if(name==='losowanie'){pokazOstatniStroj();updateDayGuards();updateAskInfo()}
 }
-
 function setMode(m){
   tryb=m;save('r_tryb',m);
   $('bLos').className='btn'+(m==='los'?' active':'');
@@ -182,96 +182,67 @@ function setMode(m){
   $('areaLos').style.display=m==='los'?'block':'none';
   $('areaTrack').style.display=m==='track'?'block':'none';
 }
-
 function updatePkt(){
-  var el=$('pkt');
-  el.innerHTML=punkty.toFixed(1);
-  el.style.color=punkty<0?'#ff4444':'#ff66cc';
+  var el=$('pkt');el.innerHTML=punkty.toFixed(1);el.style.color=punkty<0?'#ff4444':'#ff66cc';
   if(punkty>=CEL)$('pktInfo').innerHTML='<span class="green">Cel osiagniety</span>';
   else if(punkty<0)$('pktInfo').innerHTML='<span class="red">Saldo ujemne</span>';
   else $('pktInfo').innerHTML='Brakuje <span class="red">'+(CEL-punkty).toFixed(1)+'</span>';
-  $('passa').innerHTML=passa;
-  $('passa2').innerHTML=passa;
+  $('passa').innerHTML=passa;$('passa2').innerHTML=passa;
 }
 function updateAskInfo(){
   if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
   $('askInfo').innerHTML='Pytania o zgode: <strong>'+askCount+'/2</strong>';
 }
-
-function addPkt(p,powod){
-  punkty+=p;save('r_pkt',punkty);updatePkt();
-  addHist(powod,(p>0?'+':'')+p+' pkt');
-}
-function addHist(g,d){
-  hist.unshift({t:now(),g:g,d:d});
-  if(hist.length>25)hist.pop();
-  saveJSON('r_hist',hist);showHist();
-}
+function addPkt(p,powod){punkty+=p;save('r_pkt',punkty);updatePkt();addHist(powod,(p>0?'+':'')+p+' pkt')}
+function addHist(g,d){hist.unshift({t:now(),g:g,d:d});if(hist.length>25)hist.pop();saveJSON('r_hist',hist);showHist()}
 function showHist(){
   if(!hist.length){$('hist').innerHTML='<em>Brak</em>';return}
-  var s='';
-  for(var i=0;i<hist.length;i++)s+='<strong>'+hist[i].t+'</strong> -> '+hist[i].g+' | '+hist[i].d+'<br>';
+  var s='';for(var i=0;i<hist.length;i++)s+='<strong>'+hist[i].t+'</strong> — '+hist[i].g+' | '+hist[i].d+'<br>';
   $('hist').innerHTML=s;
 }
-
 function checkWeek(){
   var w=weekNum();
   if(week!==w){
     if(punkty>=0&&punkty<CEL&&week!=='')save('r_karny','1');
     if(punkty>=0)punkty=0;
-    save('r_pkt',punkty);save('r_week',w);week=w;
-    karaCount={};saveJSON('r_karac',karaCount);
+    save('r_pkt',punkty);save('r_week',w);week=w;karaCount={};saveJSON('r_karac',karaCount);
   }
   updatePkt();
 }
-
 function ensureMeldunki(){
   if(meldunki.date!==todayStr()){
     meldunki={date:todayStr(),h9:null,h12:null,h15:null,rozliczone:false,kara17:false,karaPotw:false};
     saveJSON('r_meld',meldunki);
   }
 }
-
 function updateDayGuards(){
   ensureMeldunki();
-  var h=hour(), box=$('alertBox'), msg='';
+  var h=hour(),box=$('alertBox'),msg='';
   $('btnLosuj').disabled=(h>=17 || losDate===todayStr());
-
   if(h>=10 && losDate===todayStr() && !potwierdzone && !meldunki.karaPotw){
     meldunki.karaPotw=true;saveJSON('r_meld',meldunki);
     addPkt(-2,'Brak potwierdzenia stroju do 10:00');
     msg='Brak potwierdzenia do 10:00 = -2';
   }
   if(h>=17&&!meldunki.rozliczone&&!meldunki.kara17){
-    meldunki.kara17=true;saveJSON('r_meld',meldunki);
-    addPkt(-2,'Brak rozliczenia dnia po 17:00');
+    meldunki.kara17=true;saveJSON('r_meld',meldunki);addPkt(-2,'Brak rozliczenia po 17');
     msg=(msg?msg+' | ':'')+'Po 17 bez rozliczenia = -2';
-  }else if(h>=17){
-    msg=(msg?msg+' | ':'')+'Po 17:00 - losowanie zablokowane';
-  }else if(losDate===todayStr()){
-    msg=(msg?msg+' | ':'')+'Dzis juz losowano';
-  }
+  }else if(h>=17) msg=(msg?msg+' | ':'')+'Po 17:00 losowanie zablokowane';
+  else if(losDate===todayStr()) msg=(msg?msg+' | ':'')+'Dzis juz losowano';
   $('btnPotwierdz').style.display=(last&&losDate===todayStr()&&!potwierdzone)?'block':'none';
   if(msg){box.style.display='block';box.innerHTML=msg}else box.style.display='none';
 }
-
 function pokazOstatniStroj(){
   if(!last)return;
-  var res=$('result'), ask=$('askBtn');
-  var html='<h2>'+String(last.gorna).toUpperCase()+' - DO 17:00</h2>';
-  html+='<h2>BALERINKI - OBOWIAZKOWE</h2><h2>DAMSKIE MAJTKI - OBOWIAZKOWE</h2>';
-  if(last.komb)html+='<h2>KOMBINEZON - OBOWIAZKOWY</h2>';
-  if(last.stopki){
-    html+='<h2 class="green">RAJSTOPY - NIEOBOWIAZKOWE</h2><h2>STOPKI - OBOWIAZKOWE</h2>';
-    res.className='no';
-  }else if(last.det&&last.det!=='-'&&last.det!==''){
-    var jask=String(last.det).indexOf('jaskrawe')>=0;
-    html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+(jask?'!!! ':'')+last.det+' | do '+(last.godz||'-')+'</p>';
-    html+='<p class="small">Kolor ustalony przez program - bez podmiany</p>';
-    res.className='mandatory';
-  }else res.className='mandatory';
-  if(last.sezon)html+='<p class="small">Sezon: '+last.sezon+'</p>';
-  html+='<p class="small">Wylosowano: '+last.t+'</p>';
+  var res=$('result'),ask=$('askBtn');
+  var html='<h2>'+String(last.gorna).toUpperCase()+' — DO 17:00</h2>';
+  html+='<h2>SPOD: '+(last.spod||'MAJTKI')+'</h2>';
+  html+='<h2>BALERINKI — OBOWIAZKOWE</h2>';
+  if(last.komb)html+='<h2>KOMBINEZON — OBOWIAZKOWY</h2>';
+  if(last.stopki){html+='<h2 class="green">RAJSTOPY — NIEOBOWIAZKOWE</h2><h2>STOPKI — OBOWIAZKOWE</h2>';res.className='no'}
+  else if(last.det){html+='<h2>RAJSTOPY — OBOWIAZKOWE</h2><p class="red">'+last.det+' | do '+(last.godz||'-')+'</p>';res.className='mandatory'}
+  else res.className='mandatory';
+  html+='<p class="small">'+last.t+'</p>';
   if(losDate===todayStr())html+='<p class="small">Potwierdzenie: '+(potwierdzone?'<span class="green">TAK</span>':'<span class="red">BRAK</span>')+'</p>';
   res.innerHTML=html;
   var g=String(last.gorna||'');
@@ -279,235 +250,171 @@ function pokazOstatniStroj(){
   if(ask)ask.disabled=blokada;
   rajstopyOn=!last.stopki;
 }
-
 function showMeldunki(){
   ensureMeldunki();
-  function one(key,st,btn){
-    var v=meldunki[key];
-    if(v==='ok'){$(st).innerHTML='<span class="green">Punktualny</span>';$(btn).disabled=true}
-    else if(v==='late'){$(st).innerHTML='<span class="orange">Spozniony (-1)</span>';$(btn).disabled=true}
-    else{$(st).innerHTML='<span class="red">Brak</span>';$(btn).disabled=false}
+  function one(k,s,b){
+    var v=meldunki[k];
+    if(v==='ok'){$(s).innerHTML='<span class="green">Punktualny</span>';$(b).disabled=true}
+    else if(v==='late'){$(s).innerHTML='<span class="orange">Spozniony</span>';$(b).disabled=true}
+    else{$(s).innerHTML='<span class="red">Brak</span>';$(b).disabled=false}
   }
   one('h9','st900','btn900');one('h12','st1200','btn1200');one('h15','st1500','btn1500');
 }
-
 function zamelduj(g){
   ensureMeldunki();
   var key=g===9?'h9':(g===12?'h12':'h15');
   if(meldunki[key]){alert('Juz zameldowano');return}
   var t=hour(),a=g-0.25,b=g+0.25;
-  if(t<a){alert('Za wczesnie. Od '+fmt(a));return}
-  if(t<=b){meldunki[key]='ok';saveJSON('r_meld',meldunki);addHist('Meldunek '+g+':00','Punktualny');alert('Punktualny')}
-  else{meldunki[key]='late';saveJSON('r_meld',meldunki);addPkt(-1,'Meldunek '+g+':00 spozniony');alert('Spozniony = -1')}
+  if(t<a){alert('Za wczesnie');return}
+  if(t<=b){meldunki[key]='ok';saveJSON('r_meld',meldunki);addHist('Meldunek '+g,'OK');alert('Punktualny')}
+  else{meldunki[key]='late';saveJSON('r_meld',meldunki);addPkt(-1,'Meldunek '+g+' spozniony');alert('Spozniony = -1')}
   showMeldunki();showStatus();
 }
-
 function rozliczDzien(){
   ensureMeldunki();
   if(meldunki.rozliczone){alert('Juz rozliczono');return}
   var ok=0,br=0;
   ['h9','h12','h15'].forEach(function(k){if(meldunki[k]==='ok')ok++;else if(meldunki[k]===null)br++});
-  var msg='';
-  if(ok===3){addPkt(2,'3 punktualne');msg='+2'}
-  else if(br>0){addPkt(-br,'Brak '+br+' meldunkow');msg='-'+br}
-  else msg='Bez dodatkowych punktow';
+  if(ok===3)addPkt(2,'3 punktualne');
+  else if(br>0)addPkt(-br,'Brak meldunkow');
   meldunki.rozliczone=true;saveJSON('r_meld',meldunki);updateDayGuards();
-  alert('Rozliczenie: '+msg+' | Saldo: '+punkty.toFixed(1));
+  alert('Rozliczono. Saldo '+punkty.toFixed(1));
 }
-
 function losujGorna(){
   var r=Math.random();
-  if(sezon==='zimowa'){
-    if(r<0.60)return 'Body z dlugim rekawem';
-    return 'Kostium gimnastyczny';
-  }
+  if(sezon==='zimowa'){if(r<0.60)return 'Body z dlugim rekawem';return 'Kostium gimnastyczny'}
   if(r<0.50)return 'Body';
   if(r<0.60)return 'Body z dlugim rekawem';
   if(r<0.80)return 'Kostium gimnastyczny';
   return 'Romper';
 }
-
-function kolorZima(){
-  return pick(['CZARNE','TRANSPARENTNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE']);
-}
-function kolorLatoZwykly(){
-  return Math.random()<0.5?'CZARNE':'TRANSPARENTNE';
-}
-function kolorJaskrawy(){
-  return pick(['BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE']);
-}
-
+function losujSpod(){return Math.random()<0.70?'MAJTKI':'BODY'}
+function kolorZima(){return pick(['CZARNE','TRANSPARENTNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE'])}
+function kolorLato(){return Math.random()<0.5?'CZARNE':'TRANSPARENTNE'}
+function kolorJask(){return pick(['BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE'])}
 function losujRaj(temp){
-  if(Math.random()<0.10){
-    return '40 den — jaskrawe '+kolorJaskrawy();
-  }
+  if(Math.random()<0.10)return '40 den — jaskrawe '+kolorJask();
   if(sezon==='zimowa'){
-    var kz=kolorZima();
-    if(temp<=-2)return '60+ den — '+kz;
-    if(temp<=12)return '40-60 den — '+kz;
-    return '15-20 den — '+kz;
+    var k=kolorZima();
+    if(temp<=-2)return '60+ den — '+k;
+    if(temp<=12)return '40-60 den — '+k;
+    return '15-20 den — '+k;
   }
-  var kl=kolorLatoZwykly();
-  if(temp<=10&&Math.random()<0.3)return '30-60 den — '+kl;
-  return '15-20 den — '+kl;
+  var k2=kolorLato();
+  if(temp<=10&&Math.random()<0.3)return '30-60 den — '+k2;
+  return '15-20 den — '+k2;
 }
-
 function losuj(){
-  if(hour()>=17){alert('Po 17:00 nie wolno losowac');return}
+  if(hour()>=17){alert('Po 17:00 nie wolno');return}
   if(losDate===todayStr()){alert('Dzis juz bylo losowanie. Raz i dosc.');return}
-  var temp=parseFloat($('temp').value);
-  var res=$('result'),ask=$('askBtn');
+  var temp=parseFloat($('temp').value),res=$('result'),ask=$('askBtn');
   if(isNaN(temp)){res.innerHTML='<p class="red">Podaj temperature</p>';res.className='mandatory';return}
-
-  sezon=sezonZTemp(temp);save('r_sezon',sezon);pokazSezon();
+  sezon=sezonZTemp(temp);save('r_sezon',sezon);pokazSezon();losujBaner();
 
   if(load('r_karny','')==='1'){
     save('r_karny','');
-    res.innerHTML='<h2>DZIEN KARNY</h2><p class="red">Kostium + biale rajstopy + male biale baletki</p>';
-    res.className='mandatory';blokada=true;ask.disabled=true;
-    last={gorna:'DZIEN KARNY',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,sezon:sezon,t:now()};
-    saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
-    potwierdzone=false;save('r_potw','');$('btnPotwierdz').style.display='block';
-    addPkt(0,'Dzien karny');showStatus();updateDayGuards();return;
+    last={gorna:'DZIEN KARNY',spod:'BODY',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,sezon:sezon,t:now()};
+    saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);potwierdzone=false;save('r_potw','');
+    pokazOstatniStroj();addPkt(0,'Dzien karny');updateDayGuards();return;
   }
 
-  var gorna=losujGorna(),det='',godz='-',stopki=false,komb=false,pkt=0;
+  var gorna=losujGorna(),spod=losujSpod(),det='',godz='-',stopki=false,komb=false,pkt=0;
   blokada=(gorna==='Kostium gimnastyczny'||gorna==='Romper');
   ask.disabled=blokada;
   komb=(sezon==='letnia')?(Math.random()<0.10):(Math.random()<0.40);
   if(gorna==='Body')pkt+=1;else if(gorna==='Body z dlugim rekawem')pkt+=1.5;else pkt+=2.5;
+  if(spod==='BODY')pkt+=0.5;
   if(komb)pkt+=(sezon==='letnia'?2:1);
 
-  var html='<h2>'+gorna.toUpperCase()+' - DO 17:00</h2>';
-  html+='<p class="small">Sezon: '+(sezon==='zimowa'?'ZIMOWA':'LETNIA')+' ('+temp+' C)</p>';
-  if(komb)html+='<h2>KOMBINEZON - OBOWIAZKOWY</h2>';
-  html+='<h2>BALERINKI - OBOWIAZKOWE</h2><h2>DAMSKIE MAJTKI - OBOWIAZKOWE</h2>';
+  var html='<h2>'+gorna.toUpperCase()+' — DO 17:00</h2>';
+  html+='<p class="small">'+(sezon==='zimowa'?'ZIMA':'LATO')+' • '+temp+' C</p>';
+  html+='<h2>SPOD: '+spod+(spod==='BODY'?' (zamiast majtek)':'')+'</h2>';
+  if(komb)html+='<h2>KOMBINEZON — OBOWIAZKOWY</h2>';
+  html+='<h2>BALERINKI — OBOWIAZKOWE</h2>';
 
   if(sezon==='letnia'&&temp>21){
     if(Math.random()<0.10){
       det=losujRaj(temp);godz=fmt(12+Math.random()*5);rajstopyOn=true;pkt+=1;
-      html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';
-      if(String(det).indexOf('jaskrawe')>=0){html+='<p class="red">KOLOR JASKRAWY</p>';pkt+=0.5}
-      res.className='mandatory';
+      html+='<h2>RAJSTOPY — OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';res.className='mandatory';
     }else{
       stopki=true;rajstopyOn=false;
-      html+='<h2 class="green">RAJSTOPY - NIEOBOWIAZKOWE</h2><h2>STOPKI - OBOWIAZKOWE</h2>';res.className='no';
+      html+='<h2 class="green">RAJSTOPY — NIEOBOWIAZKOWE</h2><h2>STOPKI — OBOWIAZKOWE</h2>';res.className='no';
     }
   }else{
     det=losujRaj(temp);godz=fmt(12+Math.random()*5);rajstopyOn=true;pkt+=1;
-    html+='<h2>RAJSTOPY - OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';
-    if(String(det).indexOf('jaskrawe')>=0){html+='<p class="red">KOLOR JASKRAWY</p>';pkt+=0.5}
-    res.className='mandatory';
+    html+='<h2>RAJSTOPY — OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';res.className='mandatory';
   }
-  if(blokada)html+='<p class="red">Kostium/Romper - brak zgody przed 17</p>';
-  else if(rajstopyOn)html+='<p class="small">Po 10:00 mozesz blagac (max 2/dzien)</p>';
+  if(blokada)html+='<p class="red">Kostium/Romper — brak zgody przed 17</p>';
   html+='<p class="green">Punkty: +'+pkt+'</p>';
   res.innerHTML=html;
 
-  addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':''));
-  last={gorna:gorna+(komb?' + kombinezon':''),det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,t:now()};
+  addPkt(pkt,'Losowanie: '+gorna+' / '+spod);
+  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');$('btnPotwierdz').style.display='block';
   showStatus();updateDayGuards();
 }
-
 function potwierdzStroj(){
   if(!last||losDate!==todayStr()){alert('Brak dzisiejszego losowania');return}
-  potwierdzone=true;save('r_potw',todayStr());
-  addHist('Potwierdzenie','Zalozono stroj');
-  $('btnPotwierdz').style.display='none';
-  alert('Potwierdzono');pokazOstatniStroj();showStatus();updateDayGuards();
+  potwierdzone=true;save('r_potw',todayStr());addHist('Potwierdzenie','OK');
+  $('btnPotwierdz').style.display='none';pokazOstatniStroj();showStatus();updateDayGuards();
 }
-
 function pytaj(){
   var res=$('result');
-  if(blokada){res.innerHTML='<p class="red">Przy kostiumie/romperze nie wolno</p>';res.className='mandatory';return}
+  if(blokada){res.innerHTML='<p class="red">Przy kostiumie/romperze nie</p>';res.className='mandatory';return}
   if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
-  if(askCount>=2){res.innerHTML='<p class="red">Limit 2 pytan na dzien</p>';res.className='mandatory';return}
+  if(askCount>=2){res.innerHTML='<p class="red">Limit 2 pytan</p>';res.className='mandatory';return}
   var t=Date.now();
   if(t-lastAsk<3600000){res.innerHTML='<p class="red">Raz na godzine</p>';res.className='mandatory';return}
   if(hour()<10){res.innerHTML='<p class="red">Przed 10:00 nie</p>';res.className='mandatory';return}
-  lastAsk=t;save('r_ask',lastAsk);
-  askCount++;save('r_askc',String(askCount));
-  updateAskInfo();
-  addPkt(-1,'Pytanie o zgode ('+askCount+'/2)');
+  lastAsk=t;save('r_ask',lastAsk);askCount++;save('r_askc',String(askCount));updateAskInfo();addPkt(-1,'Pytanie');
   if(Math.random()<(sezon==='zimowa'?0.3:0.35)){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
   else{res.innerHTML='<p class="red">NIE</p>';res.className='mandatory'}
   setTimeout(pokazOstatniStroj,4000);
 }
-
 function zapiszTrack(){
-  if(!($('c1').checked&&$('c2').checked&&$('c3').checked&&$('c4').checked)){
-    addPkt(-2,'Sledzenie niekompletne');alert('Niekompletne = -2');return;
-  }
+  if(!($('c1').checked&&$('c2').checked&&$('c3').checked&&$('c4').checked)){addPkt(-2,'Sledzenie niekompletne');alert('-2');return}
   addHist('Sledzenie','OK');alert('Zapisano');
   $('c1').checked=$('c2').checked=$('c3').checked=$('c4').checked=false;
 }
-
 function dorob(){
-  var ile=prompt('Ile punktow?');if(ile===null)return;
-  var p=parseFloat(ile);if(isNaN(p)||p<=0){alert('Zla liczba');return}
-  var pow=prompt('Za co?');if(!pow||!pow.trim()){alert('Podaj powod');return}
-  addPkt(p,'Dorobione: '+pow.trim());alert('+'+p);
+  var ile=prompt('Ile?');if(ile===null)return;
+  var p=parseFloat(ile);if(isNaN(p)||p<=0)return;
+  var pow=prompt('Za co?');if(!pow||!pow.trim())return;
+  addPkt(p,'Dorobione: '+pow.trim());
 }
-
 function updateSumaKar(){
   var s=0,list=document.querySelectorAll('.kara');
   for(var i=0;i<list.length;i++)if(list[i].checked)s+=parseInt(list[i].getAttribute('data-pkt'),10);
   $('sumaKar').innerHTML=s;
 }
-
 function nalozKary(){
-  var list=document.querySelectorAll('.kara'),suma=0,opis=[];
+  var list=document.querySelectorAll('.kara'),suma=0;
   for(var i=0;i<list.length;i++){
     if(!list[i].checked)continue;
-    var base=parseInt(list[i].getAttribute('data-pkt'),10);
-    var key=list[i].getAttribute('data-key')||('k'+i);
-    var n=list[i].parentNode.textContent.replace(/\s+/g,' ').trim();
-    if(list[i].id==='karaInne'){
-      var pow=prompt('Powod:');if(!pow||!pow.trim())continue;n='Inne: '+pow.trim();key='inne:'+pow.trim().toLowerCase();
-    }
-    if(!karaCount[key])karaCount[key]=0;
-    karaCount[key]+=1;
-    var ile=karaCount[key];
-    var mult=1;
-    if(ile===2)mult=1.5;
-    if(ile>=3)mult=2;
-    var p=Math.ceil(base*mult);
-    suma+=p;
-    opis.push(n+' [x'+ile+' -> -'+p+']');
+    var base=parseInt(list[i].getAttribute('data-pkt'),10),key=list[i].getAttribute('data-key')||('k'+i);
+    if(list[i].id==='karaInne'){var pow=prompt('Powod:');if(!pow||!pow.trim())continue;key='inne:'+pow.trim().toLowerCase()}
+    if(!karaCount[key])karaCount[key]=0;karaCount[key]++;
+    var ile=karaCount[key],mult=ile>=3?2:(ile===2?1.5:1);
+    suma+=Math.ceil(base*mult);
   }
   if(!suma){alert('Nic nie zaznaczono');return}
-  saveJSON('r_karac',karaCount);
-  addPkt(-suma,'Kary: '+opis.join('; '));
+  saveJSON('r_karac',karaCount);addPkt(-suma,'Kary');
   passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
-  alert('Kary -'+suma+' | Saldo '+punkty.toFixed(1));
   for(var j=0;j<list.length;j++)list[j].checked=false;updateSumaKar();
 }
-
 function showStatus(){
   if(!last)$('statusTxt').innerHTML='Brak danych.';
-  else{
-    var s='<p><strong>'+last.gorna+'</strong></p><p>'+last.det+'</p><p>Rajstopy do: '+(last.godz||'-')+'</p>';
-    if(last.komb)s+='<p class="red">Kombinezon: TAK</p>';
-    if(last.stopki)s+='<p class="red">Stopki: TAK</p>';
-    if(last.sezon)s+='<p>Sezon: '+last.sezon+'</p>';
-    s+='<p class="small">'+last.t+'</p>';
-    $('statusTxt').innerHTML=s;
-  }
+  else $('statusTxt').innerHTML='<p><strong>'+last.gorna+'</strong></p><p>Spod: '+(last.spod||'-')+'</p><p>'+last.det+'</p><p>Do: '+(last.godz||'-')+'</p>';
   ensureMeldunki();
-  var m='9:00: '+(meldunki.h9==='ok'?'OK':(meldunki.h9==='late'?'spozniony':'brak'))+'<br>';
-  m+='12:00: '+(meldunki.h12==='ok'?'OK':(meldunki.h12==='late'?'spozniony':'brak'))+'<br>';
-  m+='15:00: '+(meldunki.h15==='ok'?'OK':(meldunki.h15==='late'?'spozniony':'brak'));
-  $('statusMeld').innerHTML=m;
-  $('statusPotw').innerHTML='Potwierdzenie: '+(potwierdzone?'<span class="green">TAK</span>':'<span class="red">NIE</span>');
-  var end=new Date();end.setHours(17,0,0,0);var diff=end-new Date();
-  if(diff>0){var hh=Math.floor(diff/3600000),mm=Math.floor((diff%3600000)/60000);$('czas').innerHTML='Do 17:00: <strong>'+hh+'h '+mm+'min</strong>'}
+  $('statusMeld').innerHTML='9:00 '+(meldunki.h9||'brak')+'<br>12:00 '+(meldunki.h12||'brak')+'<br>15:00 '+(meldunki.h15||'brak');
+  $('statusPotw').innerHTML='Potwierdzenie: '+(potwierdzone?'TAK':'NIE');
+  var end=new Date();end.setHours(17,0,0,0);var d=end-new Date();
+  if(d>0)$('czas').innerHTML='Do 17:00: <strong>'+Math.floor(d/3600000)+'h '+Math.floor((d%3600000)/60000)+'min</strong>';
   else $('czas').innerHTML='<span class="green">Po 17:00</span>';
 }
-
 function zapiszDziennik(){
-  var t=$('dziennik').value.trim();if(!t){alert('Wpisz cos');return}
+  var t=$('dziennik').value.trim();if(!t)return;
   dziennik.unshift({t:t,d:now()});if(dziennik.length>15)dziennik.pop();
   saveJSON('r_dz',dziennik);$('dziennik').value='';showDziennik();
   if(lastViol!==todayStr()){passa++;save('r_passa',passa);updatePkt()}
@@ -518,70 +425,39 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  if(!hist.length){alert('Brak historii');return}
-  var c='=== v3.6 MS ===\nPkt: '+punkty.toFixed(1)+'/'+CEL+'\nPassa: '+passa+'\n'+now()+'\n\n';
+  if(!hist.length)return;
+  var c='=== v3.7 ===\nPkt: '+punkty.toFixed(1)+'/'+CEL+'\n';
   for(var i=0;i<hist.length;i++)c+=(i+1)+'. '+hist[i].t+' | '+hist[i].g+' | '+hist[i].d+'\n';
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v36ms.txt';a.click();
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v37.txt';a.click();
 }
-
 function bind(){
-  $('t1').onclick=function(){go('losowanie')};
-  $('t2').onclick=function(){go('status')};
-  $('t3').onclick=function(){go('kontrola')};
-  $('t4').onclick=function(){go('kary')};
-  $('t5').onclick=function(){go('dziennik')};
-  $('bLos').onclick=function(){setMode('los')};
-  $('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;
-  $('btnPotwierdz').onclick=potwierdzStroj;
-  $('askBtn').onclick=pytaj;
-  $('btnTrack').onclick=zapiszTrack;
-  $('btnDorob').onclick=dorob;
-  $('btnTxt').onclick=pobierz;
-  $('btn900').onclick=function(){zamelduj(9)};
-  $('btn1200').onclick=function(){zamelduj(12)};
-  $('btn1500').onclick=function(){zamelduj(15)};
-  $('btnRozlicz').onclick=rozliczDzien;
-  $('btnKary').onclick=nalozKary;
-  $('btnDz').onclick=zapiszDziennik;
-  document.addEventListener('change',function(e){
-    if(e.target&&e.target.classList&&e.target.classList.contains('kara'))updateSumaKar();
-  });
+  $('t1').onclick=function(){go('losowanie')};$('t2').onclick=function(){go('status')};
+  $('t3').onclick=function(){go('kontrola')};$('t4').onclick=function(){go('kary')};$('t5').onclick=function(){go('dziennik')};
+  $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
+  $('btnLosuj').onclick=losuj;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
+  $('btnTrack').onclick=zapiszTrack;$('btnDorob').onclick=dorob;$('btnTxt').onclick=pobierz;
+  $('btn900').onclick=function(){zamelduj(9)};$('btn1200').onclick=function(){zamelduj(12)};$('btn1500').onclick=function(){zamelduj(15)};
+  $('btnRozlicz').onclick=rozliczDzien;$('btnKary').onclick=nalozKary;$('btnDz').onclick=zapiszDziennik;
+  document.addEventListener('change',function(e){if(e.target&&e.target.classList&&e.target.classList.contains('kara'))updateSumaKar()});
 }
-
 function init(){
   try{
-    sezon=load('r_sezon','letnia');
-    tryb=load('r_tryb','los');
+    sezon=load('r_sezon','letnia');tryb=load('r_tryb','los');
     punkty=parseFloat(load('r_pkt','0'));if(isNaN(punkty))punkty=0;
-    week=load('r_week','');
-    hist=loadJSON('r_hist',[]);
-    last=loadJSON('r_last',null);
-    lastAsk=parseInt(load('r_ask','0'),10)||0;
-    askCount=parseInt(load('r_askc','0'),10)||0;
-    askDate=load('r_askd','');
-    passa=parseInt(load('r_passa','0'),10)||0;
-    lastViol=load('r_viol','');
-    dziennik=loadJSON('r_dz',[]);
-    meldunki=loadJSON('r_meld',{});
-    potwierdzone=(load('r_potw','')===todayStr());
-    losDate=load('r_losd','');
-    karaCount=loadJSON('r_karac',{});
-    blokada=false;rajstopyOn=false;
-    bind();
-    setMode(tryb);pokazSezon();
+    week=load('r_week','');hist=loadJSON('r_hist',[]);last=loadJSON('r_last',null);
+    lastAsk=parseInt(load('r_ask','0'),10)||0;askCount=parseInt(load('r_askc','0'),10)||0;askDate=load('r_askd','');
+    passa=parseInt(load('r_passa','0'),10)||0;lastViol=load('r_viol','');
+    dziennik=loadJSON('r_dz',[]);meldunki=loadJSON('r_meld',{});
+    potwierdzone=(load('r_potw','')===todayStr());losDate=load('r_losd','');
+    karaCount=loadJSON('r_karac',{});blokada=false;rajstopyOn=false;
+    bind();setMode(tryb);pokazSezon();losujBaner();
     checkWeek();showHist();updatePkt();updateAskInfo();
     pokazOstatniStroj();showStatus();updateDayGuards();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.6 MS</span>');
-  }catch(e){
-    bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>');
-    alert('Blad startu: '+(e&&e.message?e.message:e));
-  }
+    bootMsg('<span class="green">Gotowe v3.7</span>');
+  }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
-
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
-else init();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body>
