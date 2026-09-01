@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.2</title>
+<title>Pani Regulamin v3.9.3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,8 +42,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.2</h1>
-  <p class="sub">1 losowanie dziennie • kary obnizone • odrabianie</p>
+  <h1>Pani Regulamin v3.9.3</h1>
+  <p class="sub">1 los / dzien • zima: pelna pula obuwia</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
@@ -57,7 +57,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
   </div>
 
   <div id="p-losowanie" class="panel active">
-    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">11 C+ lato • &lt;11 zima • od 15 C zakaz tenisowek</div></div>
+    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">11 C+ lato • &lt;11 zima • tenisowki/wywrotki OK poza kostiumem</div></div>
     <div class="row">
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
@@ -168,7 +168,7 @@ var CEL=18,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastV
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
-  if(twarda||temp<=15){if(Math.random()<0.15)return 'baletki czarne';return pick(BUTY_BAL.slice(1))}
+  if(twarda){if(Math.random()<0.15)return 'baletki czarne';return pick(BUTY_BAL.slice(1))}
   if(Math.random()<0.15)return 'baletki czarne';return pick(BUTY_BAL.slice(1).concat(BUTY_LUZ));
 }
 function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
@@ -444,7 +444,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.2 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.3 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -495,7 +495,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.2</span>');
+    bootMsg('<span class="green">Gotowe v3.9.3</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
