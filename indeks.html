@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.7</title>
+<title>Pani Regulamin v3.8</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,12 +42,11 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.7</h1>
-  <p class="sub">1 losowanie dziennie • sezon z temperatury</p>
+  <h1>Pani Regulamin v3.8</h1>
+  <p class="sub">1 losowanie dziennie • obuwie z listy</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
-
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Status</button>
@@ -55,7 +54,6 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     <button type="button" class="tab" id="t4">Kary</button>
     <button type="button" class="tab" id="t5">Dziennik</button>
   </div>
-
   <div id="p-losowanie" class="panel active">
     <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">11 C i wiecej = lato, ponizej 11 = zima</div></div>
     <div class="row">
@@ -75,7 +73,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <p class="small">Odhacz wszystko. Brak = -2</p>
       <div class="check"><input type="checkbox" id="c1"> Gorna czesc</div>
       <div class="check"><input type="checkbox" id="c2"> Rajstopy / stopki</div>
-      <div class="check"><input type="checkbox" id="c3"> Balerinki</div>
+      <div class="check"><input type="checkbox" id="c3"> Wylosowane obuwie</div>
       <div class="check"><input type="checkbox" id="c4"> Spod (majtki / body)</div>
       <button type="button" class="main-btn" id="btnTrack">Zapisz wykonanie</button>
     </div>
@@ -84,14 +82,12 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     <div id="result"></div>
     <div class="history"><strong>Historia</strong><br><span id="hist"></span></div>
   </div>
-
   <div id="p-status" class="panel">
     <div class="box"><h2 style="color:#ff66cc">Status</h2><div id="statusTxt">Brak danych.</div><p id="czas"></p></div>
     <div class="box" style="text-align:left"><strong>Meldunki</strong><div id="statusMeld"></div></div>
     <div class="box" id="statusPotw">Potwierdzenie: -</div>
     <div class="box">Passa: <strong id="passa2">0</strong></div>
   </div>
-
   <div id="p-kontrola" class="panel">
     <div class="box"><h2 style="color:#ff66cc">Meldunki</h2><p class="small">+/- 15 min</p></div>
     <div class="meldunek"><strong>9:00</strong><div id="st900" class="small">brak</div><button type="button" class="main-btn" id="btn900">Zamelduj 9:00</button></div>
@@ -99,7 +95,6 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     <div class="meldunek"><strong>15:00</strong><div id="st1500" class="small">brak</div><button type="button" class="main-btn" id="btn1500">Zamelduj 15:00</button></div>
     <button type="button" class="main-btn green" id="btnRozlicz">Rozlicz dzien</button>
   </div>
-
   <div id="p-kary" class="panel">
     <div class="box" style="text-align:left">
       <h2 style="color:#ff66cc;text-align:center">Kary</h2>
@@ -107,7 +102,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="uszk"> Uszkodzenie rajstop (-2)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="10" data-key="niezgodny"> Niezgodny ubior (-10)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="brak"> Brak wylosowanego ubioru (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="bal"> Zdjecie balerinek (-1)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="but"> Inne obuwie niz wylosowane (-3)</label></div>
+      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="bal"> Zdjecie obuwia bez zgody (-1)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="spod"> Brak spodu (-3)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="4" data-key="raj"> Zdjecie rajstop bez zgody (-4)</label></div>
       <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="kolor"> Podmiana koloru (-5)</label></div>
@@ -117,7 +113,6 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <button type="button" class="main-btn red" id="btnKary">Naloz kary</button>
     </div>
   </div>
-
   <div id="p-dziennik" class="panel">
     <div class="box">
       <h2 style="color:#ff66cc">Dziennik</h2>
@@ -129,24 +124,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </div>
 <script>
 (function(){
-var BANERY=[
-  'Szmato, masz co chcialas. Teraz nos.',
-  'Nie jestes partnerem. Jestes ubraniem na nogach.',
-  'Pluskwa ma wiecej godnosci niz ty.',
-  'Ania mowi. Ty sie wcinasz w rajstopy.',
-  'Glos masz po to, zeby potwierdzic ze jestes ubrana.',
-  'Prosba o wygode to obelga wobec regulaminu.',
-  'Nie wybierasz koloru. Kolor wybiera ciebie.',
-  'Stoisz nizej niz brudne majtki w koszu.',
-  'Jak wypadl romper, to nie ma zgody. Koniec.',
-  'Twoje zdanie nic nie zmienia. Zmieniasz tylko bielizne.',
-  'Meldunek to nie rozmowa. To sprawdzenie czy jeszcze sluchasz.',
-  'Wstyd? Dobrze. To jedyne co ci zostalo.',
-  'Nie zaslugujesz na body krotkie, jak Ania powie dlugie.',
-  'Ubrana i cicho. Reszta cie nie dotyczy.',
-  'To nie stroj. To kaganiec z materialu.',
-  'Raz dziennie. Bez poprawiania wyniku.'
-];
+var BANERY=['Szmato, masz co chcialas. Teraz nos.','Nie wybierasz butow. Buty wybieraja ciebie.','Pluskwa ma wiecej godnosci niz ty.','Ania mowi. Ty sie wcinasz w rajstopy.','Jak wypadlo, tak nosisz.','Wstyd? Dobrze. To jedyne co ci zostalo.','Ubrana i cicho. Reszta cie nie dotyczy.','To nie stroj. To kaganiec z materialu.','Raz dziennie. Bez poprawiania wyniku.'];
 function losujBaner(){var el=document.getElementById('baner');if(el)el.innerHTML=BANERY[Math.floor(Math.random()*BANERY.length)]}
 function $(id){return document.getElementById(id)}
 function load(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
@@ -159,7 +137,9 @@ function hour(){var n=new Date();return n.getHours()+n.getMinutes()/60}
 function fmt(h){return (h%1===0)?(h+':00'):String(h.toFixed(1)).replace('.5',':30')}
 function weekNum(){var n=new Date(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=16,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,rajstopyOn;
+var CEL=16,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada;
+var BUTY_INNE=['baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki','wywrotki','tenisowki'];
+function losujButy(){return Math.random()<0.15?'baletki czarne':pick(BUTY_INNE)}
 function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
 function sezonZTemp(t){return t>=11?'letnia':'zimowa'}
 function pokazSezon(){$('sezonTxt').innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA'}
@@ -237,7 +217,7 @@ function pokazOstatniStroj(){
   var res=$('result'),ask=$('askBtn');
   var html='<h2>'+String(last.gorna).toUpperCase()+' — DO 17:00</h2>';
   html+='<h2>SPOD: '+(last.spod||'MAJTKI')+'</h2>';
-  html+='<h2>BALERINKI — OBOWIAZKOWE</h2>';
+  html+='<h2>OBUWIE: '+(last.buty||'BALETKI')+'</h2>';
   if(last.komb)html+='<h2>KOMBINEZON — OBOWIAZKOWY</h2>';
   if(last.stopki){html+='<h2 class="green">RAJSTOPY — NIEOBOWIAZKOWE</h2><h2>STOPKI — OBOWIAZKOWE</h2>';res.className='no'}
   else if(last.det){html+='<h2>RAJSTOPY — OBOWIAZKOWE</h2><p class="red">'+last.det+' | do '+(last.godz||'-')+'</p>';res.className='mandatory'}
@@ -248,7 +228,6 @@ function pokazOstatniStroj(){
   var g=String(last.gorna||'');
   blokada=(g.indexOf('Kostium')>=0||g.indexOf('Romper')>=0);
   if(ask)ask.disabled=blokada;
-  rajstopyOn=!last.stopki;
 }
 function showMeldunki(){
   ensureMeldunki();
@@ -313,12 +292,12 @@ function losuj(){
 
   if(load('r_karny','')==='1'){
     save('r_karny','');
-    last={gorna:'DZIEN KARNY',spod:'BODY',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,sezon:sezon,t:now()};
+    last={gorna:'DZIEN KARNY',spod:'BODY',buty:'baletki biale',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,sezon:sezon,t:now()};
     saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);potwierdzone=false;save('r_potw','');
     pokazOstatniStroj();addPkt(0,'Dzien karny');updateDayGuards();return;
   }
 
-  var gorna=losujGorna(),spod=losujSpod(),det='',godz='-',stopki=false,komb=false,pkt=0;
+  var gorna=losujGorna(),spod=losujSpod(),buty=losujButy(),det='',godz='-',stopki=false,komb=false,pkt=0;
   blokada=(gorna==='Kostium gimnastyczny'||gorna==='Romper');
   ask.disabled=blokada;
   komb=(sezon==='letnia')?(Math.random()<0.10):(Math.random()<0.40);
@@ -329,27 +308,27 @@ function losuj(){
   var html='<h2>'+gorna.toUpperCase()+' — DO 17:00</h2>';
   html+='<p class="small">'+(sezon==='zimowa'?'ZIMA':'LATO')+' • '+temp+' C</p>';
   html+='<h2>SPOD: '+spod+(spod==='BODY'?' (zamiast majtek)':'')+'</h2>';
+  html+='<h2>OBUWIE: '+buty.toUpperCase()+'</h2>';
   if(komb)html+='<h2>KOMBINEZON — OBOWIAZKOWY</h2>';
-  html+='<h2>BALERINKI — OBOWIAZKOWE</h2>';
 
   if(sezon==='letnia'&&temp>21){
     if(Math.random()<0.10){
-      det=losujRaj(temp);godz=fmt(12+Math.random()*5);rajstopyOn=true;pkt+=1;
+      det=losujRaj(temp);godz=fmt(12+Math.random()*5);pkt+=1;
       html+='<h2>RAJSTOPY — OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';res.className='mandatory';
     }else{
-      stopki=true;rajstopyOn=false;
+      stopki=true;
       html+='<h2 class="green">RAJSTOPY — NIEOBOWIAZKOWE</h2><h2>STOPKI — OBOWIAZKOWE</h2>';res.className='no';
     }
   }else{
-    det=losujRaj(temp);godz=fmt(12+Math.random()*5);rajstopyOn=true;pkt+=1;
+    det=losujRaj(temp);godz=fmt(12+Math.random()*5);pkt+=1;
     html+='<h2>RAJSTOPY — OBOWIAZKOWE</h2><p class="red">'+det+' | do '+godz+'</p>';res.className='mandatory';
   }
   if(blokada)html+='<p class="red">Kostium/Romper — brak zgody przed 17</p>';
   html+='<p class="green">Punkty: +'+pkt+'</p>';
   res.innerHTML=html;
 
-  addPkt(pkt,'Losowanie: '+gorna+' / '+spod);
-  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,t:now()};
+  addPkt(pkt,'Losowanie: '+gorna+' / '+spod+' / '+buty);
+  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');$('btnPotwierdz').style.display='block';
   showStatus();updateDayGuards();
@@ -405,7 +384,7 @@ function nalozKary(){
 }
 function showStatus(){
   if(!last)$('statusTxt').innerHTML='Brak danych.';
-  else $('statusTxt').innerHTML='<p><strong>'+last.gorna+'</strong></p><p>Spod: '+(last.spod||'-')+'</p><p>'+last.det+'</p><p>Do: '+(last.godz||'-')+'</p>';
+  else $('statusTxt').innerHTML='<p><strong>'+last.gorna+'</strong></p><p>Spod: '+(last.spod||'-')+'</p><p>Obuwie: '+(last.buty||'-')+'</p><p>'+last.det+'</p><p>Do: '+(last.godz||'-')+'</p>';
   ensureMeldunki();
   $('statusMeld').innerHTML='9:00 '+(meldunki.h9||'brak')+'<br>12:00 '+(meldunki.h12||'brak')+'<br>15:00 '+(meldunki.h15||'brak');
   $('statusPotw').innerHTML='Potwierdzenie: '+(potwierdzone?'TAK':'NIE');
@@ -426,9 +405,9 @@ function showDziennik(){
 }
 function pobierz(){
   if(!hist.length)return;
-  var c='=== v3.7 ===\nPkt: '+punkty.toFixed(1)+'/'+CEL+'\n';
+  var c='=== v3.8 ===\n';
   for(var i=0;i<hist.length;i++)c+=(i+1)+'. '+hist[i].t+' | '+hist[i].g+' | '+hist[i].d+'\n';
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v37.txt';a.click();
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/plain'}));a.download='regulamin_v38.txt';a.click();
 }
 function bind(){
   $('t1').onclick=function(){go('losowanie')};$('t2').onclick=function(){go('status')};
@@ -449,12 +428,12 @@ function init(){
     passa=parseInt(load('r_passa','0'),10)||0;lastViol=load('r_viol','');
     dziennik=loadJSON('r_dz',[]);meldunki=loadJSON('r_meld',{});
     potwierdzone=(load('r_potw','')===todayStr());losDate=load('r_losd','');
-    karaCount=loadJSON('r_karac',{});blokada=false;rajstopyOn=false;
+    karaCount=loadJSON('r_karac',{});blokada=false;
     bind();setMode(tryb);pokazSezon();losujBaner();
     checkWeek();showHist();updatePkt();updateAskInfo();
     pokazOstatniStroj();showStatus();updateDayGuards();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.7</span>');
+    bootMsg('<span class="green">Gotowe v3.8</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
