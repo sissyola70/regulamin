@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.3</title>
+<title>Pani Regulamin v3.9.4</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,8 +42,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.3</h1>
-  <p class="sub">1 los / dzien • zima: pelna pula obuwia</p>
+  <h1>Pani Regulamin v3.9.4</h1>
+  <p class="sub">1 los / dzien • podsumowanie 17:00-17:15</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
@@ -100,6 +100,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     <div class="meldunek"><strong id="lblCtrl">Kontrola dodatkowa</strong><div id="stCtrl" class="small">brak</div><button type="button" class="main-btn" id="btnCtrl">Zamelduj kontrole</button></div>
     <div class="meldunek"><strong>15:00</strong><div id="st1500" class="small">brak</div><button type="button" class="main-btn" id="btn1500">Zamelduj 15:00</button></div>
     <button type="button" class="main-btn green" id="btnRozlicz">Rozlicz dzien</button>
+    <button type="button" class="main-btn" id="btnPodsum" style="background:#660066">Podsumowanie 17:00-17:15</button>
+    <p class="small" id="podsumInfo">Opcjonalne. Bez bledu +1, blad -1. Pominiecie = 0.</p>
   </div>
 
   <div id="p-kary" class="panel">
@@ -182,7 +184,7 @@ function go(name){
   }
   if(name==='status')showStatus();
   if(name==='dziennik')showDziennik();
-  if(name==='kontrola')showMeldunki();
+  if(name==='kontrola'){showMeldunki();updateDayGuards();}
   if(name==='kary')updateSumaKar();
   if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();updateDayGuards();updateAskInfo()}}
 }
@@ -229,7 +231,7 @@ function checkWeek(){
 }
 function ensureMeldunki(){
   if(meldunki.date!==todayStr()){
-    meldunki={date:todayStr(),h9:null,h12:null,h15:null,hCtrl:null,rozliczone:false,kara17:false,karaPotw:false};
+    meldunki={date:todayStr(),h9:null,h12:null,h15:null,hCtrl:null,rozliczone:false,kara17:false,karaPotw:false,podsum:null};
     saveJSON('r_meld',meldunki);
   }
 }
@@ -245,7 +247,38 @@ function updateDayGuards(){
   }else if(h>=17)msg=(msg?msg+' | ':'')+'Po 17:00 zablokowane';
   else if(losDate===todayStr())msg=(msg?msg+' | ':'')+'Dzis juz losowano';
   $('btnPotwierdz').style.display=(last&&losDate===todayStr()&&!potwierdzone)?'block':'none';
+  var bp=$('btnPodsum'), pi=$('podsumInfo');
+  if(bp){
+    var okOkno=(h>=17&&h<17.25);
+    bp.disabled=(!okOkno||meldunki.podsum);
+    if(pi){
+      if(meldunki.podsum==='ok')pi.innerHTML='Podsumowanie: dzien bez bledu +1';
+      else if(meldunki.podsum==='blad')pi.innerHTML='Podsumowanie: byl blad -1';
+      else if(!okOkno)pi.innerHTML='Opcjonalne. Okno 17:00-17:15. Pominiecie = 0.';
+      else pi.innerHTML='Okno otwarte. Bez bledu +1, blad -1.';
+    }
+  }
   if(msg){box.style.display='block';box.innerHTML=msg}else box.style.display='none';
+}
+function dzienZBledem(){
+  ensureMeldunki();
+  if(karaToday===todayStr())return true;
+  if(lastViol===todayStr())return true;
+  if(meldunki.karaPotw)return true;
+  if(meldunki.h9==='late'||meldunki.h12==='late'||meldunki.h15==='late'||meldunki.hCtrl==='late')return true;
+  if(askCount>0&&askDate===todayStr())return true;
+  return false;
+}
+function podsumujDzien(){
+  ensureMeldunki();
+  var h=hour();
+  if(h<17||h>=17.25){alert('Tylko 17:00-17:15');return}
+  if(meldunki.podsum){alert('Dzis juz podsumowano');return}
+  var blad=dzienZBledem();
+  if(blad){meldunki.podsum='blad';addPkt(-1,'Podsumowanie dnia: BLAD')}
+  else{meldunki.podsum='ok';addPkt(1,'Podsumowanie dnia: bez bledu')}
+  saveJSON('r_meld',meldunki);updateDayGuards();showStatus();
+  alert(blad?'Byl blad = -1':'Dzien czysty = +1');
 }
 function pokazOstatniStroj(){
   if(!last)return;
@@ -444,7 +477,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.3 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.4 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -475,7 +508,7 @@ function bind(){
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
   $('btnCtrl').onclick=function(){if(last&&last.ctrlH)zamelduj(last.ctrlH,'hCtrl')};
-  $('btnRozlicz').onclick=rozliczDzien;$('btnKary').onclick=nalozKary;
+  $('btnRozlicz').onclick=rozliczDzien;$('btnPodsum').onclick=podsumujDzien;$('btnKary').onclick=nalozKary;
   $('btnOdrob').onclick=zaliczOdrob;$('btnDz').onclick=zapiszDziennik;
   document.addEventListener('change',function(e){if(e.target&&e.target.classList&&e.target.classList.contains('kara'))updateSumaKar()});
 }
@@ -495,7 +528,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.3</span>');
+    bootMsg('<span class="green">Gotowe v3.9.4</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
