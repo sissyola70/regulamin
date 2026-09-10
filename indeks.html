@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.5</title>
+<title>Pani Regulamin v3.9.6</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,7 +42,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.5</h1>
+  <h1>Pani Regulamin v3.9.6</h1>
   <p class="sub">zima od &lt;15 C • zgoda 15% • 1 los / dzien</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -339,9 +339,17 @@ function losujGorna(){
   return 'Romper';
 }
 function losujSpod(){return Math.random()<0.70?'MAJTKI':'BODY'}
-function kolorZima(){return pick(['CZARNE','TRANSPARENTNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE'])}
-function kolorLato(){return Math.random()<0.5?'CZARNE':'TRANSPARENTNE'}
-function kolorJask(){return pick(['BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE'])}
+function kolorZima(){
+  if(Math.random()<0.08)return 'TRANSPARENTNE';
+  return pick(['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE','CIELISTE','SZARE','FIOLETOWE','ZIELONE BUTELKOWE','BEZOWE']);
+}
+function kolorLato(){
+  var r=Math.random();
+  if(r<0.10)return 'TRANSPARENTNE';
+  if(r<0.50)return 'CZARNE';
+  return pick(['GRAFITOWE','GRANATOWE','CIELISTE','SZARE','BORDOWE']);
+}
+function kolorJask(){return pick(['BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE','FIOLETOWE','ZIELONE'])}
 function losujRaj(temp){
   if(Math.random()<0.10)return '40 den — jaskrawe '+kolorJask();
   if(temp<15){
@@ -475,7 +483,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.5 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.6 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -526,7 +534,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.5</span>');
+    bootMsg('<span class="green">Gotowe v3.9.6</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
