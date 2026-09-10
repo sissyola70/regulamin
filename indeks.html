@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.4</title>
+<title>Pani Regulamin v3.9.5</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,8 +42,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.4</h1>
-  <p class="sub">1 los / dzien • podsumowanie 17:00-17:15</p>
+  <h1>Pani Regulamin v3.9.5</h1>
+  <p class="sub">zima od &lt;15 C • zgoda 15% • 1 los / dzien</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
@@ -57,7 +57,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
   </div>
 
   <div id="p-losowanie" class="panel active">
-    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">11 C+ lato • &lt;11 zima • tenisowki/wywrotki OK poza kostiumem</div></div>
+    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">15 C+ lato • &lt;15 zima • ponizej 15 C brak 15-20 den</div></div>
     <div class="row">
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
@@ -174,7 +174,7 @@ function losujButy(temp,twarda){
   if(Math.random()<0.15)return 'baletki czarne';return pick(BUTY_BAL.slice(1).concat(BUTY_LUZ));
 }
 function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
-function sezonZTemp(t){return t>=11?'letnia':'zimowa'}
+function sezonZTemp(t){return t>=15?'letnia':'zimowa'}
 function pokazSezon(){$('sezonTxt').innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA'}
 function go(name){
   var n=['losowanie','status','kontrola','kary','odrabianie','dziennik'];
@@ -344,14 +344,12 @@ function kolorLato(){return Math.random()<0.5?'CZARNE':'TRANSPARENTNE'}
 function kolorJask(){return pick(['BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE'])}
 function losujRaj(temp){
   if(Math.random()<0.10)return '40 den — jaskrawe '+kolorJask();
-  if(sezon==='zimowa'){
+  if(temp<15){
     var k=kolorZima();
     if(temp<=-2)return '60+ den — '+k;
-    if(temp<=12)return '40-60 den — '+k;
-    return '15-20 den — '+k;
+    return '40-60 den — '+k;
   }
   var k2=kolorLato();
-  if(temp<=10&&Math.random()<0.3)return '30-60 den — '+k2;
   return '15-20 den — '+k2;
 }
 function startKarny(){
@@ -404,7 +402,7 @@ function pytaj(){
   if(hour()<10){res.innerHTML='<p class="red">Przed 10:00 nie</p>';res.className='mandatory';return}
   lastAsk=Date.now();save('r_ask',lastAsk);askCount++;save('r_askc',String(askCount));updateAskInfo();
   addPkt(-1,'Pytanie o zgode');passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
-  if(Math.random()<(sezon==='zimowa'?0.20:0.25)){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
+  if(Math.random()<0.15){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
   else{res.innerHTML='<p class="red">NIE</p>';res.className='mandatory'}
   setTimeout(pokazOstatniStroj,4000);
 }
@@ -477,7 +475,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.4 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.5 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -528,7 +526,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.4</span>');
+    bootMsg('<span class="green">Gotowe v3.9.5</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
