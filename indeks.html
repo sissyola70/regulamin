@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.6</title>
+<title>Pani Regulamin v3.9.7</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,8 +42,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.6</h1>
-  <p class="sub">zima od &lt;15 C • zgoda 15% • 1 los / dzien</p>
+  <h1>Pani Regulamin v3.9.7</h1>
+  <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
@@ -57,7 +57,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
   </div>
 
   <div id="p-losowanie" class="panel active">
-    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">15 C+ lato • &lt;15 zima • ponizej 15 C brak 15-20 den</div></div>
+    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">10 C+ lato • &lt;10 zima tylko body dlugie • od 10 C rajstopy 50/50</div></div>
     <div class="row">
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
@@ -66,7 +66,9 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     <div class="box">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/3</div>
     <div class="box small" id="askInfo">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
-      <input type="number" id="temp" placeholder="Temperatura C" step="0.1" inputmode="decimal">
+      <div class="box small" id="netInfo">Serwer: pobieranie...</div>
+      <input type="number" id="temp" placeholder="Temp z serwera" step="0.1" inputmode="decimal" readonly>
+      <button type="button" class="main-btn gray" id="btnNet">Odswiez czas i temperature</button>
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
       <button type="button" class="main-btn" id="askBtn" style="background:#9900cc">Blagaj o zgode</button>
@@ -160,9 +162,11 @@ function load(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e
 function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function loadJSON(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o))}catch(e){}}
-function todayStr(){return new Date().toDateString()}
-function now(){try{return new Date().toLocaleString('pl-PL')}catch(e){return new Date().toISOString()}}
-function hour(){var n=new Date();return n.getHours()+n.getMinutes()/60}
+var srvDate=null,srvOk=false,srvTemp=null;
+function clock(){return srvDate?new Date(srvDate.getTime()):new Date()}
+function todayStr(){return clock().toDateString()}
+function now(){try{return clock().toLocaleString('pl-PL')}catch(e){return clock().toISOString()}}
+function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=new Date(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
@@ -173,8 +177,30 @@ function losujButy(temp,twarda){
   if(twarda){if(Math.random()<0.15)return 'baletki czarne';return pick(BUTY_BAL.slice(1))}
   if(Math.random()<0.15)return 'baletki czarne';return pick(BUTY_BAL.slice(1).concat(BUTY_LUZ));
 }
+
+function setNetInfo(s){var el=$('netInfo');if(el)el.innerHTML=s}
+function pobierzSerwer(){
+  return fetch('https://api.open-meteo.com/v1/forecast?latitude=50.294&longitude=18.671&current=temperature_2m&timezone=Europe%2FWarsaw')
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+    .then(function(j){
+      var cur=j.current||{};
+      if(cur.time){srvDate=new Date(cur.time);if(isNaN(srvDate.getTime()))srvDate=new Date()}
+      else srvDate=new Date();
+      srvTemp=parseFloat(cur.temperature_2m);
+      srvOk=true;
+      if($('temp')&&!isNaN(srvTemp))$('temp').value=srvTemp;
+      setNetInfo('Gliwice '+srvTemp+' C • '+now()+(srvOk?' • serwer':' • lokalnie'));
+      pokazSezon();
+      return srvTemp;
+    })
+    .catch(function(e){
+      srvOk=false;srvDate=new Date();
+      setNetInfo('<span class="red">Brak serwera. Losowanie zablokowane. '+e.message+'</span>');
+      throw e;
+    });
+}
 function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
-function sezonZTemp(t){return t>=15?'letnia':'zimowa'}
+function sezonZTemp(t){return t>=10?'letnia':'zimowa'}
 function pokazSezon(){$('sezonTxt').innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA'}
 function go(name){
   var n=['losowanie','status','kontrola','kary','odrabianie','dziennik'];
@@ -238,13 +264,14 @@ function ensureMeldunki(){
 function updateDayGuards(){
   ensureMeldunki();
   var h=hour(),box=$('alertBox'),msg='';
-  $('btnLosuj').disabled=(h>=17||losDate===todayStr());
+  $('btnLosuj').disabled=(h>=17||!srvOk||losDate===todayStr());
   if(h>=8.5&&losDate===todayStr()&&!potwierdzone&&!meldunki.karaPotw){
     meldunki.karaPotw=true;saveJSON('r_meld',meldunki);addPkt(-2,'Brak potwierdzenia do 8:30');msg='Brak potwierdzenia do 8:30 = -2';
   }
   if(h>=17&&!meldunki.rozliczone&&!meldunki.kara17){
     meldunki.kara17=true;saveJSON('r_meld',meldunki);addPkt(-2,'Brak rozliczenia po 17');msg=(msg?msg+' | ':'')+'Po 17 bez rozliczenia = -2';
   }else if(h>=17)msg=(msg?msg+' | ':'')+'Po 17:00 zablokowane';
+  else if(!srvOk)msg=(msg?msg+' | ':'')+'Brak danych z serwera';
   else if(losDate===todayStr())msg=(msg?msg+' | ':'')+'Dzis juz losowano';
   $('btnPotwierdz').style.display=(last&&losDate===todayStr()&&!potwierdzone)?'block':'none';
   var bp=$('btnPodsum'), pi=$('podsumInfo');
@@ -333,7 +360,6 @@ function rozliczDzien(){
 function losujGorna(){
   var r=Math.random();
   if(sezon==='zimowa'){if(r<0.55)return 'Body z dlugim rekawem';return 'Kostium gimnastyczny'}
-  if(r<0.40)return 'Body';
   if(r<0.55)return 'Body z dlugim rekawem';
   if(r<0.80)return 'Kostium gimnastyczny';
   return 'Romper';
@@ -352,13 +378,14 @@ function kolorLato(){
 function kolorJask(){return pick(['BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE','FIOLETOWE','ZIELONE'])}
 function losujRaj(temp){
   if(Math.random()<0.10)return '40 den — jaskrawe '+kolorJask();
-  if(temp<15){
+  if(temp<10){
     var k=kolorZima();
     if(temp<=-2)return '60+ den — '+k;
     return '40-60 den — '+k;
   }
-  var k2=kolorLato();
-  return '15-20 den — '+k2;
+  var k=(temp<15)?kolorZima():kolorLato();
+  if(Math.random()<0.5)return '40-60 den — '+k;
+  return '15-20 den — '+k;
 }
 function startKarny(){
   var ctrl=+(10.5+Math.random()*4).toFixed(2);
@@ -371,8 +398,10 @@ function startKarny(){
 function losuj(){
   if(hour()>=17){alert('Po 17:00 nie wolno');return}
   if(losDate===todayStr()){alert('Dzis juz bylo losowanie. Raz i dosc.');return}
-  var temp=parseFloat($('temp').value),res=$('result'),ask=$('askBtn');
-  if(isNaN(temp)){res.innerHTML='<p class="red">Podaj temperature</p>';res.className='mandatory';return}
+  if(!srvOk||isNaN(srvTemp)){alert('Najpierw odswiez temperature z serwera');return}
+  var temp=srvTemp,res=$('result'),ask=$('askBtn');
+  if($('temp'))$('temp').value=temp;
+  if(isNaN(temp)){res.innerHTML='<p class="red">Brak temperatury z serwera</p>';res.className='mandatory';return}
   sezon=sezonZTemp(temp);save('r_sezon',sezon);pokazSezon();losujBaner();
   karnyLeft=parseInt(load('r_karnyL','0'),10)||0;
   if(karnyLeft>0){startKarny();return}
@@ -483,7 +512,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.6 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.7 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -509,7 +538,7 @@ function bind(){
   $('t3').onclick=function(){go('kontrola')};$('t4').onclick=function(){go('kary')};
   $('t5').onclick=function(){go('odrabianie')};$('t6').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
+  $('btnLosuj').onclick=losuj;if($('btnNet'))$('btnNet').onclick=function(){pobierzSerwer().then(updateDayGuards).catch(function(){})};$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
@@ -530,11 +559,11 @@ function init(){
     karaCount=loadJSON('r_karac',{});karaToday=load('r_karaD','');
     odrobToday=load('r_odD','');odrobPkt=parseFloat(load('r_odP','0'))||0;odrobDone=loadJSON('r_odK',{});
     karnyLeft=parseInt(load('r_karnyL','0'),10)||0;blokada=false;
-    bind();setMode(tryb);pokazSezon();losujBaner();
+    bind();setMode(tryb);pokazSezon();losujBaner();pobierzSerwer().then(function(){updateDayGuards();showStatus()}).catch(function(){updateDayGuards()});
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.6</span>');
+    bootMsg('<span class="green">Gotowe v3.9.7</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
