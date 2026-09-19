@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.7</title>
+<title>Pani Regulamin v3.9.8</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,7 +42,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.7</h1>
+  <h1>Pani Regulamin v3.9.8</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -62,8 +62,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
-    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 18<div id="pktInfo" class="small"></div></div>
-    <div class="box">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/3</div>
+    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 20<div id="pktInfo" class="small"></div></div>
+    <div class="box">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/2</div>
     <div class="box small" id="askInfo">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
       <div class="box small" id="netInfo">Serwer: pobieranie...</div>
@@ -131,8 +131,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
   <div id="p-odrabianie" class="panel">
     <div class="box" style="text-align:left">
       <h2 style="color:#ff66cc;text-align:center">Odrabianie</h2>
-      <p class="small" style="text-align:center">Max +3 / dzien. Nie w dniu kary i dniu karnym. Wpisz w dziennik.</p>
-      <p class="small" style="text-align:center">Dzis: <strong id="odrobInfo2">0</strong> / 3</p>
+      <p class="small" style="text-align:center">Max +2 / dzien. Nie w dniu kary i dniu karnym. Wpisz w dziennik.</p>
+      <p class="small" style="text-align:center">Dzis: <strong id="odrobInfo2">0</strong> / 2</p>
       <div class="check"><label><input type="checkbox" class="odrob" data-pkt="1" data-key="bez_pytania"> Caly dzien bez pytania (+1)</label></div>
       <div class="check"><label><input type="checkbox" class="odrob" data-pkt="1" data-key="extra60"> Extra 60 min rajstop po godzinie (+1)</label></div>
       <div class="check"><label><input type="checkbox" class="odrob" data-pkt="1.5" data-key="jask"> Extra 60 min biale/jaskrawe (+1.5)</label></div>
@@ -170,7 +170,7 @@ function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=new Date(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=18,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft;
+var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
@@ -352,7 +352,7 @@ function rozliczDzien(){
     if(k==='hCtrl'&&!(last&&last.ctrlH))return;
     if(meldunki[k]==='ok')ok++;else if(meldunki[k]===null)br++;
   });
-  if(br===0&&ok>=3)addPkt(2,'Pelne meldunki');
+  if(br===0&&ok>=3)addPkt(1,'Pelne meldunki');
   else if(br>0)addPkt(-br,'Brak meldunkow');
   meldunki.rozliczone=true;saveJSON('r_meld',meldunki);updateDayGuards();
   alert('Rozliczono. Saldo '+punkty.toFixed(1));
@@ -411,7 +411,7 @@ function losuj(){
   ask.disabled=blokada;
   var buty=losujButy(temp,blokada),ctrl=+(10.5+Math.random()*4).toFixed(2);
   komb=(sezon==='letnia')?(Math.random()<0.10):(Math.random()<0.40);
-  if(gorna==='Body')pkt+=1;else if(gorna==='Body z dlugim rekawem')pkt+=1.5;else pkt+=2.5;
+  if(gorna==='Body')pkt+=1;else if(gorna==='Body z dlugim rekawem')pkt+=1;else pkt+=2;
   if(spod==='BODY')pkt+=0.5;if(komb)pkt+=(sezon==='letnia'?2:1);
 
   if(sezon==='letnia'&&temp>21&&!blokada){
@@ -458,7 +458,7 @@ function zaliczOdrob(){
     var key=list[i].getAttribute('data-key');
     if(odrobDone[key])continue;
     var p=parseFloat(list[i].getAttribute('data-pkt'));
-    if(odrobPkt+suma+p>3.001){alert('Limit +3 na dzien');break}
+    if(odrobPkt+suma+p>2.001){alert('Limit +2 na dzien');break}
     suma+=p;opis.push(list[i].parentNode.textContent.replace(/\s+/g,' ').trim());
     odrobDone[key]=true;
   }
@@ -512,7 +512,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.7 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/3\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.8 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -563,7 +563,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.7</span>');
+    bootMsg('<span class="green">Gotowe v3.9.8</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
