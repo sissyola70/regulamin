@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.8</title>
+<title>Pani Regulamin v3.9.9</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,7 +42,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.8</h1>
+  <h1>Pani Regulamin v3.9.9</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -186,10 +186,11 @@ function pobierzSerwer(){
       var cur=j.current||{};
       if(cur.time){srvDate=new Date(cur.time);if(isNaN(srvDate.getTime()))srvDate=new Date()}
       else srvDate=new Date();
-      srvTemp=parseFloat(cur.temperature_2m);
+      var raw=parseFloat(cur.temperature_2m);
+      srvTemp=isNaN(raw)?raw:(Math.round((raw-2)*10)/10);
       srvOk=true;
       if($('temp')&&!isNaN(srvTemp))$('temp').value=srvTemp;
-      setNetInfo('Gliwice '+srvTemp+' C • '+now()+(srvOk?' • serwer':' • lokalnie'));
+      setNetInfo('API '+raw+' C → losowanie '+srvTemp+' C (−2) • '+now());
       pokazSezon();
       return srvTemp;
     })
@@ -512,7 +513,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.8 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.9 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -563,7 +564,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.8</span>');
+    bootMsg('<span class="green">Gotowe v3.9.9</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
