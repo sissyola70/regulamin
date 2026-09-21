@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.11</title>
+<title>Pani Regulamin v3.9.12</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,7 +42,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.11</h1>
+  <h1>Pani Regulamin v3.9.12</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -536,40 +536,21 @@ function nalozKary(){
   if(Math.random()<0.60){
     var g=last&&String(last.gorna)||'';
     var spod=last&&String(last.spod)||'';
+    var tmp=(!isNaN(srvTemp)?srvTemp:(last&&last.temp));
     var pula=[
-      'DODATEK: zdjac czarne — biale 40 den do 17',
-      'DODATEK: jaskrawe 40 den do 17, widoczne',
-      'DODATEK: kombinezon NA WIERZCH zapięty do 17',
-      'DODATEK: zakaz pytania + rajstopy do 17',
-      'DODATEK: przyciasne biale baletki do 17',
-      'DODATEK: rajstopy 40-60 den, kolor nie czarny',
-      'DODATEK: druga para rajstop na wylosowane, do 17',
-      'DODATEK: stopki baletkowe POD rajstopami do 17',
-      'DODATEK: kombinezon zapięty, zakaz rozpinania do 17',
-      'DODATEK: rekawy zasuniete, bez podwijania do 17',
-      'DODATEK: obuwie na ciasniejsze z puli (biale/CROSS), nie tenisowki',
-      'DODATEK: kolor jaskrawy, denier z losowania zostaje',
       'DODATEK: godzina zdjecia rajstop cofnieta do 17',
-      'DODATEK: zero pytan i zero blagania do 17',
-      'DODATEK: 60 min po 17 tylko w rajstopach',
-      'DODATEK: rajstopy na lewa strone, szew na wierzchu',
-      'DODATEK: pasek balerin zapiety (CROSS/kostka)',
-      'DODATEK: bez kurtki na kombinezon do 17',
-      'DODATEK: po 17 pranie kompletu zanim wolno zdjac na stale',
-      'DODATEK: jutro bez odrabiania (losowanie zostaje)',
-      'DODATEK: zdjecie kontrolne nog w 15 min od kary',
-      'DODATEK: kombinezon na body, bez bluzy pod spodem',
-      'DODATEK: rajstopy z polarem na wylosowane do 17',
-      'DODATEK: legginsy NA rajstopy do 17',
-      'DODATEK: legginsy POD rajstopami do 17'
+      'DODATEK: kolor nie czarny / biale albo jaskrawe 40 den do 17',
+      'DODATEK: druga para rajstop na wylosowane do 17',
+      'DODATEK: kombinezon zapięty, bez rozpinania do 17',
+      'DODATEK: obuwie ciasniejsze (biale/CROSS), nie tenisowki',
+      'DODATEK: zakaz pytania + rajstopy do 17'
     ];
+    if(!(tmp>12)) pula.push('DODATEK: POLAR — grube bawełniane, bardzo cieple, na cienkie do 17');
+    else pula.push('DODATEK: legginsy NA rajstopy do 17');
     if(g.indexOf('Body')>=0&&g.indexOf('Kostium')<0&&g.indexOf('Romper')<0)
-      pula.push('DODATEK: body precz — kostium do 17');
-    if(g.indexOf('Body')>=0&&g.indexOf('Romper')<0)
-      pula.push('DODATEK: body precz — romper do 17');
-    if(spod.indexOf('MAJTKI')>=0)
-      pula.push('DODATEK: majtki precz — body modelujace do 17');
+      pula.push('DODATEK: body precz — kostium albo romper do 17');
     extra=pick(pula);
+
   }
   saveJSON('r_karac',karaCount);
   var txt=label+' -'+suma+(mult>1?' (x'+mult+')':'')+(dop?' | DZIŚ: '+dop:'')+(extra?' | '+extra:'')+(kor?' | korekta TAK':' | korekta NIE');
@@ -608,7 +589,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.11 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.12 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -659,7 +640,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.11</span>');
+    bootMsg('<span class="green">Gotowe v3.9.12</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
