@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.9</title>
+<title>Pani Regulamin v3.9.11</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,7 +42,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.9</h1>
+  <h1>Pani Regulamin v3.9.11</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -108,27 +108,37 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 
   <div id="p-kary" class="panel">
     <div class="box" style="text-align:left">
-      <h2 style="color:#ff66cc;text-align:center">Kary</h2>
-      <p class="small" style="text-align:center">Powtorzka x1.5 / x2 • dzien kary = brak odrabiania</p>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="wyrzut"> Rajstopy do wyrzucenia (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="uszk"> Uszkodzenie rajstop (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="5" data-key="niezgodny"> Niezgodny ubior (-5)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="brak"> Brak wylosowanego ubioru (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="but"> Inne obuwie (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="bal"> Zdjecie obuwia (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="spod"> Brak spodu (-2)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="2" data-key="raj"> Zdjecie rajstop bez zgody (-2)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="kolor"> Podmiana koloru (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="1" data-key="rekawy"> Podwiniete rekawy (-1)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="3" data-key="wielo"> Wielokrotne losowanie (-3)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" data-pkt="4" data-key="klamstwo"> Klamstwo (-4)</label></div>
-      <div class="check"><label><input type="checkbox" class="kara" id="karaInne" data-pkt="1" data-key="inne"> Inne (-1)</label></div>
-      <div class="kara-suma">Suma: <strong id="sumaKar">0</strong></div>
-      <button type="button" class="main-btn red" id="btnKary">Naloz kary</button>
+      <h2 style="color:#ff66cc;text-align:center">Kary — listwa</h2>
+      <p class="small" style="text-align:center">Powtorzka x1.5 / x2. Dzien kary = brak odrabiania.</p>
+      <select id="karaSel" style="width:100%;padding:12px;font-size:16px;margin:8px 0;background:#220022;color:#ffccff;border:1px solid #ff00aa;border-radius:8px">
+        <option value="">— wybierz kare —</option>
+        <option value="niezgodny" data-pkt="5">Niezgodny ubior</option>
+        <option value="zastepstwo_dol" data-pkt="5">Zastepstwo w dol (romper→body)</option>
+        <option value="klamstwo" data-pkt="4">Klamstwo</option>
+        <option value="wyrzut" data-pkt="3">Rajstopy do wyrzucenia</option>
+        <option value="brak" data-pkt="3">Brak wylosowanego ubioru</option>
+        <option value="but" data-pkt="3">Inne obuwie</option>
+        <option value="kolor" data-pkt="3">Podmiana koloru</option>
+        <option value="wielo" data-pkt="3">Wielokrotne losowanie</option>
+        <option value="brak_korekty" data-pkt="3">Brak korekty do 17:00</option>
+        <option value="raj" data-pkt="2">Zdjecie rajstop bez zgody</option>
+        <option value="spod" data-pkt="2">Brak spodu</option>
+        <option value="bal" data-pkt="1">Zdjecie obuwia</option>
+        <option value="uszk" data-pkt="1">Uszkodzenie rajstop</option>
+        <option value="rekawy" data-pkt="1">Podwiniete rekawy</option>
+        <option value="inne" data-pkt="1">Inne</option>
+      </select>
+      <p class="small">Punkty (mozna poprawic)</p>
+      <input type="number" id="karaPkt" value="0" step="1">
+      <textarea id="karaDopisek" placeholder="Dopisek na reszte dnia np. rajstopy do 17, zakaz pytania, kolor nie czarny"></textarea>
+      <div class="check"><label><input type="checkbox" id="karaKorekta"> Korekta stroju wykonana (w gore)</label></div>
+      <div class="kara-suma">Do naliczenia: <strong id="sumaKar">0</strong></div>
+      <button type="button" class="main-btn red" id="btnKary">Naloz kare</button>
+      <div id="karaHist" class="history"><strong>Ostatnie kary</strong><br></div>
     </div>
   </div>
 
-  <div id="p-odrabianie" class="panel">
+<div id="p-odrabianie" class="panel">
     <div class="box" style="text-align:left">
       <h2 style="color:#ff66cc;text-align:center">Odrabianie</h2>
       <p class="small" style="text-align:center">Max +2 / dzien. Nie w dniu kary i dniu karnym. Wpisz w dziennik.</p>
@@ -168,7 +178,7 @@ function todayStr(){return clock().toDateString()}
 function now(){try{return clock().toLocaleString('pl-PL')}catch(e){return clock().toISOString()}}
 function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
-function weekNum(){var n=new Date(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
+function weekNum(){var n=clock(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
 var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
@@ -180,17 +190,19 @@ function losujButy(temp,twarda){
 
 function setNetInfo(s){var el=$('netInfo');if(el)el.innerHTML=s}
 function pobierzSerwer(){
-  return fetch('https://api.open-meteo.com/v1/forecast?latitude=50.294&longitude=18.671&current=temperature_2m&timezone=Europe%2FWarsaw')
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
-    .then(function(j){
-      var cur=j.current||{};
-      if(cur.time){srvDate=new Date(cur.time);if(isNaN(srvDate.getTime()))srvDate=new Date()}
+  var pogoda=fetch('https://api.open-meteo.com/v1/forecast?latitude=50.294&longitude=18.671&current=temperature_2m&timezone=Europe%2FWarsaw').then(function(r){if(!r.ok)throw new Error('pogoda');return r.json()});
+  var czas=fetch('https://worldtimeapi.org/api/timezone/Europe/Warsaw').then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+  return Promise.all([pogoda,czas]).then(function(arr){
+      var j=arr[0],ct=arr[1],cur=j.current||{};
+      if(ct&&ct.datetime){srvDate=new Date(ct.datetime)}
+      else if(cur.time){srvDate=new Date(cur.time)}
       else srvDate=new Date();
+      if(isNaN(srvDate.getTime()))srvDate=new Date();
       var raw=parseFloat(cur.temperature_2m);
       srvTemp=isNaN(raw)?raw:(Math.round((raw-2)*10)/10);
       srvOk=true;
       if($('temp')&&!isNaN(srvTemp))$('temp').value=srvTemp;
-      setNetInfo('API '+raw+' C → losowanie '+srvTemp+' C (−2) • '+now());
+      setNetInfo('API '+raw+' C → losowanie '+srvTemp+' C (−2) • '+now()+(ct&&ct.datetime?' • czas worldtime':' • czas meteo'));
       pokazSezon();
       return srvTemp;
     })
@@ -212,7 +224,7 @@ function go(name){
   if(name==='status')showStatus();
   if(name==='dziennik')showDziennik();
   if(name==='kontrola'){showMeldunki();updateDayGuards();}
-  if(name==='kary')updateSumaKar();
+  if(name==='kary'){updateSumaKar();showKaraHist();}
   if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();updateDayGuards();updateAskInfo()}}
 }
 function setMode(m){
@@ -308,16 +320,32 @@ function podsumujDzien(){
   saveJSON('r_meld',meldunki);updateDayGuards();showStatus();
   alert(blad?'Byl blad = -1':'Dzien czysty = +1');
 }
+function karaDnia(){
+  var k=loadJSON('r_karaX',null);
+  if(!k||k.date!==todayStr())return null;
+  return k;
+}
 function pokazOstatniStroj(){
-  if(!last)return;
   var res=$('result'),ask=$('askBtn');
-  var html='<h2>'+String(last.gorna).toUpperCase()+' — DO 17:00</h2>';
+  if(!res)return;
+  var html='';
+  if(!last){html='<p class="small">Brak dzisiejszego stroju</p>'}
+  else{
+  html='<h2>'+String(last.gorna).toUpperCase()+' — DO 17:00</h2>';
   html+='<h2>SPOD: '+(last.spod||'-')+'</h2><h2>OBUWIE: '+(last.buty||'-')+'</h2>';
   if(last.komb)html+='<h2>KOMBINEZON — OBOWIAZKOWY</h2>';
   if(last.stopki){html+='<h2 class="green">RAJSTOPY — NIEOBOWIAZKOWE</h2><h2>STOPKI — OBOWIAZKOWE</h2>';res.className='no'}
   else if(last.det){html+='<h2>RAJSTOPY — OBOWIAZKOWE</h2><p class="red">'+last.det+' | do '+(last.godz||'-')+'</p>';res.className='mandatory'}
   if(last.ctrlH)html+='<p class="orange">Kontrola dodatkowa: '+fmt(last.ctrlH)+'</p>';
   html+='<p class="small">'+(last.t||'')+'</p>';
+  }
+  var kx=karaDnia();
+  if(kx){
+    html+='<h2 class="red">KARA DNIA</h2><p class="red">'+(kx.txt||'')+'</p>';
+    if(kx.extra)html+='<p class="orange">'+kx.extra+'</p>';
+    if(kx.dop)html+='<p class="orange">DOPISEK ANI: '+kx.dop+'</p>';
+    res.className='mandatory';
+  }
   res.innerHTML=html;
   var g=String(last.gorna||'');
   blokada=(g.indexOf('Kostium')>=0||g.indexOf('Romper')>=0||g.indexOf('DZIEN KARNY')>=0);
@@ -420,7 +448,9 @@ function losuj(){
     else stopki=true;
   }else{det=losujRaj(temp);godz=blokada?'17:00':fmt(12+Math.random()*5);pkt+=1}
 
-  addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':'')+' / '+spod+' / '+buty+(det?(' / '+det+' do '+godz):' / stopki')+' / kontrola '+fmt(ctrl));
+  var kolejny=(losDate===todayStr());
+  if(!kolejny)addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':'')+' / '+spod+' / '+buty+(det?(' / '+det+' do '+godz):' / stopki')+' / kontrola '+fmt(ctrl));
+  else addHist('Losowanie TEST','bez pkt (kolejne w dniu)');
   last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,ctrlH:ctrl,temp:temp,t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');
@@ -469,26 +499,91 @@ function zaliczOdrob(){
   addPkt(suma,'Odrabianie: '+opis.join('; '));
   for(var j=0;j<list.length;j++)list[j].checked=false;updateOdrob();
 }
+function showKaraHist(){
+  var el=$('karaHist');if(!el)return;
+  var s='',n=0;
+  for(var i=0;i<hist.length&&n<8;i++){
+    var g=String(hist[i].g||'');
+    if(g.indexOf('Kara')<0&&g.indexOf('Kary')<0)continue;
+    s+='<strong>'+hist[i].t+'</strong> — '+hist[i].d+'<br>';n++;
+  }
+  el.innerHTML='<strong>Ostatnie kary</strong><br>'+(s||'<em>Brak</em>');
+}
+function syncKaraSel(){
+  var sel=$('karaSel');if(!sel)return;
+  var opt=sel.options[sel.selectedIndex];
+  var pkt=opt&&opt.getAttribute('data-pkt')?parseInt(opt.getAttribute('data-pkt'),10):0;
+  if($('karaPkt'))$('karaPkt').value=pkt;
+  if($('sumaKar'))$('sumaKar').innerHTML=pkt;
+}
 function updateSumaKar(){
-  var s=0,list=document.querySelectorAll('.kara');
-  for(var i=0;i<list.length;i++)if(list[i].checked)s+=parseInt(list[i].getAttribute('data-pkt'),10);
-  $('sumaKar').innerHTML=s;
+  var pkt=parseInt(($('karaPkt')&&$('karaPkt').value)||'0',10)||0;
+  if($('sumaKar'))$('sumaKar').innerHTML=pkt;
 }
 function nalozKary(){
-  var list=document.querySelectorAll('.kara'),suma=0;
-  for(var i=0;i<list.length;i++){
-    if(!list[i].checked)continue;
-    var base=parseInt(list[i].getAttribute('data-pkt'),10),key=list[i].getAttribute('data-key')||('k'+i);
-    if(list[i].id==='karaInne'){var pow=prompt('Powod:');if(!pow||!pow.trim())continue;key='inne:'+pow.trim().toLowerCase()}
-    if(!karaCount[key])karaCount[key]=0;karaCount[key]++;
-    var ile=karaCount[key],mult=ile>=3?2:(ile===2?1.5:1);
-    suma+=Math.ceil(base*mult);
+  var sel=$('karaSel');
+  var key=sel?sel.value:'';
+  if(!key){alert('Wybierz kare z listwy');return}
+  var label=sel.options[sel.selectedIndex].text;
+  var base=parseInt(($('karaPkt')&&$('karaPkt').value)||'0',10)||0;
+  if(base<=0){alert('Punkty musza byc > 0');return}
+  if(!karaCount[key])karaCount[key]=0;karaCount[key]++;
+  var ile=karaCount[key],mult=ile>=3?2:(ile===2?1.5:1);
+  var suma=Math.ceil(base*mult);
+  var dop=($('karaDopisek')&&$('karaDopisek').value||'').trim();
+  var kor=$('karaKorekta')&&$('karaKorekta').checked;
+  var extra='';
+  if(Math.random()<0.60){
+    var g=last&&String(last.gorna)||'';
+    var spod=last&&String(last.spod)||'';
+    var pula=[
+      'DODATEK: zdjac czarne — biale 40 den do 17',
+      'DODATEK: jaskrawe 40 den do 17, widoczne',
+      'DODATEK: kombinezon NA WIERZCH zapięty do 17',
+      'DODATEK: zakaz pytania + rajstopy do 17',
+      'DODATEK: przyciasne biale baletki do 17',
+      'DODATEK: rajstopy 40-60 den, kolor nie czarny',
+      'DODATEK: druga para rajstop na wylosowane, do 17',
+      'DODATEK: stopki baletkowe POD rajstopami do 17',
+      'DODATEK: kombinezon zapięty, zakaz rozpinania do 17',
+      'DODATEK: rekawy zasuniete, bez podwijania do 17',
+      'DODATEK: obuwie na ciasniejsze z puli (biale/CROSS), nie tenisowki',
+      'DODATEK: kolor jaskrawy, denier z losowania zostaje',
+      'DODATEK: godzina zdjecia rajstop cofnieta do 17',
+      'DODATEK: zero pytan i zero blagania do 17',
+      'DODATEK: 60 min po 17 tylko w rajstopach',
+      'DODATEK: rajstopy na lewa strone, szew na wierzchu',
+      'DODATEK: pasek balerin zapiety (CROSS/kostka)',
+      'DODATEK: bez kurtki na kombinezon do 17',
+      'DODATEK: po 17 pranie kompletu zanim wolno zdjac na stale',
+      'DODATEK: jutro bez odrabiania (losowanie zostaje)',
+      'DODATEK: zdjecie kontrolne nog w 15 min od kary',
+      'DODATEK: kombinezon na body, bez bluzy pod spodem',
+      'DODATEK: rajstopy z polarem na wylosowane do 17',
+      'DODATEK: legginsy NA rajstopy do 17',
+      'DODATEK: legginsy POD rajstopami do 17'
+    ];
+    if(g.indexOf('Body')>=0&&g.indexOf('Kostium')<0&&g.indexOf('Romper')<0)
+      pula.push('DODATEK: body precz — kostium do 17');
+    if(g.indexOf('Body')>=0&&g.indexOf('Romper')<0)
+      pula.push('DODATEK: body precz — romper do 17');
+    if(spod.indexOf('MAJTKI')>=0)
+      pula.push('DODATEK: majtki precz — body modelujace do 17');
+    extra=pick(pula);
   }
-  if(!suma){alert('Nic nie zaznaczono');return}
-  saveJSON('r_karac',karaCount);addPkt(-suma,'Kary');
+  saveJSON('r_karac',karaCount);
+  var txt=label+' -'+suma+(mult>1?' (x'+mult+')':'')+(dop?' | DZIŚ: '+dop:'')+(extra?' | '+extra:'')+(kor?' | korekta TAK':' | korekta NIE');
+  saveJSON('r_karaX',{date:todayStr(),txt:txt,extra:extra,dop:dop});
+  addPkt(-suma,'Kara: '+txt);
+  pokazOstatniStroj();
+  dziennik.unshift({t:'KARA '+txt,d:now()});
+  if(dziennik.length>15)dziennik.pop();saveJSON('r_dz',dziennik);
   passa=0;lastViol=todayStr();karaToday=todayStr();
   save('r_passa','0');save('r_viol',lastViol);save('r_karaD',karaToday);updatePkt();
-  for(var j=0;j<list.length;j++)list[j].checked=false;updateSumaKar();
+  if($('karaDopisek'))$('karaDopisek').value='';
+  if($('karaKorekta'))$('karaKorekta').checked=false;
+  sel.selectedIndex=0;if($('karaPkt'))$('karaPkt').value=0;updateSumaKar();showKaraHist();
+  alert('Nalozono -'+suma+(dop?'\nDopisek Ani: '+dop:'')+(extra?'\n'+extra:'\nBrak dodatku tym razem'));
 }
 function showStatus(){
   if(!last)$('statusTxt').innerHTML='Brak danych.';
@@ -513,7 +608,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.9 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.11 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -544,7 +639,7 @@ function bind(){
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
   $('btnCtrl').onclick=function(){if(last&&last.ctrlH)zamelduj(last.ctrlH,'hCtrl')};
-  $('btnRozlicz').onclick=rozliczDzien;$('btnPodsum').onclick=podsumujDzien;$('btnKary').onclick=nalozKary;
+  $('btnRozlicz').onclick=rozliczDzien;$('btnPodsum').onclick=podsumujDzien;$('btnKary').onclick=nalozKary;if($('karaSel'))$('karaSel').onchange=syncKaraSel;if($('karaPkt'))$('karaPkt').oninput=updateSumaKar;
   $('btnOdrob').onclick=zaliczOdrob;$('btnDz').onclick=zapiszDziennik;
   document.addEventListener('change',function(e){if(e.target&&e.target.classList&&e.target.classList.contains('kara'))updateSumaKar()});
 }
@@ -564,7 +659,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.9</span>');
+    bootMsg('<span class="green">Gotowe v3.9.11</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
