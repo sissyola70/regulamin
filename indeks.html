@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.12</title>
+<title>Pani Regulamin v3.9.13</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,7 +42,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.12</h1>
+  <h1>Pani Regulamin v3.9.13</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -130,7 +130,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       </select>
       <p class="small">Punkty (mozna poprawic)</p>
       <input type="number" id="karaPkt" value="0" step="1">
-      <textarea id="karaDopisek" placeholder="Dopisek na reszte dnia np. rajstopy do 17, zakaz pytania, kolor nie czarny"></textarea>
+      <textarea id="karaDopisek" placeholder="Opis za co (przy Inne obowiazkowy). Dopisek na reszte dnia przy innych karach"></textarea>
       <div class="check"><label><input type="checkbox" id="karaKorekta"> Korekta stroju wykonana (w gore)</label></div>
       <div class="kara-suma">Do naliczenia: <strong id="sumaKar">0</strong></div>
       <button type="button" class="main-btn red" id="btnKary">Naloz kare</button>
@@ -531,9 +531,10 @@ function nalozKary(){
   var ile=karaCount[key],mult=ile>=3?2:(ile===2?1.5:1);
   var suma=Math.ceil(base*mult);
   var dop=($('karaDopisek')&&$('karaDopisek').value||'').trim();
+  if(key==='inne'&&!dop){alert('Inne: wpisz za co');return}
   var kor=$('karaKorekta')&&$('karaKorekta').checked;
   var extra='';
-  if(Math.random()<0.60){
+  if(key!=='inne'&&Math.random()<0.60){
     var g=last&&String(last.gorna)||'';
     var spod=last&&String(last.spod)||'';
     var tmp=(!isNaN(srvTemp)?srvTemp:(last&&last.temp));
@@ -589,7 +590,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.12 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.13 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -640,7 +641,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.12</span>');
+    bootMsg('<span class="green">Gotowe v3.9.13</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
