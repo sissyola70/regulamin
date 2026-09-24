@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.13</title>
+<title>Pani Regulamin v3.9.14</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -42,7 +42,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.13</h1>
+  <h1>Pani Regulamin v3.9.14</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -130,7 +130,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       </select>
       <p class="small">Punkty (mozna poprawic)</p>
       <input type="number" id="karaPkt" value="0" step="1">
-      <textarea id="karaDopisek" placeholder="Opis za co (przy Inne obowiazkowy). Dopisek na reszte dnia przy innych karach"></textarea>
+      <textarea id="karaOpis" placeholder="Za co (obowiazkowe przy Inne): np. zly zwrot do Pani"></textarea>
+      <textarea id="karaDopisek" placeholder="Dopisek na reszte dnia (nie przy Inne)"></textarea>
       <div class="check"><label><input type="checkbox" id="karaKorekta"> Korekta stroju wykonana (w gore)</label></div>
       <div class="kara-suma">Do naliczenia: <strong id="sumaKar">0</strong></div>
       <button type="button" class="main-btn red" id="btnKary">Naloz kare</button>
@@ -396,15 +397,17 @@ function losujGorna(){
 function losujSpod(){return Math.random()<0.70?'MAJTKI':'BODY'}
 function kolorZima(){
   if(Math.random()<0.08)return 'TRANSPARENTNE';
-  return pick(['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE','CIELISTE','SZARE','FIOLETOWE','ZIELONE BUTELKOWE','BEZOWE']);
+  return pick(['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ZOLTE','BLEKIT KROLEWSKI','CIELISTE','FIOLETOWE','ZIELONE BUTELKOWE',
+    'ROZOWE','ROZOWE','ROZOWE','CZERWONE','CZERWONE','CZERWONE','LIMONKA','LIMONKA','LIMONKA']);
 }
 function kolorLato(){
   var r=Math.random();
   if(r<0.10)return 'TRANSPARENTNE';
-  if(r<0.50)return 'CZARNE';
-  return pick(['GRAFITOWE','GRANATOWE','CIELISTE','SZARE','BORDOWE']);
+  if(r<0.45)return 'CZARNE';
+  return pick(['GRAFITOWE','GRANATOWE','CIELISTE','BORDOWE','FIOLETOWE',
+    'ROZOWE','ROZOWE','ROZOWE','CZERWONE','CZERWONE','CZERWONE','LIMONKA','LIMONKA','LIMONKA']);
 }
-function kolorJask(){return pick(['BIALE','ROZOWE','ZOLTE','BLEKIT KROLEWSKI','CZERWONE','FIOLETOWE','ZIELONE'])}
+function kolorJask(){return pick(['BIALE','ZOLTE','BLEKIT KROLEWSKI','FIOLETOWE','ZIELONE','ROZOWE','ROZOWE','CZERWONE','CZERWONE','LIMONKA','LIMONKA'])}
 function losujRaj(temp){
   if(Math.random()<0.10)return '40 den — jaskrawe '+kolorJask();
   if(temp<10){
@@ -530,9 +533,10 @@ function nalozKary(){
   if(!karaCount[key])karaCount[key]=0;karaCount[key]++;
   var ile=karaCount[key],mult=ile>=3?2:(ile===2?1.5:1);
   var suma=Math.ceil(base*mult);
+  var opis=($('karaOpis')&&$('karaOpis').value||'').trim();
   var dop=($('karaDopisek')&&$('karaDopisek').value||'').trim();
-  if(key==='inne'&&!dop){alert('Inne: wpisz za co');return}
   var kor=$('karaKorekta')&&$('karaKorekta').checked;
+  if(key==='inne'&&!opis){alert('Inne wymaga opisu ZA CO');return}
   var extra='';
   if(key!=='inne'&&Math.random()<0.60){
     var g=last&&String(last.gorna)||'';
@@ -554,18 +558,19 @@ function nalozKary(){
 
   }
   saveJSON('r_karac',karaCount);
-  var txt=label+' -'+suma+(mult>1?' (x'+mult+')':'')+(dop?' | DZIŚ: '+dop:'')+(extra?' | '+extra:'')+(kor?' | korekta TAK':' | korekta NIE');
-  saveJSON('r_karaX',{date:todayStr(),txt:txt,extra:extra,dop:dop});
+  var txt=label+' -'+suma+(mult>1?' (x'+mult+')':'')+(opis?' | ZA CO: '+opis:'')+(dop?' | DZIŚ: '+dop:'')+(extra?' | '+extra:'')+(kor?' | korekta TAK':' | korekta NIE');
+  saveJSON('r_karaX',{date:todayStr(),txt:txt,extra:extra,dop:dop,opis:opis,key:key});
   addPkt(-suma,'Kara: '+txt);
   pokazOstatniStroj();
   dziennik.unshift({t:'KARA '+txt,d:now()});
   if(dziennik.length>15)dziennik.pop();saveJSON('r_dz',dziennik);
   passa=0;lastViol=todayStr();karaToday=todayStr();
   save('r_passa','0');save('r_viol',lastViol);save('r_karaD',karaToday);updatePkt();
+  if($('karaOpis'))$('karaOpis').value='';
   if($('karaDopisek'))$('karaDopisek').value='';
   if($('karaKorekta'))$('karaKorekta').checked=false;
   sel.selectedIndex=0;if($('karaPkt'))$('karaPkt').value=0;updateSumaKar();showKaraHist();
-  alert('Nalozono -'+suma+(dop?'\nDopisek Ani: '+dop:'')+(extra?'\n'+extra:'\nBrak dodatku tym razem'));
+  alert('Nalozono -'+suma+(opis?'\nZa co: '+opis:'')+(dop?'\nDopisek: '+dop:'')+(key==='inne'?'\nInne: bez dodatku':(extra?'\n'+extra:'\nBrak dodatku')));
 }
 function showStatus(){
   if(!last)$('statusTxt').innerHTML='Brak danych.';
@@ -590,7 +595,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.13 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.14 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -641,7 +646,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.13</span>');
+    bootMsg('<span class="green">Gotowe v3.9.14</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
