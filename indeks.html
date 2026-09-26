@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.19</title>
+<title>Pani Regulamin v3.9.21</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -48,9 +48,12 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.19</h1>
+  <h1>Pani Regulamin v3.9.21</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
-  <div id="baner" class="box">...</div>
+  <div id="baner" class="box">
+    <button type="button" class="main-btn gray" id="askPal" style="margin:0">Proszę o papierosa</button>
+    <div class="small" id="palInfo">Papieros: losowa zgoda • 4 odmowy → 5. = TAK • co 30 min</div>
+  </div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
   <div class="tabs">
@@ -186,7 +189,7 @@ function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=clock(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft;
+var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
@@ -248,7 +251,9 @@ function updatePkt(){
 }
 function updateAskInfo(){
   if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
-  $('askInfo').innerHTML='Pytania: <strong>'+askCount+'/2</strong> • koszt -1';
+  if($('askInfo'))$('askInfo').innerHTML='Pytania rajstopy: <strong>'+askCount+'/2</strong> • koszt -1';
+  if(palDate!==todayStr()){palOdm=0;palDate=todayStr();lastPal=0;save('r_palO','0');save('r_palD',palDate);save('r_palT','0')}
+  if($('palInfo'))$('palInfo').innerHTML='Odmowy: <strong>'+palOdm+'/4</strong> • losowe TAK • 5. po 4x NIE = TAK • 30 min • za wcześnie = −1';
 }
 function updateOdrob(){
   if(odrobToday!==todayStr()){odrobPkt=0;odrobDone={};odrobToday=todayStr();save('r_odD',odrobToday);save('r_odP','0');saveJSON('r_odK',{})}
@@ -446,7 +451,7 @@ function losuj(){
   var temp=srvTemp,res=$('result'),ask=$('askBtn');
   if($('temp'))$('temp').value=temp;
   if(isNaN(temp)){res.innerHTML='<p class="red">Brak temperatury z serwera</p>';res.className='mandatory';return}
-  sezon=sezonZTemp(temp);save('r_sezon',sezon);pokazSezon();losujBaner();
+  sezon=sezonZTemp(temp);save('r_sezon',sezon);pokazSezon();
   karnyLeft=parseInt(load('r_karnyL','0'),10)||0;
   if(karnyLeft>0){startKarny();return}
 
@@ -487,6 +492,33 @@ function pytaj(){
   addPkt(-1,'Pytanie o zgode');passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
   if(Math.random()<0.15){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
   else{res.innerHTML='<p class="red">NIE</p>';res.className='mandatory'}
+  setTimeout(pokazOstatniStroj,4000);
+}
+function pytajPal(){
+  updateAskInfo();
+  var res=$('result');
+  if(lastPal && Date.now()-lastPal<30*60*1000){
+    addPkt(-1,'Papieros za wczesnie');
+    alert('Za wcześnie (co 30 min) = −1. To nie liczy się jako pytanie.');
+    return;
+  }
+  lastPal=Date.now();save('r_palT',String(lastPal));
+  palOdm=(parseInt(palOdm,10)||0);
+  var tak=false,powod='';
+  if(palOdm>=4){tak=true;powod='5. pytanie po 4 odmowach'}
+  else if(Math.random()<0.20){tak=true;powod='wylosowane TAK'}
+  if(tak){
+    palOdm=0;save('r_palO','0');
+    addHist('Papieros','ZGODA ('+powod+')');
+    if(res){res.innerHTML='<p class="green">PAPIEROS — TAK ('+powod+')</p>';res.className='ok'}
+    alert('TAK. Jeden papieros. ('+powod+')');
+  }else{
+    palOdm++;save('r_palO',String(palOdm));
+    addHist('Papieros','ODMOWA '+palOdm+'/4');
+    if(res){res.innerHTML='<p class="red">PAPIEROS — NIE ('+palOdm+'/4)</p>';res.className='mandatory'}
+    alert('NIE. Odmowa '+palOdm+'/4. Po czterech NIE piate = TAK.');
+  }
+  updateAskInfo();
   setTimeout(pokazOstatniStroj,4000);
 }
 function zapiszTrack(){
@@ -634,7 +666,7 @@ function eksportDziennik(){
   a.click();
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.19 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.21 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -660,7 +692,7 @@ function bind(){
   $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
   $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;if($('btnNet'))$('btnNet').onclick=function(){pobierzSerwer().then(updateDayGuards).catch(function(){})};$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
+  $('btnLosuj').onclick=losuj;if($('btnNet'))$('btnNet').onclick=function(){pobierzSerwer().then(updateDayGuards).catch(function(){})};$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;if($('askPal'))$('askPal').onclick=pytajPal;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
@@ -674,18 +706,18 @@ function init(){
     sezon=load('r_sezon','letnia');tryb=load('r_tryb','los');
     punkty=parseFloat(load('r_pkt','0'))||0;week=load('r_week','');
     hist=loadJSON('r_hist',[]);last=loadJSON('r_last',null);
-    lastAsk=parseInt(load('r_ask','0'),10)||0;askCount=parseInt(load('r_askc','0'),10)||0;askDate=load('r_askd','');
+    lastAsk=parseInt(load('r_ask','0'),10)||0;askCount=parseInt(load('r_askc','0'),10)||0;askDate=load('r_askd','');palOdm=parseInt(load('r_palO','0'),10)||0;palDate=load('r_palD','');lastPal=parseInt(load('r_palT','0'),10)||0;
     passa=parseInt(load('r_passa','0'),10)||0;lastViol=load('r_viol','');
     dziennik=loadJSON('r_dz',[]);meldunki=loadJSON('r_meld',{});
     potwierdzone=(load('r_potw','')===todayStr());losDate=load('r_losd','');
     karaCount=loadJSON('r_karac',{});karaToday=load('r_karaD','');
     odrobToday=load('r_odD','');odrobPkt=parseFloat(load('r_odP','0'))||0;odrobDone=loadJSON('r_odK',{});
     karnyLeft=parseInt(load('r_karnyL','0'),10)||0;blokada=false;
-    bind();setMode(tryb);pokazSezon();losujBaner();pobierzSerwer().then(function(){updateDayGuards();showStatus()}).catch(function(){updateDayGuards()});
+    bind();setMode(tryb);pokazSezon();pobierzSerwer().then(function(){updateDayGuards();showStatus()}).catch(function(){updateDayGuards()});
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.19</span>');
+    bootMsg('<span class="green">Gotowe v3.9.21</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
