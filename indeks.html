@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.15</title>
+<title>Pani Regulamin v3.9.16</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -48,18 +48,17 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.15</h1>
+  <h1>Pani Regulamin v3.9.16</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
-    <button type="button" class="tab" id="t2">Status</button>
-    <button type="button" class="tab" id="t3">Kontrola</button>
-    <button type="button" class="tab" id="t4">Kary</button>
-    <button type="button" class="tab" id="t5">Odrabianie</button>
-    <button type="button" class="tab" id="t6">Dziennik</button>
+    <button type="button" class="tab" id="t2">Kontrola</button>
+    <button type="button" class="tab" id="t3">Kary</button>
+    <button type="button" class="tab" id="t4">Odrabianie</button>
+    <button type="button" class="tab" id="t5">Dziennik</button>
   </div>
 
   <div id="p-losowanie" class="panel active">
@@ -89,19 +88,11 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     </div>
     <button type="button" class="main-btn gray" id="btnTxt">Pobierz TXT</button>
     <div id="result"></div>
-    <div class="history"><strong>Historia</strong><br><span id="hist"></span></div>
-  </div>
-
-  <div id="p-status" class="panel">
-    <div class="box"><h2 style="color:#ff66cc">Status</h2><div id="statusTxt">Brak danych.</div><p id="czas"></p></div>
-    <div class="box" style="text-align:left"><strong>Meldunki</strong><div id="statusMeld"></div></div>
-    <div class="box" id="statusPotw">Potwierdzenie: -</div>
-    <div class="box" id="statusCtrl">Kontrola: -</div>
-    <div class="box">Passa: <strong id="passa2">0</strong></div>
+    <p class="small" id="czas"></p>
   </div>
 
   <div id="p-kontrola" class="panel">
-    <div class="box"><h2 style="color:#ff66cc">Meldunki</h2><p class="small">+/- 15 min • spoznienie = -1</p></div>
+    <div class="box"><h2 style="color:#ff66cc">Meldunki</h2><p class="small">+/- 15 min • spoznienie = -1</p><p id="czas2" class="small"></p></div>
     <div class="meldunek"><strong>8:30 potwierdzenie</strong><div class="small">Brak = -2</div></div>
     <div class="meldunek"><strong>9:00</strong><div id="st900" class="small">brak</div><button type="button" class="main-btn" id="btn900">Zamelduj 9:00</button></div>
     <div class="meldunek"><strong>12:00</strong><div id="st1200" class="small">brak</div><button type="button" class="main-btn" id="btn1200">Zamelduj 12:00</button></div>
@@ -163,10 +154,11 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 
   <div id="p-dziennik" class="panel">
     <div class="box">
-      <h2 style="color:#ff66cc">Dziennik</h2>
+      <h2 style="color:#ff66cc">Dziennik + historia</h2>
       <textarea id="dziennik" placeholder="Wpis..."></textarea>
       <button type="button" class="main-btn" id="btnDz">Zapisz</button>
       <div id="dzHist" style="margin-top:10px;text-align:left;font-size:.85rem"></div>
+      <div class="history"><strong>Historia programu</strong><br><span id="hist"></span></div>
     </div>
   </div>
 </div>
@@ -223,13 +215,12 @@ function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
 function sezonZTemp(t){return t>=10?'letnia':'zimowa'}
 function pokazSezon(){$('sezonTxt').innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA'}
 function go(name){
-  var n=['losowanie','status','kontrola','kary','odrabianie','dziennik'];
+  var n=['losowanie','kontrola','kary','odrabianie','dziennik'];
   for(var i=0;i<n.length;i++){
     var p=$('p-'+n[i]); if(p)p.className='panel'+(n[i]===name?' active':'');
     var t=$('t'+(i+1)); if(t)t.className='tab'+(n[i]===name?' active':'');
   }
-  if(name==='status')showStatus();
-  if(name==='dziennik')showDziennik();
+  if(name==='dziennik'){showDziennik();showHist();}
   if(name==='kontrola'){showMeldunki();updateDayGuards();}
   if(name==='kary'){updateSumaKar();showKaraHist();}
   if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();updateDayGuards();updateAskInfo()}}
@@ -586,15 +577,10 @@ function nalozKary(){
   alert('Nalozono -'+suma+(opis?'\nZa co: '+opis:'')+(dop?'\nDopisek: '+dop:'')+(key==='inne'?'\nInne: bez dodatku':(extra?'\n'+extra:'\nBrak dodatku')));
 }
 function showStatus(){
-  if(!last)$('statusTxt').innerHTML='Brak danych.';
-  else $('statusTxt').innerHTML='<p><strong>'+last.gorna+'</strong></p><p>Spod: '+(last.spod||'-')+'</p><p>Obuwie: '+(last.buty||'-')+'</p><p>'+(last.det||'-')+'</p><p>Do: '+(last.godz||'-')+'</p>';
-  ensureMeldunki();
-  $('statusMeld').innerHTML='9:00 '+(meldunki.h9||'brak')+'<br>12:00 '+(meldunki.h12||'brak')+'<br>15:00 '+(meldunki.h15||'brak')+'<br>ekstra: '+(meldunki.hCtrl||'brak');
-  $('statusPotw').innerHTML='Potwierdzenie: '+(potwierdzone?'TAK':'NIE');
-  $('statusCtrl').innerHTML='Kontrola: '+(last&&last.ctrlH?fmt(last.ctrlH):'-');
   var end=new Date();end.setHours(17,0,0,0);var d=end-new Date();
-  if(d>0)$('czas').innerHTML='Do 17:00: <strong>'+Math.floor(d/3600000)+'h '+Math.floor((d%3600000)/60000)+'min</strong>';
-  else $('czas').innerHTML='<span class="green">Po 17:00</span>';
+  var txt=d>0?('Do 17:00: <strong>'+Math.floor(d/3600000)+'h '+Math.floor((d%3600000)/60000)+'min</strong>'):'<span class="green">Po 17:00</span>';
+  if($('czas'))$('czas').innerHTML=txt;
+  if($('czas2'))$('czas2').innerHTML=txt;
 }
 function zapiszDziennik(){
   var t=$('dziennik').value.trim();if(!t)return;
@@ -608,7 +594,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.15 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.16 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -630,9 +616,9 @@ function pobierz(){
   a.click();
 }
 function bind(){
-  $('t1').onclick=function(){go('losowanie')};$('t2').onclick=function(){go('status')};
-  $('t3').onclick=function(){go('kontrola')};$('t4').onclick=function(){go('kary')};
-  $('t5').onclick=function(){go('odrabianie')};$('t6').onclick=function(){go('dziennik')};
+  $('t1').onclick=function(){go('losowanie')};$('t2').onclick=function(){go('kontrola')};
+  $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
+  $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
   $('btnLosuj').onclick=losuj;if($('btnNet'))$('btnNet').onclick=function(){pobierzSerwer().then(updateDayGuards).catch(function(){})};$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
@@ -659,7 +645,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.15</span>');
+    bootMsg('<span class="green">Gotowe v3.9.16</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
