@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.14</title>
+<title>Pani Regulamin v3.9.15</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -24,7 +24,13 @@ h1{color:#ff66cc;text-align:center;font-size:1.15rem;margin-bottom:6px}
 .main-btn:disabled{background:#555;opacity:.7}
 input[type=number],textarea{width:100%;padding:14px;font-size:16px;text-align:center;background:#220022;border:1px solid #ff00aa;color:#ffccff;border-radius:8px;margin-bottom:8px}
 textarea{text-align:left;min-height:70px}
-#result{margin-top:12px;padding:12px;border-radius:8px;min-height:90px;line-height:1.4;background:#1a1a1a;border:1px solid #777}
+#result{margin-top:12px;padding:0;border-radius:8px;min-height:90px;line-height:1.35;background:#1a1a1a;border:1px solid #777;overflow:hidden;text-align:left}
+.karta .lin{display:flex;gap:8px;padding:8px 10px;border-bottom:1px solid #440044;font-size:.92rem}
+.karta .lin:last-child{border-bottom:none}
+.karta .lbl{flex:0 0 92px;color:#cc99ff;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.karta .val{flex:1;font-weight:bold;color:#ffccff}
+.karta .val.red{color:#ff6666}.karta .val.orange{color:#ffaa44}.karta .val.green{color:#66ff66}
+.karta .nag{background:#330022;padding:8px 10px;font-size:.8rem;color:#ff66cc;letter-spacing:.06em}
 .mandatory{background:#3a0000;border:2px solid #ff3333}
 .ok{background:#003300;border:2px solid #00aa00}
 .no{background:#1a1a1a;border:2px solid #777}
@@ -42,7 +48,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.14</h1>
+  <h1>Pani Regulamin v3.9.15</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -326,27 +332,34 @@ function karaDnia(){
   if(!k||k.date!==todayStr())return null;
   return k;
 }
+function lin(lbl,val,cls){return '<div class="lin"><div class="lbl">'+lbl+'</div><div class="val'+(cls?(' '+cls):'')+'">'+(val||'—')+'</div></div>'}
 function pokazOstatniStroj(){
   var res=$('result'),ask=$('askBtn');
   if(!res)return;
-  var html='';
-  if(!last){html='<p class="small">Brak dzisiejszego stroju</p>'}
+  var html='<div class="karta">';
+  if(!last){html+='<div class="nag">DZIS</div>'+lin('stroj','brak losowania','orange')}
   else{
-  html='<h2>'+String(last.gorna).toUpperCase()+' — DO 17:00</h2>';
-  html+='<h2>SPOD: '+(last.spod||'-')+'</h2><h2>OBUWIE: '+(last.buty||'-')+'</h2>';
-  if(last.komb)html+='<h2>KOMBINEZON — OBOWIAZKOWY</h2>';
-  if(last.stopki){html+='<h2 class="green">RAJSTOPY — NIEOBOWIAZKOWE</h2><h2>STOPKI — OBOWIAZKOWE</h2>';res.className='no'}
-  else if(last.det){html+='<h2>RAJSTOPY — OBOWIAZKOWE</h2><p class="red">'+last.det+' | do '+(last.godz||'-')+'</p>';res.className='mandatory'}
-  if(last.ctrlH)html+='<p class="orange">Kontrola dodatkowa: '+fmt(last.ctrlH)+'</p>';
-  html+='<p class="small">'+(last.t||'')+'</p>';
+    html+='<div class="nag">STROJ DO 17:00</div>';
+    html+=lin('gora',String(last.gorna).toUpperCase());
+    html+=lin('spod',last.spod);
+    html+=lin('buty',last.buty);
+    html+=lin('warstwa',last.komb?'KOMBINEZON — obowiazkowy':'brak extra');
+    if(last.stopki){html+=lin('nogi','rajstopy nieobowiazkowe • stopki TAK','green');res.className='no'}
+    else{html+=lin('rajstopy',last.det||'—','red');html+=lin('zdjecie',last.godz||'—','red');res.className='mandatory'}
+    html+=lin('kontrola',last.ctrlH?fmt(last.ctrlH):'—','orange');
+    html+=lin('czas',last.t,'');
   }
   var kx=karaDnia();
   if(kx){
-    html+='<h2 class="red">KARA DNIA</h2><p class="red">'+(kx.txt||'')+'</p>';
-    if(kx.extra)html+='<p class="orange">'+kx.extra+'</p>';
-    if(kx.dop)html+='<p class="orange">DOPISEK ANI: '+kx.dop+'</p>';
+    html+='<div class="nag">KARA DNIA</div>';
+    html+=lin('kara',kx.txt,'red');
+    if(kx.opis)html+=lin('za co',kx.opis,'orange');
+    if(kx.extra)html+=lin('dodatek',kx.extra,'orange');
+    if(kx.dop)html+=lin('dopisek',kx.dop,'orange');
     res.className='mandatory';
   }
+  html+='<div class="nag">ZWROT</div>'+lin('O:','zaczyna od Proszę Pani — inaczej Inne −1','orange');
+  html+='</div>';
   res.innerHTML=html;
   var g=String(last.gorna||'');
   blokada=(g.indexOf('Kostium')>=0||g.indexOf('Romper')>=0||g.indexOf('DZIEN KARNY')>=0);
@@ -595,7 +608,7 @@ function showDziennik(){
   $('dzHist').innerHTML=s;
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.14 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.15 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -646,7 +659,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.14</span>');
+    bootMsg('<span class="green">Gotowe v3.9.15</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
