@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.16</title>
+<title>Pani Regulamin v3.9.19</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -48,7 +48,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.16</h1>
+  <h1>Pani Regulamin v3.9.19</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">...</div>
   <div id="boot" class="box">Ladowanie...</div>
@@ -127,8 +127,9 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       </select>
       <p class="small">Punkty (mozna poprawic)</p>
       <input type="number" id="karaPkt" value="0" step="1">
-      <textarea id="karaOpis" placeholder="Za co (obowiazkowe przy Inne): np. zly zwrot do Pani"></textarea>
-      <textarea id="karaDopisek" placeholder="Dopisek na reszte dnia (nie przy Inne)"></textarea>
+      <div id="karaInneBox" style="display:none">
+      <textarea id="karaOpis" placeholder="Za co (obowiazkowe): np. zly zwrot do Pani"></textarea>
+      </div>
       <div class="check"><label><input type="checkbox" id="karaKorekta"> Korekta stroju wykonana (w gore)</label></div>
       <div class="kara-suma">Do naliczenia: <strong id="sumaKar">0</strong></div>
       <button type="button" class="main-btn red" id="btnKary">Naloz kare</button>
@@ -149,16 +150,22 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <div class="check"><label><input type="checkbox" class="odrob" data-pkt="0.5" data-key="opis"> Extra meldunek + opis (+0.5)</label></div>
       <div class="check"><label><input type="checkbox" class="odrob" data-pkt="0.5" data-key="pranie"> Pranie/skladanie kompletu (+0.5)</label></div>
       <button type="button" class="main-btn green" id="btnOdrob">Zaliczy zaznaczone</button>
+      <p class="small" style="margin-top:12px">Wlasne punkty — max lacznie 2 / dzien. Bez opisu = -3, bez dnia kary.</p>
+      <input type="number" id="odrobIle" placeholder="Ile pkt" step="0.5" min="0.5" max="2">
+      <textarea id="odrobOpis" placeholder="Za co (obowiazkowe)"></textarea>
+      <button type="button" class="main-btn" id="btnOdrobWlasne">Dodaj wlasne punkty</button>
     </div>
   </div>
 
   <div id="p-dziennik" class="panel">
     <div class="box">
-      <h2 style="color:#ff66cc">Dziennik + historia</h2>
-      <textarea id="dziennik" placeholder="Wpis..."></textarea>
-      <button type="button" class="main-btn" id="btnDz">Zapisz</button>
+      <h2 style="color:#ff66cc">Dziennik</h2>
+      <p class="small">Wszystko razem, od najnowszych.</p>
+      <textarea id="dziennik" placeholder="Wpis reczny..."></textarea>
+      <button type="button" class="main-btn" id="btnDz">Zapisz wpis</button>
+      <button type="button" class="main-btn gray" id="btnExpDz">Eksportuj dziennik TXT</button>
       <div id="dzHist" style="margin-top:10px;text-align:left;font-size:.85rem"></div>
-      <div class="history"><strong>Historia programu</strong><br><span id="hist"></span></div>
+      <span id="hist" style="display:none"></span>
     </div>
   </div>
 </div>
@@ -248,7 +255,8 @@ function updateOdrob(){
   $('odrobInfo').innerHTML=odrobPkt;if($('odrobInfo2'))$('odrobInfo2').innerHTML=odrobPkt;
 }
 function addPkt(p,powod){punkty+=p;save('r_pkt',punkty);updatePkt();addHist(powod,(p>0?'+':'')+p+' pkt')}
-function addHist(g,d){hist.unshift({t:now(),g:g,d:d});if(hist.length>30)hist.pop();saveJSON('r_hist',hist);showHist()}
+function addHist(g,d){hist.unshift({t:now(),g:g,d:d,ts:Date.now()});if(hist.length>40)hist.pop();saveJSON('r_hist',hist);showHist();logWp((g||'')+' | '+(d||''))}
+function logWp(text){dziennik.unshift({t:text,d:now(),ts:Date.now()});if(dziennik.length>80)dziennik.pop();saveJSON('r_dz',dziennik);if($('dzHist'))showDziennik()}
 function showHist(){
   if(!hist.length){$('hist').innerHTML='<em>Brak</em>';return}
   var s='';for(var i=0;i<hist.length;i++)s+='<strong>'+hist[i].t+'</strong> — '+hist[i].g+' | '+hist[i].d+'<br>';
@@ -506,6 +514,26 @@ function zaliczOdrob(){
   addPkt(suma,'Odrabianie: '+opis.join('; '));
   for(var j=0;j<list.length;j++)list[j].checked=false;updateOdrob();
 }
+function zaliczOdrobWlasne(){
+  updateOdrob();
+  if(karaToday===todayStr()){alert('Dzien kary — brak odrabiania');return}
+  if(last&&String(last.gorna).indexOf('DZIEN KARNY')>=0&&losDate===todayStr()){alert('Dzien karny — brak odrabiania');return}
+  var ile=parseFloat(($('odrobIle')&&$('odrobIle').value)||'');
+  var opis=($('odrobOpis')&&$('odrobOpis').value||'').trim();
+  if(!opis){
+    addPkt(-3,'Odrabianie bez opisu');
+    alert('Brak opisu = -3. Odrabianie nadal mozliwe.');
+    return;
+  }
+  if(isNaN(ile)||ile<=0){alert('Podaj liczbe punktow');return}
+  if(odrobPkt+ile>2.001){alert('Limit +2 na dzien (zostalo '+(2-odrobPkt).toFixed(1)+')');return}
+  odrobPkt=+(odrobPkt+ile).toFixed(2);
+  save('r_odP',String(odrobPkt));save('r_odD',todayStr());
+  addPkt(ile,'Odrabianie wlasne: '+opis+' (+'+ile+')');
+  if($('odrobIle'))$('odrobIle').value='';
+  if($('odrobOpis'))$('odrobOpis').value='';
+  updateOdrob();
+}
 function showKaraHist(){
   var el=$('karaHist');if(!el)return;
   var s='',n=0;
@@ -522,6 +550,8 @@ function syncKaraSel(){
   var pkt=opt&&opt.getAttribute('data-pkt')?parseInt(opt.getAttribute('data-pkt'),10):0;
   if($('karaPkt'))$('karaPkt').value=pkt;
   if($('sumaKar'))$('sumaKar').innerHTML=pkt;
+  var box=$('karaInneBox');
+  if(box)box.style.display=(sel.value==='inne')?'block':'none';
 }
 function updateSumaKar(){
   var pkt=parseInt(($('karaPkt')&&$('karaPkt').value)||'0',10)||0;
@@ -566,8 +596,6 @@ function nalozKary(){
   saveJSON('r_karaX',{date:todayStr(),txt:txt,extra:extra,dop:dop,opis:opis,key:key});
   addPkt(-suma,'Kara: '+txt);
   pokazOstatniStroj();
-  dziennik.unshift({t:'KARA '+txt,d:now()});
-  if(dziennik.length>15)dziennik.pop();saveJSON('r_dz',dziennik);
   passa=0;lastViol=todayStr();karaToday=todayStr();
   save('r_passa','0');save('r_viol',lastViol);save('r_karaD',karaToday);updatePkt();
   if($('karaOpis'))$('karaOpis').value='';
@@ -583,18 +611,30 @@ function showStatus(){
   if($('czas2'))$('czas2').innerHTML=txt;
 }
 function zapiszDziennik(){
-  var t=$('dziennik').value.trim();if(!t)return;
-  dziennik.unshift({t:t,d:now()});if(dziennik.length>15)dziennik.pop();
-  saveJSON('r_dz',dziennik);$('dziennik').value='';showDziennik();
+  var txt=$('dziennik').value.trim();if(!txt)return;
+  logWp('WPIS: '+txt);$('dziennik').value='';
   if(lastViol!==todayStr()){passa++;save('r_passa',passa);updatePkt()}
 }
 function showDziennik(){
-  if(!dziennik.length){$('dzHist').innerHTML='<em>Brak</em>';return}
-  var s='';for(var i=0;i<dziennik.length;i++)s+='<div style="margin-bottom:8px"><strong>'+dziennik[i].d+'</strong><br>'+dziennik[i].t+'</div>';
+  var arr=(dziennik||[]).slice();
+  arr.sort(function(a,b){return (b.ts||0)-(a.ts||0)});
+  if(!arr.length){$('dzHist').innerHTML='<em>Brak</em>';return}
+  var s='';for(var i=0;i<arr.length;i++)s+='<div style="margin-bottom:8px"><strong>'+arr[i].d+'</strong><br>'+arr[i].t+'</div>';
   $('dzHist').innerHTML=s;
 }
+function eksportDziennik(){
+  var arr=(dziennik||[]).slice();
+  arr.sort(function(a,b){return (b.ts||0)-(a.ts||0)});
+  var c='=== DZIENNIK v3.9.17 ===\n'+now()+'\n\n';
+  if(!arr.length)c+='Brak.\n';
+  else for(var i=0;i<arr.length;i++)c+=(i+1)+'. '+arr[i].d+' | '+arr[i].t+'\n';
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([c],{type:'text/plain;charset=utf-8'}));
+  a.download='dziennik_'+todayStr().replace(/\s+/g,'_')+'.txt';
+  a.click();
+}
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.16 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.19 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -626,7 +666,7 @@ function bind(){
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
   $('btnCtrl').onclick=function(){if(last&&last.ctrlH)zamelduj(last.ctrlH,'hCtrl')};
   $('btnRozlicz').onclick=rozliczDzien;$('btnPodsum').onclick=podsumujDzien;$('btnKary').onclick=nalozKary;if($('karaSel'))$('karaSel').onchange=syncKaraSel;if($('karaPkt'))$('karaPkt').oninput=updateSumaKar;
-  $('btnOdrob').onclick=zaliczOdrob;$('btnDz').onclick=zapiszDziennik;
+  $('btnOdrob').onclick=zaliczOdrob;if($('btnOdrobWlasne'))$('btnOdrobWlasne').onclick=zaliczOdrobWlasne;$('btnDz').onclick=zapiszDziennik;if($('btnExpDz'))$('btnExpDz').onclick=eksportDziennik;
   document.addEventListener('change',function(e){if(e.target&&e.target.classList&&e.target.classList.contains('kara'))updateSumaKar()});
 }
 function init(){
@@ -645,7 +685,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.16</span>');
+    bootMsg('<span class="green">Gotowe v3.9.19</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
