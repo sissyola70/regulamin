@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.22</title>
+<title>Pani Regulamin v3.9.23</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -48,7 +48,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.22</h1>
+  <h1>Pani Regulamin v3.9.23</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">
     <button type="button" class="main-btn gray" id="askPal" style="margin:0">Proszę o papierosa</button>
@@ -411,19 +411,16 @@ function losujGorna(){
   return 'Romper';
 }
 function losujSpod(){return Math.random()<0.70?'MAJTKI':'BODY'}
+var KOLORY_ROWNE=['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ZOLTE','BLEKIT KROLEWSKI','CIELISTE','FIOLETOWE','ZIELONE BUTELKOWE','ROZOWE','CZERWONE','LIMONKA'];
 function kolorZima(){
   if(Math.random()<0.08)return 'TRANSPARENTNE';
-  return pick(['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ZOLTE','BLEKIT KROLEWSKI','CIELISTE','FIOLETOWE','ZIELONE BUTELKOWE',
-    'ROZOWE','ROZOWE','ROZOWE','CZERWONE','CZERWONE','CZERWONE','LIMONKA','LIMONKA','LIMONKA']);
+  return pick(KOLORY_ROWNE);
 }
 function kolorLato(){
-  var r=Math.random();
-  if(r<0.10)return 'TRANSPARENTNE';
-  if(r<0.45)return 'CZARNE';
-  return pick(['GRAFITOWE','GRANATOWE','CIELISTE','BORDOWE','FIOLETOWE',
-    'ROZOWE','ROZOWE','ROZOWE','CZERWONE','CZERWONE','CZERWONE','LIMONKA','LIMONKA','LIMONKA']);
+  if(Math.random()<0.10)return 'TRANSPARENTNE';
+  return pick(KOLORY_ROWNE);
 }
-function kolorJask(){return pick(['BIALE','ZOLTE','BLEKIT KROLEWSKI','FIOLETOWE','ZIELONE','ROZOWE','ROZOWE','CZERWONE','CZERWONE','LIMONKA','LIMONKA'])}
+function kolorJask(){return pick(KOLORY_ROWNE)}
 function losujRaj(temp){
   if(Math.random()<0.10)return '40 den — jaskrawe '+kolorJask();
   if(temp<10){
@@ -664,7 +661,7 @@ function eksportDziennik(){
   a.click();
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.22 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.23 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -715,7 +712,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.22</span>');
+    bootMsg('<span class="green">Gotowe v3.9.23</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
