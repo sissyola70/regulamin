@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.21</title>
+<title>Pani Regulamin v3.9.22</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -48,11 +48,11 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.21</h1>
+  <h1>Pani Regulamin v3.9.22</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">
     <button type="button" class="main-btn gray" id="askPal" style="margin:0">Proszę o papierosa</button>
-    <div class="small" id="palInfo">Papieros: losowa zgoda • 4 odmowy → 5. = TAK • co 30 min</div>
+    <div class="small" id="palInfo">Losowa zgoda • za wcześnie = −1</div>
   </div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
@@ -253,7 +253,7 @@ function updateAskInfo(){
   if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
   if($('askInfo'))$('askInfo').innerHTML='Pytania rajstopy: <strong>'+askCount+'/2</strong> • koszt -1';
   if(palDate!==todayStr()){palOdm=0;palDate=todayStr();lastPal=0;save('r_palO','0');save('r_palD',palDate);save('r_palT','0')}
-  if($('palInfo'))$('palInfo').innerHTML='Odmowy: <strong>'+palOdm+'/4</strong> • losowe TAK • 5. po 4x NIE = TAK • 30 min • za wcześnie = −1';
+  if($('palInfo'))$('palInfo').innerHTML='Losowa zgoda • za wcześnie = −1';
 }
 function updateOdrob(){
   if(odrobToday!==todayStr()){odrobPkt=0;odrobDone={};odrobToday=todayStr();save('r_odD',odrobToday);save('r_odP','0');saveJSON('r_odK',{})}
@@ -362,7 +362,6 @@ function pokazOstatniStroj(){
     if(kx.dop)html+=lin('dopisek',kx.dop,'orange');
     res.className='mandatory';
   }
-  html+='<div class="nag">ZWROT</div>'+lin('O:','zaczyna od Proszę Pani — inaczej Inne −1','orange');
   html+='</div>';
   res.innerHTML=html;
   var g=String(last.gorna||'');
@@ -505,18 +504,17 @@ function pytajPal(){
   lastPal=Date.now();save('r_palT',String(lastPal));
   palOdm=(parseInt(palOdm,10)||0);
   var tak=false,powod='';
-  if(palOdm>=4){tak=true;powod='5. pytanie po 4 odmowach'}
-  else if(Math.random()<0.20){tak=true;powod='wylosowane TAK'}
+  if(palOdm>=4){tak=true;powod='TAK'}
+  else if(Math.random()<0.20){tak=true;powod='TAK'}
   if(tak){
     palOdm=0;save('r_palO','0');
-    addHist('Papieros','ZGODA ('+powod+')');
-    if(res){res.innerHTML='<p class="green">PAPIEROS — TAK ('+powod+')</p>';res.className='ok'}
-    alert('TAK. Jeden papieros. ('+powod+')');
+    addHist('Papieros','ZGODA');
+    if(res){res.innerHTML='<p class="green">PAPIEROS — TAK</p>';res.className='ok'}
+    alert('TAK. Jeden papieros.');
   }else{
     palOdm++;save('r_palO',String(palOdm));
-    addHist('Papieros','ODMOWA '+palOdm+'/4');
-    if(res){res.innerHTML='<p class="red">PAPIEROS — NIE ('+palOdm+'/4)</p>';res.className='mandatory'}
-    alert('NIE. Odmowa '+palOdm+'/4. Po czterech NIE piate = TAK.');
+    if(res){res.innerHTML='<p class="red">PAPIEROS — NIE</p>';res.className='mandatory'}
+    alert('NIE');
   }
   updateAskInfo();
   setTimeout(pokazOstatniStroj,4000);
@@ -666,7 +664,7 @@ function eksportDziennik(){
   a.click();
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.21 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.22 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -717,7 +715,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.21</span>');
+    bootMsg('<span class="green">Gotowe v3.9.22</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
