@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.23</title>
+<title>Pani Regulamin v3.9.24</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -48,7 +48,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.23</h1>
+  <h1>Pani Regulamin v3.9.24</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">
     <button type="button" class="main-btn gray" id="askPal" style="margin:0">Proszę o papierosa</button>
@@ -78,6 +78,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <input type="number" id="temp" placeholder="Temp z serwera" step="0.1" inputmode="decimal" readonly>
       <button type="button" class="main-btn gray" id="btnNet">Odswiez czas i temperature</button>
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
+      <button type="button" class="main-btn gray" id="btnWyjazd">Dzien wyjazdowy</button>
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
       <button type="button" class="main-btn" id="askBtn" style="background:#9900cc">Blagaj o zgode</button>
     </div>
@@ -189,7 +190,7 @@ function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=clock(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal;
+var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
@@ -440,6 +441,16 @@ function startKarny(){
   addPkt(0,'Dzien karny / BODY / baletki biale / jaskrawe BIALE do 17 / kontrola '+fmt(ctrl));
   pokazOstatniStroj();updateDayGuards();showStatus();showMeldunki();
 }
+function dzienWyjazdowy(){
+  if(load('r_wyjD','')===todayStr()){alert('Dzis juz zaznaczony dzien wyjazdowy');return}
+  save('r_wyjD',todayStr());
+  kombNext=true;save('r_kombN','1');
+  addPkt(-5,'Dzien wyjazdowy — stroj z losowania nie obowiazuje');
+  last={gorna:'DZIEN WYJAZDOWY',spod:'nie obowiazuje',buty:'dowolne',det:'',godz:'-',stopki:true,komb:false,sezon:sezon,ctrlH:null,temp:srvTemp,t:now(),wyjazd:true};
+  saveJSON('r_last',last);
+  pokazOstatniStroj();showStatus();updatePkt();
+  alert('Dzien wyjazdowy. -5. Nastepne losowanie: kombinezon obowiazkowy.');
+}
 function losuj(){
   if(hour()>=17){alert('Po 17:00 nie wolno');return}
   if(losDate===todayStr()){alert('Dzis juz bylo losowanie. Raz i dosc.');return}
@@ -456,6 +467,7 @@ function losuj(){
   ask.disabled=blokada;
   var buty=losujButy(temp,blokada),ctrl=+(10.5+Math.random()*4).toFixed(2);
   komb=(sezon==='letnia')?(Math.random()<0.10):(Math.random()<0.40);
+  if(kombNext){komb=true;kombNext=false;save('r_kombN','');}
   if(gorna==='Body')pkt+=1;else if(gorna==='Body z dlugim rekawem')pkt+=1;else pkt+=2;
   if(spod==='BODY')pkt+=0.5;if(komb)pkt+=(sezon==='letnia'?2:1);
 
@@ -661,7 +673,7 @@ function eksportDziennik(){
   a.click();
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.23 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.24 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -687,7 +699,7 @@ function bind(){
   $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
   $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;if($('btnNet'))$('btnNet').onclick=function(){pobierzSerwer().then(updateDayGuards).catch(function(){})};$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;if($('askPal'))$('askPal').onclick=pytajPal;
+  $('btnLosuj').onclick=losuj;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('btnNet'))$('btnNet').onclick=function(){pobierzSerwer().then(updateDayGuards).catch(function(){})};$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;if($('askPal'))$('askPal').onclick=pytajPal;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
@@ -707,12 +719,12 @@ function init(){
     potwierdzone=(load('r_potw','')===todayStr());losDate=load('r_losd','');
     karaCount=loadJSON('r_karac',{});karaToday=load('r_karaD','');
     odrobToday=load('r_odD','');odrobPkt=parseFloat(load('r_odP','0'))||0;odrobDone=loadJSON('r_odK',{});
-    karnyLeft=parseInt(load('r_karnyL','0'),10)||0;blokada=false;
+    karnyLeft=parseInt(load('r_karnyL','0'),10)||0;blokada=false;kombNext=(load('r_kombN','')==='1');
     bind();setMode(tryb);pokazSezon();pobierzSerwer().then(function(){updateDayGuards();showStatus()}).catch(function(){updateDayGuards()});
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.23</span>');
+    bootMsg('<span class="green">Gotowe v3.9.24</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
