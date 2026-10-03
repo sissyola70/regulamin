@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.24</title>
+<title>Pani Regulamin v3.9.26</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -48,7 +48,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.24</h1>
+  <h1>Pani Regulamin v3.9.26</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">
     <button type="button" class="main-btn gray" id="askPal" style="margin:0">Proszę o papierosa</button>
@@ -65,12 +65,12 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
   </div>
 
   <div id="p-losowanie" class="panel active">
-    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">10 C+ lato • &lt;10 zima tylko body dlugie • od 10 C rajstopy 50/50</div></div>
+    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">10 C+ lato • &lt;10 zima tylko body dlugie • od 12 C cienkie 50/50 • zdjecie 14-17</div></div>
     <div class="row">
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
-    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 20<div id="pktInfo" class="small"></div></div>
+    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 24<div id="pktInfo" class="small"></div></div>
     <div class="box">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/2</div>
     <div class="box small" id="askInfo">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
@@ -190,7 +190,7 @@ function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=clock(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext;
+var CEL=24,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
@@ -275,14 +275,14 @@ function checkWeek(){
       if(punkty<0){karnyLeft=2;save('r_karnyL','2')}
       else if(punkty<CEL){karnyLeft=1;save('r_karnyL','1')}
     }
-    if(punkty>=0)punkty=0;
+    if(punkty>0)punkty=0;
     save('r_pkt',punkty);save('r_week',w);week=w;karaCount={};saveJSON('r_karac',karaCount);
   }
   updatePkt();
 }
 function ensureMeldunki(){
   if(meldunki.date!==todayStr()){
-    meldunki={date:todayStr(),h9:null,h12:null,h15:null,hCtrl:null,rozliczone:false,kara17:false,karaPotw:false,podsum:null};
+    meldunki={date:todayStr(),h9:null,h12:null,h15:null,hCtrl:null,rozliczone:false,kara17:false,karaPotw:false,podsum:null,karaNie:false,karaSkip:false};
     saveJSON('r_meld',meldunki);
   }
 }
@@ -292,6 +292,15 @@ function updateDayGuards(){
   $('btnLosuj').disabled=(h>=17||!srvOk||losDate===todayStr());
   if(h>=8.5&&losDate===todayStr()&&!potwierdzone&&!meldunki.karaPotw){
     meldunki.karaPotw=true;saveJSON('r_meld',meldunki);addPkt(-2,'Brak potwierdzenia do 8:30');msg='Brak potwierdzenia do 8:30 = -2';
+  }
+  var lastWin=15;
+  if(last&&last.ctrlH&&last.ctrlH>lastWin)lastWin=last.ctrlH;
+  var niekomplet=!potwierdzone||meldunki.h9!=='ok'||meldunki.h12!=='ok'||meldunki.h15!=='ok'||(last&&last.ctrlH&&meldunki.hCtrl!=='ok');
+  if(h>=lastWin+0.25&&niekomplet&&!meldunki.karaNie&&losDate===todayStr()){
+    meldunki.karaNie=true;saveJSON('r_meld',meldunki);addPkt(-3,'Niekompletny dzien meldunkow');msg=(msg?msg+' | ':'')+'Niekomplet = -3';
+  }
+  if(h>=17.25&&!meldunki.podsum&&!meldunki.karaSkip&&dzienZBledem()){
+    meldunki.karaSkip=true;saveJSON('r_meld',meldunki);addPkt(-1,'Pominiete podsumowanie przy bledzie');msg=(msg?msg+' | ':'')+'Pominiete podsumowanie = -1';
   }
   if(h>=17&&!meldunki.rozliczone&&!meldunki.kara17){
     meldunki.kara17=true;saveJSON('r_meld',meldunki);addPkt(-2,'Brak rozliczenia po 17');msg=(msg?msg+' | ':'')+'Po 17 bez rozliczenia = -2';
@@ -411,7 +420,7 @@ function losujGorna(){
   if(r<0.80)return 'Kostium gimnastyczny';
   return 'Romper';
 }
-function losujSpod(){return Math.random()<0.70?'MAJTKI':'BODY'}
+function losujSpod(){return Math.random()<0.50?'MAJTKI':'BODY'}
 var KOLORY_ROWNE=['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ZOLTE','BLEKIT KROLEWSKI','CIELISTE','FIOLETOWE','ZIELONE BUTELKOWE','ROZOWE','CZERWONE','LIMONKA'];
 function kolorZima(){
   if(Math.random()<0.08)return 'TRANSPARENTNE';
@@ -430,12 +439,13 @@ function losujRaj(temp){
     return '40-60 den — '+k;
   }
   var k=(temp<15)?kolorZima():kolorLato();
-  if(Math.random()<0.5)return '40-60 den — '+k;
+  if(temp<12||Math.random()<0.5)return '40-60 den — '+k;
   return '15-20 den — '+k;
 }
 function startKarny(){
   var ctrl=+(10.5+Math.random()*4).toFixed(2);
-  last={gorna:'DZIEN KARNY',spod:'BODY',buty:'baletki biale',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:false,sezon:sezon,ctrlH:ctrl,t:now()};
+  var kk=!!kombNext;if(kombNext){kombNext=false;save('r_kombN','');}
+  last={gorna:'DZIEN KARNY'+(kk?' + kombinezon':''),spod:'BODY',buty:'baletki biale',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:kk,sezon:sezon,ctrlH:ctrl,t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);potwierdzone=false;save('r_potw','');
   karnyLeft=Math.max(0,(parseInt(load('r_karnyL','0'),10)||0)-1);save('r_karnyL',String(karnyLeft));
   addPkt(0,'Dzien karny / BODY / baletki biale / jaskrawe BIALE do 17 / kontrola '+fmt(ctrl));
@@ -445,11 +455,12 @@ function dzienWyjazdowy(){
   if(load('r_wyjD','')===todayStr()){alert('Dzis juz zaznaczony dzien wyjazdowy');return}
   save('r_wyjD',todayStr());
   kombNext=true;save('r_kombN','1');
-  addPkt(-5,'Dzien wyjazdowy — stroj z losowania nie obowiazuje');
+  var po=losDate===todayStr();
+  addPkt(po?-7:-5,'Dzien wyjazdowy'+(po?' PO losowaniu -7':' -5'));
   last={gorna:'DZIEN WYJAZDOWY',spod:'nie obowiazuje',buty:'dowolne',det:'',godz:'-',stopki:true,komb:false,sezon:sezon,ctrlH:null,temp:srvTemp,t:now(),wyjazd:true};
   saveJSON('r_last',last);
   pokazOstatniStroj();showStatus();updatePkt();
-  alert('Dzien wyjazdowy. -5. Nastepne losowanie: kombinezon obowiazkowy.');
+  alert('Dzien wyjazdowy. '+(po?'-7 (po losowaniu)':'-5')+'. Nastepne losowanie: kombinezon obowiazkowy.');
 }
 function losuj(){
   if(hour()>=17){alert('Po 17:00 nie wolno');return}
@@ -466,15 +477,15 @@ function losuj(){
   blokada=(gorna==='Kostium gimnastyczny'||gorna==='Romper');
   ask.disabled=blokada;
   var buty=losujButy(temp,blokada),ctrl=+(10.5+Math.random()*4).toFixed(2);
-  komb=(sezon==='letnia')?(Math.random()<0.10):(Math.random()<0.40);
-  if(kombNext){komb=true;kombNext=false;save('r_kombN','');}
+  komb=(sezon==='letnia')?(Math.random()<0.15):(Math.random()<0.50);
+  if(kombNext){if(!komb)addPkt(-5,'Brak kombinezonu mimo flagi wyjazdu');komb=true;kombNext=false;save('r_kombN','');}
   if(gorna==='Body')pkt+=1;else if(gorna==='Body z dlugim rekawem')pkt+=1;else pkt+=2;
   if(spod==='BODY')pkt+=0.5;if(komb)pkt+=(sezon==='letnia'?2:1);
 
   if(sezon==='letnia'&&temp>21&&!blokada){
-    if(Math.random()<0.25){det=losujRaj(temp);godz=fmt(12+Math.random()*5);pkt+=1}
+    if(Math.random()<0.25){det=losujRaj(temp);godz=fmt(14+Math.random()*3);pkt+=1}
     else stopki=true;
-  }else{det=losujRaj(temp);godz=blokada?'17:00':fmt(12+Math.random()*5);pkt+=1}
+  }else{det=losujRaj(temp);godz=blokada?'17:00':fmt(14+Math.random()*3);pkt+=1}
 
   var kolejny=(losDate===todayStr());
   if(!kolejny)addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':'')+' / '+spod+' / '+buty+(det?(' / '+det+' do '+godz):' / stopki')+' / kontrola '+fmt(ctrl));
@@ -497,8 +508,8 @@ function pytaj(){
   if(Date.now()-lastAsk<3600000){res.innerHTML='<p class="red">Raz na godzine</p>';res.className='mandatory';return}
   if(hour()<10){res.innerHTML='<p class="red">Przed 10:00 nie</p>';res.className='mandatory';return}
   lastAsk=Date.now();save('r_ask',lastAsk);askCount++;save('r_askc',String(askCount));updateAskInfo();
-  addPkt(-1,'Pytanie o zgode');passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
-  if(Math.random()<0.15){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
+  addPkt(askCount>=2?-2:-1,'Pytanie o zgode'+(askCount>=2?' (drugie -2)':''));passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
+  if(Math.random()<0.10){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
   else{res.innerHTML='<p class="red">NIE</p>';res.className='mandatory'}
   setTimeout(pokazOstatniStroj,4000);
 }
@@ -611,7 +622,7 @@ function nalozKary(){
   var kor=$('karaKorekta')&&$('karaKorekta').checked;
   if(key==='inne'&&!opis){alert('Inne wymaga opisu ZA CO');return}
   var extra='';
-  if(key!=='inne'&&Math.random()<0.60){
+  if(key!=='inne'&&(key==='niezgodny'||key==='zastepstwo_dol'||Math.random()<0.60)){
     var g=last&&String(last.gorna)||'';
     var spod=last&&String(last.spod)||'';
     var tmp=(!isNaN(srvTemp)?srvTemp:(last&&last.temp));
@@ -673,7 +684,7 @@ function eksportDziennik(){
   a.click();
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.24 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.26 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -724,7 +735,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.24</span>');
+    bootMsg('<span class="green">Gotowe v3.9.26</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
