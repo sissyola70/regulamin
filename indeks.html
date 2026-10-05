@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.28</title>
+<title>Pani Regulamin v3.9.30</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
@@ -48,7 +48,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.28</h1>
+  <h1>Pani Regulamin v3.9.30</h1>
   <p class="sub">1 los / dzien • czas i temp z serwera</p>
   <div id="baner" class="box">
     <button type="button" class="main-btn gray" id="askPal" style="margin:0">Proszę o papierosa</button>
@@ -76,11 +76,11 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
     <div id="areaLos">
       <div class="box small" id="netInfo">Serwer: pobieranie...</div>
       <input type="number" id="temp" placeholder="Temp z serwera" step="0.1" inputmode="decimal" readonly>
-      <button type="button" class="main-btn gray" id="askKomb">Prosba o zdjecie kombinezonu</button>
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
       <button type="button" class="main-btn gray" id="btnWyjazd">Dzien wyjazdowy</button>
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
-      <button type="button" class="main-btn" id="askBtn" style="background:#9900cc">Blagaj o zgode</button>
+      <button type="button" class="main-btn" id="askBtn" style="background:#9900cc">Prosba o zdjecie rajstop</button>
+      <button type="button" class="main-btn gray" id="askKomb">Prosba o zdjecie kombinezonu</button>
     </div>
     <div id="areaTrack" style="display:none">
       <p class="small">Odhacz wszystko. Brak = -2</p>
@@ -252,7 +252,7 @@ function updatePkt(){
 }
 function updateAskInfo(){
   if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
-  if($('askInfo'))$('askInfo').innerHTML='Pytania rajstopy: <strong>'+askCount+'/2</strong> • koszt -1';
+  if($('askInfo'))$('askInfo').innerHTML='Pytania rajstopy: <strong>'+askCount+'/3</strong> • -1 • za wczesnie -1';
   if(palDate!==todayStr()){palOdm=0;palDate=todayStr();lastPal=0;save('r_palO','0');save('r_palD',palDate);save('r_palT','0')}
   if($('palInfo'))$('palInfo').innerHTML='Losowa zgoda • za wcześnie = −1';
 }
@@ -506,12 +506,11 @@ function pytajKomb(){
   if(!last||!last.komb){if(res){res.innerHTML='<p class="red">Brak kombinezonu. Nie ma o co prosic.</p>';res.className='no'}return}
   if(hour()<13){alert('Od 13:00');return}
   if(kombAskDate!==todayStr()){kombAsk=0;kombAskDate=todayStr();save('r_kac','0');save('r_kad',kombAskDate)}
-  if(kombAsk>=2){alert('Limit 2 prosb');return}
-  if(lastKombAsk&&Date.now()-lastKombAsk<3600000){alert('Raz na godzine');return}
+  if(kombAsk>=3){alert('Limit 3 prosb');return}
+  if(lastKombAsk&&Date.now()-lastKombAsk<3600000){addPkt(-1,'Kombinezon za wczesnie');alert('Za wczesnie = -1. Nie liczy sie jako pytanie.');return}
   lastKombAsk=Date.now();save('r_kat',String(lastKombAsk));
   kombAsk++;save('r_kac',String(kombAsk));
-  var koszt=kombAsk>=2?-2:-1;
-  addPkt(koszt,'Prosba o kombinezon'+(kombAsk>=2?' (druga -2)':''));
+  addPkt(-1,'Prosba o kombinezon');
   if(Math.random()<0.5){
     last.komb=false;
     last.gorna=String(last.gorna||'').replace(' + kombinezon','');
@@ -529,11 +528,11 @@ function pytaj(){
   var res=$('result');
   if(blokada){res.innerHTML='<p class="red">Kostium/romper/dzien karny — brak zgody</p>';res.className='mandatory';return}
   if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
-  if(askCount>=2){res.innerHTML='<p class="red">Limit 2 pytan</p>';res.className='mandatory';return}
-  if(Date.now()-lastAsk<3600000){res.innerHTML='<p class="red">Raz na godzine</p>';res.className='mandatory';return}
+  if(askCount>=3){res.innerHTML='<p class="red">Limit 3 pytan</p>';res.className='mandatory';return}
+  if(lastAsk&&Date.now()-lastAsk<3600000){addPkt(-1,'Rajstopy za wczesnie');res.innerHTML='<p class="red">Za wczesnie = -1. Nie liczy sie.</p>';res.className='mandatory';return}
   if(hour()<10){res.innerHTML='<p class="red">Przed 10:00 nie</p>';res.className='mandatory';return}
   lastAsk=Date.now();save('r_ask',lastAsk);askCount++;save('r_askc',String(askCount));updateAskInfo();
-  addPkt(askCount>=2?-2:-1,'Pytanie o zgode'+(askCount>=2?' (drugie -2)':''));passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
+  addPkt(-1,'Pytanie o zgode');passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
   if(Math.random()<0.10){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
   else{res.innerHTML='<p class="red">NIE</p>';res.className='mandatory'}
   setTimeout(pokazOstatniStroj,4000);
@@ -709,7 +708,7 @@ function eksportDziennik(){
   a.click();
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.28 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.30 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -760,7 +759,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.28</span>');
+    bootMsg('<span class="green">Gotowe v3.9.30</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
