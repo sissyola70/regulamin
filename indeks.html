@@ -11,7 +11,7 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#07000f;color:#f
 h1{color:#fff;text-align:center;font-size:1.55rem;margin:4px 0 2px;letter-spacing:.02em;text-shadow:0 0 16px #ff2bd6}
 .sub{text-align:center;color:#d9a3ff;font-size:.8rem;margin-bottom:12px}
 .tabs{display:flex;gap:2px;justify-content:space-between;margin:14px 0 4px;background:#160022;border:1px solid #ff2bd6;border-radius:18px;padding:8px;box-shadow:0 0 18px rgba(255,43,214,.3)}
-.tab{flex:1;padding:8px 2px;border:none;background:transparent;color:#e8b8ff;border-radius:12px;font-size:.68rem;touch-action:manipulation;line-height:1.15}
+.tab{flex:1;padding:12px 4px;border:1px solid #ff2bd6;background:transparent;color:#ffe6ff;border-radius:12px;font-size:.78rem;font-weight:700;touch-action:manipulation}
 .tab.active{background:#ff2bd6;color:#fff;box-shadow:0 0 16px #ff2bd6}
 .panel{display:none}.panel.active{display:block}
 .box{background:#16001f;border:1px solid #ff2bd6;border-radius:16px;padding:12px;margin-bottom:10px;text-align:center;box-shadow:0 0 12px rgba(255,43,214,.18)}
@@ -25,11 +25,12 @@ h1{color:#fff;text-align:center;font-size:1.55rem;margin:4px 0 2px;letter-spacin
 input[type=number],textarea,select{width:100%;padding:14px;font-size:16px;text-align:center;background:#1a0028;border:1px solid #ff2bd6;color:#ffe6ff;border-radius:12px;margin-bottom:8px}
 textarea{text-align:left;min-height:70px}
 #result{margin-top:12px;padding:0;border-radius:16px;min-height:90px;line-height:1.35;background:#14001c;border:1px solid #ff2bd6;overflow:hidden;text-align:left;box-shadow:0 0 16px rgba(255,43,214,.2)}
-.karta .lin{display:flex;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid #3a0048;font-size:.9rem}
+.karta .lin{display:flex;gap:10px;align-items:center;padding:12px;border-bottom:1px solid #3a0048;font-size:.95rem}
+.mini{padding:8px 12px;color:#c9a6ff;font-size:.78rem}
 .karta .ico{width:28px;text-align:center;color:#ff4de0;font-size:1.05rem}
 .karta .nag{display:flex;justify-content:space-between;align-items:center}
 .karta .dt{color:#c9a6ff;font-size:.75rem;letter-spacing:0}
-.pktrow{display:flex;justify-content:space-between;align-items:center;margin:8px;padding:10px 12px;border:1px solid #ff2bd6;border-radius:12px;color:#ff8ae6}
+.pktrow{display:flex;justify-content:space-between;align-items:center;padding:12px;color:#ff8ae6}
 .pktrow span{color:#ff4de0;font-size:1.35rem;font-weight:800}
 .karta .lin:last-child{border-bottom:none}
 .karta .lbl{flex:0 0 84px;color:#ff8ae6;font-size:.78rem;text-transform:lowercase}
@@ -54,7 +55,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 3.9.35</p>
+  <p class="sub">Wersja 3.9.36</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -85,7 +86,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
       <button type="button" class="main-btn gray" id="btnWyjazd">Dzien wyjazdowy</button>
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
-      <button type="button" class="main-btn" id="askBtn" style="background:#9900cc">Prośba o zdjęcie rajstop</button>
+      <button type="button" class="main-btn" id="askBtn">Prośba o zdjęcie rajstop</button>
       <button type="button" class="main-btn gray" id="askKomb">Prośba o zdjęcie kombinezonu</button>
     </div>
     <div id="areaTrack" style="display:none">
@@ -367,7 +368,7 @@ function pokazOstatniStroj(){
     if(last.stopki){html+=lin('🧦','nogi','nieobowiazkowe • stopki','green');res.className='no'}
     else{html+=lin('🧦','rajstopy',last.det||'—','red');html+=lin('📷','zdjecie',last.godz||'—','red');res.className='mandatory'}
     html+=lin('👟','buty',last.buty);
-    html+=lin('📷','kontrola',last.ctrlH?fmt(last.ctrlH):'—','orange');
+    html+='<div class="mini">kontrola '+(last.ctrlH?fmt(last.ctrlH):'—')+'</div>';
   }
   var kx=karaDnia();
   if(kx){
@@ -766,7 +767,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.35</span>');
+    bootMsg('<span class="green">Gotowe v3.9.36</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
