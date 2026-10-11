@@ -3,66 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.30</title>
+<title>Pani Regulamin v3.9.34</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#1a0033;color:#ffccff;padding:12px;min-height:100vh;-webkit-text-size-adjust:100%}
-.container{max-width:500px;margin:0 auto;background:#111;border:2px solid #ff00aa;border-radius:12px;padding:14px}
-h1{color:#ff66cc;text-align:center;font-size:1.15rem;margin-bottom:6px}
-.sub{text-align:center;color:#cc99ff;font-size:.85rem;margin-bottom:12px}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
-.tab{padding:10px;border:1px solid #ff00aa;background:#220022;color:#ffccff;border-radius:8px;font-size:.82rem;touch-action:manipulation}
-.tab.active{background:#ff00aa;color:#fff}
+body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#07000f;color:#ffe6ff;padding:12px;min-height:100vh}
+.container{max-width:460px;margin:0 auto;background:#100018;border:1px solid #ff2bd6;border-radius:22px;padding:16px;box-shadow:0 0 28px rgba(255,43,214,.35),inset 0 0 40px rgba(255,0,170,.08)}
+h1{color:#fff;text-align:center;font-size:1.55rem;margin:4px 0 2px;letter-spacing:.02em;text-shadow:0 0 16px #ff2bd6}
+.sub{text-align:center;color:#d9a3ff;font-size:.8rem;margin-bottom:12px}
+.tabs{display:flex;gap:2px;justify-content:space-between;margin:14px 0 4px;background:#160022;border:1px solid #ff2bd6;border-radius:18px;padding:8px;box-shadow:0 0 18px rgba(255,43,214,.3)}
+.tab{flex:1;padding:8px 2px;border:none;background:transparent;color:#e8b8ff;border-radius:12px;font-size:.68rem;touch-action:manipulation;line-height:1.15}
+.tab.active{background:#ff2bd6;color:#fff;box-shadow:0 0 16px #ff2bd6}
 .panel{display:none}.panel.active{display:block}
-.box{background:#1a1a1a;border:1px solid #ff00aa;border-radius:8px;padding:10px;margin-bottom:10px;text-align:center}
-.points{font-size:1.4rem;color:#ff66cc;font-weight:bold}
+.box{background:#16001f;border:1px solid #ff2bd6;border-radius:16px;padding:12px;margin-bottom:10px;text-align:center;box-shadow:0 0 12px rgba(255,43,214,.18)}
+.points{font-size:1.7rem;color:#ff4de0;font-weight:800;text-shadow:0 0 12px #ff2bd6}
 .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px}
-.btn{padding:12px 14px;border:1px solid #ff00aa;background:#220022;color:#ffccff;border-radius:8px;font-weight:bold;touch-action:manipulation}
-.btn.active{background:#ff00aa;color:#fff}
-.main-btn{width:100%;padding:14px;background:#ff00aa;color:#fff;border:none;border-radius:8px;font-size:1.05rem;font-weight:bold;margin:6px 0;touch-action:manipulation}
-.main-btn.green{background:#228822}.main-btn.red{background:#aa0000}.main-btn.gray{background:#444}
-.main-btn:disabled{background:#555;opacity:.7}
-input[type=number],textarea{width:100%;padding:14px;font-size:16px;text-align:center;background:#220022;border:1px solid #ff00aa;color:#ffccff;border-radius:8px;margin-bottom:8px}
+.btn{padding:12px 14px;border:1px solid #ff2bd6;background:#220028;color:#ffd6ff;border-radius:12px;font-weight:bold;touch-action:manipulation}
+.btn.active{background:#ff2bd6;color:#fff;box-shadow:0 0 12px #ff2bd6}
+.main-btn{width:100%;padding:15px 16px;background:transparent;color:#ff4de0;border:1.5px solid #ff2bd6;border-radius:22px;font-size:1rem;font-weight:800;margin:8px 0;touch-action:manipulation;box-shadow:0 0 18px rgba(255,43,214,.55);letter-spacing:.02em}
+.main-btn.green{background:#146614;color:#fff}.main-btn.red{background:#b00040;color:#fff;border-color:#ff6699}.main-btn.gray{background:transparent}
+.main-btn:disabled{background:#333;opacity:.6;box-shadow:none}
+input[type=number],textarea,select{width:100%;padding:14px;font-size:16px;text-align:center;background:#1a0028;border:1px solid #ff2bd6;color:#ffe6ff;border-radius:12px;margin-bottom:8px}
 textarea{text-align:left;min-height:70px}
-#result{margin-top:12px;padding:0;border-radius:8px;min-height:90px;line-height:1.35;background:#1a1a1a;border:1px solid #777;overflow:hidden;text-align:left}
-.karta .lin{display:flex;gap:8px;padding:8px 10px;border-bottom:1px solid #440044;font-size:.92rem}
+#result{margin-top:12px;padding:0;border-radius:16px;min-height:90px;line-height:1.35;background:#14001c;border:1px solid #ff2bd6;overflow:hidden;text-align:left;box-shadow:0 0 16px rgba(255,43,214,.2)}
+.karta .lin{display:flex;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid #3a0048;font-size:.9rem}
+.karta .ico{width:28px;text-align:center;color:#ff4de0;font-size:1.05rem}
+.karta .nag{display:flex;justify-content:space-between;align-items:center}
+.karta .dt{color:#c9a6ff;font-size:.75rem;letter-spacing:0}
+.pktrow{display:flex;justify-content:space-between;align-items:center;margin:8px;padding:10px 12px;border:1px solid #ff2bd6;border-radius:12px;color:#ff8ae6}
+.pktrow span{color:#ff4de0;font-size:1.35rem;font-weight:800}
 .karta .lin:last-child{border-bottom:none}
-.karta .lbl{flex:0 0 92px;color:#cc99ff;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
-.karta .val{flex:1;font-weight:bold;color:#ffccff}
-.karta .val.red{color:#ff6666}.karta .val.orange{color:#ffaa44}.karta .val.green{color:#66ff66}
-.karta .nag{background:#330022;padding:8px 10px;font-size:.8rem;color:#ff66cc;letter-spacing:.06em}
-.mandatory{background:#3a0000;border:2px solid #ff3333}
-.ok{background:#003300;border:2px solid #00aa00}
-.no{background:#1a1a1a;border:2px solid #777}
-.red{color:#ff4444;font-weight:bold}.green{color:#66ff66;font-weight:bold}.orange{color:#ffaa44;font-weight:bold}
-.small{color:#ff99cc;font-size:.88rem;font-style:italic}
-h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
+.karta .lbl{flex:0 0 84px;color:#ff8ae6;font-size:.78rem;text-transform:lowercase}
+.karta .val{flex:1;font-weight:700;color:#fff;text-align:right}
+.karta .val.red{color:#ff6b8a}.karta .val.orange{color:#ffb347}.karta .val.green{color:#7dffb3}
+.karta .nag{background:#22002c;padding:10px 12px;font-size:.82rem;color:#ff4de0;letter-spacing:.08em;border-bottom:1px solid #ff2bd6}
+.mandatory{background:#2a0018;border:2px solid #ff3366}
+.ok{background:#001a10;border:2px solid #22cc77}
+.no{background:#14001c;border:2px solid #666}
+.red{color:#ff4466;font-weight:bold}.green{color:#66ff99;font-weight:bold}.orange{color:#ffaa44;font-weight:bold}
+.small{color:#ffb3e6;font-size:.85rem;font-style:normal}
+h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
 .check{display:flex;align-items:flex-start;gap:10px;margin:8px 0;text-align:left;font-size:.92rem}
 .check input{width:22px;height:22px;flex-shrink:0;margin-top:2px}
-.history{margin-top:12px;padding:10px;background:#1a1a1a;border:1px dashed #ff00aa;border-radius:8px;font-size:.82rem;text-align:left;max-height:150px;overflow-y:auto}
-.kara-suma{text-align:center;margin:10px 0;color:#ff6666}
-.meldunek{background:#1a1a1a;border:1px solid #ff00aa;border-radius:8px;padding:10px;margin-bottom:10px;text-align:left}
-.alert{background:#4a0022;border:1px solid #ff4466;border-radius:8px;padding:10px;margin-bottom:10px;text-align:center;display:none}
-#baner{font-style:italic}
+.history{margin-top:12px;padding:10px;background:#14001c;border:1px dashed #ff2bd6;border-radius:12px;font-size:.82rem;text-align:left;max-height:180px;overflow-y:auto}
+.kara-suma{text-align:center;margin:10px 0;color:#ff6b8a}
+.meldunek{background:#16001f;border:1px solid #ff2bd6;border-radius:16px;padding:12px;margin-bottom:10px;text-align:left;box-shadow:0 0 12px rgba(255,43,214,.2)}
+.alert{background:#3a0028;border:1px solid #ff4466;border-radius:12px;padding:10px;margin-bottom:10px;text-align:center;display:none}
+#baner{font-style:normal}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>Pani Regulamin v3.9.30</h1>
-  <p class="sub">1 los / dzien • czas i temp z serwera</p>
+  <h1>Pani Regulamin</h1>
+  <p class="sub">Wersja 3.9.34</p>
   <div id="baner" class="box">
-    <button type="button" class="main-btn gray" id="askPal" style="margin:0">Proszę o papierosa</button>
+    <button type="button" class="main-btn gray" id="askPal" style="margin:0">Prośba o papierosa</button>
     <div class="small" id="palInfo">Losowa zgoda • za wcześnie = −1</div>
   </div>
   <div id="boot" class="box">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
-  <div class="tabs">
-    <button type="button" class="tab active" id="t1">Losowanie</button>
-    <button type="button" class="tab" id="t2">Kontrola</button>
-    <button type="button" class="tab" id="t3">Kary</button>
-    <button type="button" class="tab" id="t4">Odrabianie</button>
-    <button type="button" class="tab" id="t5">Dziennik</button>
-  </div>
 
   <div id="p-losowanie" class="panel active">
     <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">10 C+ lato • &lt;10 zima tylko body dlugie • od 12 C cienkie 50/50 • zdjecie 14-17</div></div>
@@ -70,7 +68,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
-    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 24<div id="pktInfo" class="small"></div></div>
+    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 22<div id="pktInfo" class="small"></div></div>
     <div class="box">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/2</div>
     <div class="box small" id="askInfo">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
@@ -79,8 +77,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
       <button type="button" class="main-btn gray" id="btnWyjazd">Dzien wyjazdowy</button>
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
-      <button type="button" class="main-btn" id="askBtn" style="background:#9900cc">Prosba o zdjecie rajstop</button>
-      <button type="button" class="main-btn gray" id="askKomb">Prosba o zdjecie kombinezonu</button>
+      <button type="button" class="main-btn" id="askBtn" style="background:#9900cc">Prośba o zdjęcie rajstop</button>
+      <button type="button" class="main-btn gray" id="askKomb">Prośba o zdjęcie kombinezonu</button>
     </div>
     <div id="areaTrack" style="display:none">
       <p class="small">Odhacz wszystko. Brak = -2</p>
@@ -172,6 +170,14 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4444}
       <span id="hist" style="display:none"></span>
     </div>
   </div>
+
+  <div class="tabs">
+    <button type="button" class="tab active" id="t1">Losowanie</button>
+    <button type="button" class="tab" id="t2">Kontrola</button>
+    <button type="button" class="tab" id="t3">Kary</button>
+    <button type="button" class="tab" id="t4">Odrabianie</button>
+    <button type="button" class="tab" id="t5">Dziennik</button>
+  </div>
 </div>
 <script>
 (function(){
@@ -190,7 +196,7 @@ function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=clock(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=24,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext,kombAsk,kombAskDate,lastKombAsk;
+var CEL=22,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext,kombAsk,kombAskDate,lastKombAsk;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
@@ -346,32 +352,32 @@ function karaDnia(){
   if(!k||k.date!==todayStr())return null;
   return k;
 }
-function lin(lbl,val,cls){return '<div class="lin"><div class="lbl">'+lbl+'</div><div class="val'+(cls?(' '+cls):'')+'">'+(val||'—')+'</div></div>'}
+function lin(ico,lbl,val,cls){return '<div class="lin"><div class="ico">'+ico+'</div><div class="lbl">'+lbl+'</div><div class="val'+(cls?(' '+cls):'')+'">'+(val||'—')+'</div></div>'}
 function pokazOstatniStroj(){
   var res=$('result'),ask=$('askBtn');
   if(!res)return;
   var html='<div class="karta">';
-  if(!last){html+='<div class="nag">DZIS</div>'+lin('stroj','brak losowania','orange')}
+  if(!last){html+='<div class="nag"><span>📅 Dzień</span><span class="dt">'+(now().split(',')[0]||'')+'</span></div>'+lin('•','stroj','brak losowania','orange')}
   else{
-    html+='<div class="nag">STROJ DO 17:00</div>';
-    html+=lin('gora',String(last.gorna).toUpperCase());
-    html+=lin('spod',last.spod);
-    html+=lin('buty',last.buty);
-    html+=lin('warstwa',last.komb?'KOMBINEZON — obowiazkowy':'brak extra');
-    if(last.stopki){html+=lin('nogi','rajstopy nieobowiazkowe • stopki TAK','green');res.className='no'}
-    else{html+=lin('rajstopy',last.det||'—','red');html+=lin('zdjecie',last.godz||'—','red');res.className='mandatory'}
-    html+=lin('kontrola',last.ctrlH?fmt(last.ctrlH):'—','orange');
-    html+=lin('czas',last.t,'');
+    html+='<div class="nag"><span>📅 Dzień</span><span class="dt">'+(last.t||'').split(',')[0]+'</span></div>';
+    html+=lin('👕','gora',String(last.gorna).toUpperCase());
+    html+=lin('👗','spod',last.spod);
+    html+=lin('📚','warstwa',last.komb?'KOMBINEZON':'brak');
+    if(last.stopki){html+=lin('🧦','nogi','nieobowiazkowe • stopki','green');res.className='no'}
+    else{html+=lin('🧦','rajstopy',last.det||'—','red');html+=lin('📷','zdjecie',last.godz||'—','red');res.className='mandatory'}
+    html+=lin('👟','buty',last.buty);
+    html+=lin('📷','kontrola',last.ctrlH?fmt(last.ctrlH):'—','orange');
   }
   var kx=karaDnia();
   if(kx){
     html+='<div class="nag">KARA DNIA</div>';
-    html+=lin('kara',kx.txt,'red');
-    if(kx.opis)html+=lin('za co',kx.opis,'orange');
-    if(kx.extra)html+=lin('dodatek',kx.extra,'orange');
-    if(kx.dop)html+=lin('dopisek',kx.dop,'orange');
+    html+=lin('⚠','kara',kx.txt,'red');
+    if(kx.opis)html+=lin('•','za co',kx.opis,'orange');
+    if(kx.extra)html+=lin('•','dodatek',kx.extra,'orange');
+    if(kx.dop)html+=lin('•','dopisek',kx.dop,'orange');
     res.className='mandatory';
   }
+  html+='<div class="pktrow">🏆 Punkty <span>'+(punkty||0).toFixed(1)+' / '+CEL+'</span></div>';
   html+='</div>';
   res.innerHTML=html;
   var g=String(last.gorna||'');
@@ -445,10 +451,10 @@ function losujRaj(temp){
 function startKarny(){
   var ctrl=+(10.5+Math.random()*4).toFixed(2);
   if(kombNext){kombNext=false;save('r_kombN','');}
-  last={gorna:'DZIEN KARNY — body dlugie + kombinezon',spod:'BODY',buty:'baletki biale',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:true,sezon:sezon,ctrlH:ctrl,t:now()};
+  last={gorna:'DZIEN KARNY — kostium bialy + kombinezon',spod:'BODY STRING',buty:'baletki biale',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:true,sezon:sezon,ctrlH:ctrl,t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);potwierdzone=false;save('r_potw','');
   karnyLeft=Math.max(0,(parseInt(load('r_karnyL','0'),10)||0)-1);save('r_karnyL',String(karnyLeft));
-  addPkt(0,'Dzien karny / body dlugie + kombinezon / BODY zamiast majtek / baletki biale / jaskrawe BIALE do 17 / kontrola '+fmt(ctrl));
+  addPkt(0,'Dzien karny / kostium bialy + kombinezon / BODY STRING / baletki biale / jaskrawe BIALE do 17 / kontrola '+fmt(ctrl));
   pokazOstatniStroj();updateDayGuards();showStatus();showMeldunki();
 }
 function dzienWyjazdowy(){
@@ -708,7 +714,7 @@ function eksportDziennik(){
   a.click();
 }
 function pobierz(){
-  var c='=== PANI REGULAMIN v3.9.30 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
+  var c='=== PANI REGULAMIN v3.9.33 ===\nEksport: '+now()+'\nPunkty: '+punkty.toFixed(1)+' / '+CEL+'\nPassa: '+passa+'\nOdrabianie dzis: '+odrobPkt+'/2\nSezon: '+(sezon||'-')+'\n\n';
   c+='--- UBIOR ---\n';
   if(!last)c+='Brak.\n\n';
   else{
@@ -759,7 +765,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.30</span>');
+    bootMsg('<span class="green">Gotowe v3.9.34</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
