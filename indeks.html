@@ -55,7 +55,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 3.9.36</p>
+  <p class="sub">Wersja 3.9.37</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -429,24 +429,20 @@ function losujGorna(){
   return 'Romper';
 }
 function losujSpod(){return Math.random()<0.50?'MAJTKI':'BODY'}
-var KOLORY_ROWNE=['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','BIALE','ZOLTE','BLEKIT KROLEWSKI','CIELISTE','FIOLETOWE','ZIELONE BUTELKOWE','ROZOWE','CZERWONE','LIMONKA'];
-function kolorZima(){
-  if(Math.random()<0.08)return 'TRANSPARENTNE';
-  return pick(KOLORY_ROWNE);
+var JASK=['BIALE','ROZOWE','ZOLTE','LIMONKA','CZERWONE','FIOLETOWE','BLEKIT KROLEWSKI'];
+var CIEMNE=['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','CIELISTE','ZIELONE BUTELKOWE'];
+function kolorRaj(temp){
+  var r=Math.random(),tr=(temp<15)?0.08:0.10;
+  if(r<0.25)return 'jaskrawe '+pick(JASK);
+  if(r<0.25+tr)return 'TRANSPARENTNE';
+  return pick(CIEMNE);
 }
-function kolorLato(){
-  if(Math.random()<0.10)return 'TRANSPARENTNE';
-  return pick(KOLORY_ROWNE);
-}
-function kolorJask(){return pick(KOLORY_ROWNE)}
 function losujRaj(temp){
-  if(Math.random()<0.10)return '40 den — jaskrawe '+kolorJask();
+  var k=kolorRaj(temp);
   if(temp<10){
-    var k=kolorZima();
     if(temp<=-2)return '60+ den — '+k;
     return '40-60 den — '+k;
   }
-  var k=(temp<15)?kolorZima():kolorLato();
   if(temp<12||Math.random()<0.5)return '40-60 den — '+k;
   return '15-20 den — '+k;
 }
@@ -767,7 +763,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.36</span>');
+    bootMsg('<span class="green">Gotowe v3.9.37</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
