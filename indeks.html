@@ -54,26 +54,34 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 3.9.34</p>
+  <p class="sub">Wersja 3.9.35</p>
+  <div class="tabs">
+    <button type="button" class="tab active" id="t1">Losowanie</button>
+    <button type="button" class="tab" id="t2">Kontrola</button>
+    <button type="button" class="tab" id="t3">Kary</button>
+    <button type="button" class="tab" id="t4">Odrabianie</button>
+    <button type="button" class="tab" id="t5">Dziennik</button>
+  </div>
+
   <div id="baner" class="box">
     <button type="button" class="main-btn gray" id="askPal" style="margin:0">Prośba o papierosa</button>
     <div class="small" id="palInfo">Losowa zgoda • za wcześnie = −1</div>
   </div>
-  <div id="boot" class="box">Ladowanie...</div>
+  <div id="boot" class="box" style="display:none">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
 
   <div id="p-losowanie" class="panel active">
-    <div class="box">Sezon: <strong id="sezonTxt">auto</strong><div class="small">10 C+ lato • &lt;10 zima tylko body dlugie • od 12 C cienkie 50/50 • zdjecie 14-17</div></div>
+    <div class="box" style="display:none">Sezon: <strong id="sezonTxt">auto</strong><div class="small">10 C+ lato • &lt;10 zima tylko body dlugie • od 12 C cienkie 50/50 • zdjecie 14-17</div></div>
     <div class="row">
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
     <div class="box">Punkty: <span class="points" id="pkt">0</span> / 22<div id="pktInfo" class="small"></div></div>
-    <div class="box">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/2</div>
-    <div class="box small" id="askInfo">Pytania: 0/2 • koszt -1</div>
+    <div class="box" style="display:none">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/2</div>
+    <div class="box small" id="askInfo" style="display:none">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
-      <div class="box small" id="netInfo">Serwer: pobieranie...</div>
-      <input type="number" id="temp" placeholder="Temp z serwera" step="0.1" inputmode="decimal" readonly>
+      <div class="box small" id="netInfo" style="display:none">Serwer: pobieranie...</div>
+      <input type="number" id="temp" style="display:none" placeholder="Temp z serwera" step="0.1" inputmode="decimal" readonly>
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
       <button type="button" class="main-btn gray" id="btnWyjazd">Dzien wyjazdowy</button>
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
@@ -171,13 +179,6 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
     </div>
   </div>
 
-  <div class="tabs">
-    <button type="button" class="tab active" id="t1">Losowanie</button>
-    <button type="button" class="tab" id="t2">Kontrola</button>
-    <button type="button" class="tab" id="t3">Kary</button>
-    <button type="button" class="tab" id="t4">Odrabianie</button>
-    <button type="button" class="tab" id="t5">Dziennik</button>
-  </div>
 </div>
 <script>
 (function(){
@@ -230,7 +231,7 @@ function pobierzSerwer(){
 }
 function bootMsg(t){var b=$('boot');if(b)b.innerHTML=t}
 function sezonZTemp(t){return t>=10?'letnia':'zimowa'}
-function pokazSezon(){$('sezonTxt').innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA'}
+function pokazSezon(){var e=$('sezonTxt');if(e)e.innerHTML=sezon==='zimowa'?'ZIMOWA':'LETNIA'}
 function go(name){
   var n=['losowanie','kontrola','kary','odrabianie','dziennik'];
   for(var i=0;i<n.length;i++){
@@ -254,7 +255,7 @@ function updatePkt(){
   if(punkty>=CEL)$('pktInfo').innerHTML='<span class="green">Cel osiagniety</span>';
   else if(punkty<0)$('pktInfo').innerHTML='<span class="red">Saldo ujemne</span>';
   else $('pktInfo').innerHTML='Brakuje <span class="red">'+(CEL-punkty).toFixed(1)+'</span>';
-  $('passa').innerHTML=passa;if($('passa2'))$('passa2').innerHTML=passa;
+  if($('passa'))$('passa').innerHTML=passa;if($('passa2'))$('passa2').innerHTML=passa;
 }
 function updateAskInfo(){
   if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
@@ -494,7 +495,7 @@ function losuj(){
   }else{det=losujRaj(temp);godz=blokada?'17:00':fmt(14+Math.random()*3);pkt+=1}
 
   var kolejny=(losDate===todayStr());
-  if(!kolejny)addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':'')+' / '+spod+' / '+buty+(det?(' / '+det+' do '+godz):' / stopki')+' / kontrola '+fmt(ctrl));
+  if(!kolejny){addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':'')+' / '+spod+' / '+buty+(det?(' / '+det+' do '+godz):' / stopki')+' / kontrola '+fmt(ctrl));addHist('Sezon/temp',sezon+' '+temp+' C');}
   else addHist('Losowanie TEST','bez pkt (kolejne w dniu)');
   last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,ctrlH:ctrl,temp:temp,t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
@@ -765,7 +766,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.34</span>');
+    bootMsg('<span class="green">Gotowe v3.9.35</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
