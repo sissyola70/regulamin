@@ -55,7 +55,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 3.9.37</p>
+  <p class="sub">Wersja 3.9.38</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -77,7 +77,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
-    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 22<div id="pktInfo" class="small"></div></div>
+    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 20<div id="pktInfo" class="small"></div></div>
     <div class="box" style="display:none">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/2</div>
     <div class="box small" id="askInfo" style="display:none">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
@@ -198,7 +198,7 @@ function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=clock(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=22,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext,kombAsk,kombAskDate,lastKombAsk;
+var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext,kombAsk,kombAskDate,lastKombAsk;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
@@ -310,9 +310,7 @@ function updateDayGuards(){
   if(h>=17.25&&!meldunki.podsum&&!meldunki.karaSkip&&dzienZBledem()){
     meldunki.karaSkip=true;saveJSON('r_meld',meldunki);addPkt(-1,'Pominiete podsumowanie przy bledzie');msg=(msg?msg+' | ':'')+'Pominiete podsumowanie = -1';
   }
-  if(h>=17&&!meldunki.rozliczone&&!meldunki.kara17){
-    meldunki.kara17=true;saveJSON('r_meld',meldunki);addPkt(-2,'Brak rozliczenia po 17');msg=(msg?msg+' | ':'')+'Po 17 bez rozliczenia = -2';
-  }else if(h>=17)msg=(msg?msg+' | ':'')+'Po 17:00 zablokowane';
+  if(h>=17)msg=(msg?msg+' | ':'')+'Po 17:00 zablokowane';
   else if(!srvOk)msg=(msg?msg+' | ':'')+'Brak danych z serwera';
   else if(losDate===todayStr())msg=(msg?msg+' | ':'')+'Dzis juz losowano';
   $('btnPotwierdz').style.display=(last&&losDate===todayStr()&&!potwierdzone)?'block':'none';
@@ -416,7 +414,7 @@ function rozliczDzien(){
     if(k==='hCtrl'&&!(last&&last.ctrlH))return;
     if(meldunki[k]==='ok')ok++;else if(meldunki[k]===null)br++;
   });
-  if(br===0&&ok>=3)addPkt(1,'Pelne meldunki');
+  if(br===0&&ok>=3)addPkt(2,'Pelne meldunki');
   else if(br>0)addPkt(-br,'Brak meldunkow');
   meldunki.rozliczone=true;saveJSON('r_meld',meldunki);updateDayGuards();
   alert('Rozliczono. Saldo '+punkty.toFixed(1));
@@ -763,7 +761,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.37</span>');
+    bootMsg('<span class="green">Gotowe v3.9.38</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
