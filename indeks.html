@@ -55,7 +55,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 3.9.40</p>
+  <p class="sub">Wersja 3.9.41</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -383,6 +383,7 @@ function pokazOstatniStroj(){
     if(last.stopki){html+=lin('🧦','nogi','nieobowiazkowe • stopki','green');res.className='no'}
     else{html+=lin('🧦','rajstopy',last.det||'—','red');html+=lin('📷','zdjecie',last.godz||'—','red');res.className='mandatory'}
     html+=lin('👟','buty',last.buty);
+    if(last.dopisek)html+=lin('➕','dopisek',last.dopisek,'red');
     html+='<div class="mini">kontrola '+(last.ctrlH?fmt(last.ctrlH):'—')+'</div>';
   }
   var kx=karaDnia();
@@ -398,7 +399,7 @@ function pokazOstatniStroj(){
   html+='</div>';
   res.innerHTML=html;
   var g=String(last.gorna||'');
-  blokada=(g.indexOf('Kostium')>=0||g.indexOf('Romper')>=0||g.indexOf('DZIEN KARNY')>=0);
+  blokada=(g.indexOf('Kostium')>=0||g.indexOf('Romper')>=0||g.indexOf('DZIEN KARNY')>=0||!!(last&&last.dopisek));
   if(ask)ask.disabled=blokada;
 }
 function showMeldunki(){
@@ -461,6 +462,14 @@ function losujRaj(temp){
   if(temp<12||Math.random()<0.5)return '40-60 den — '+k;
   return '15-20 den — '+k;
 }
+
+function losujDopisek(det,godz,buty){
+  var op=[];
+  op.push('biale baletki');
+  op.push('extra godzina rajstop');
+  op.push('jaskrawe '+pick(JASK));
+  return pick(op);
+}
 function startKarny(){
   var ctrl=+(10.5+Math.random()*4).toFixed(2);
   if(kombNext){kombNext=false;save('r_kombN','');}
@@ -509,7 +518,15 @@ function losuj(){
   var kolejny=(losDate===todayStr());
   if(!kolejny){addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':'')+' / '+spod+' / '+buty+(det?(' / '+det+' do '+godz):' / stopki')+' / kontrola '+fmt(ctrl));addHist('Sezon/temp',sezon+' '+temp+' C');}
   else addHist('Losowanie TEST','bez pkt (kolejne w dniu)');
-  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,ctrlH:ctrl,temp:temp,t:now()};
+  var dopisek='';
+  if(!stopki && Math.random()<0.20){
+    dopisek=losujDopisek(det,godz,buty);
+    if(dopisek==='biale baletki')buty='baletki biale';
+    else if(dopisek==='extra godzina rajstop'){godz='17:00'}
+    else det='40 den — '+dopisek;
+    addHist('DOPISEK',dopisek+' | rajstopy '+(det||'-')+' | buty '+buty+' | do '+godz);
+  }
+  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,ctrlH:ctrl,temp:temp,dopisek:dopisek,t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');
   pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
@@ -545,6 +562,7 @@ function pytajKomb(){
 }
 function pytaj(){
   var res=$('result');
+  if(last&&last.dopisek){res.innerHTML='<p class="red">DOPISEK — bez zdejmowania</p>';res.className='mandatory';return}
   if(blokada){res.innerHTML='<p class="red">Kostium/romper/dzien karny — brak zgody</p>';res.className='mandatory';return}
   if(askDate!==todayStr()){askCount=0;askDate=todayStr();save('r_askc','0');save('r_askd',askDate)}
   if(askCount>=3){res.innerHTML='<p class="red">Limit 3 pytan</p>';res.className='mandatory';return}
@@ -778,7 +796,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.40</span>');
+    bootMsg('<span class="green">Gotowe v3.9.41</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
