@@ -55,7 +55,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 3.9.38</p>
+  <p class="sub">Wersja 3.9.40</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -175,6 +175,8 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
       <textarea id="dziennik" placeholder="Wpis reczny..."></textarea>
       <button type="button" class="main-btn" id="btnDz">Zapisz wpis</button>
       <button type="button" class="main-btn gray" id="btnExpDz">Eksportuj dziennik TXT</button>
+      <button type="button" class="main-btn" id="btnArch">Pobierz pelna historie</button>
+      <div class="small">Historia dopisuje sie lokalnie i nie jest kasowana.</div>
       <div id="dzHist" style="margin-top:10px;text-align:left;font-size:.85rem"></div>
       <span id="hist" style="display:none"></span>
     </div>
@@ -270,7 +272,22 @@ function updateOdrob(){
 }
 function addPkt(p,powod){punkty+=p;save('r_pkt',punkty);updatePkt();addHist(powod,(p>0?'+':'')+p+' pkt')}
 function addHist(g,d){hist.unshift({t:now(),g:g,d:d,ts:Date.now()});if(hist.length>40)hist.pop();saveJSON('r_hist',hist);showHist();logWp((g||'')+' | '+(d||''))}
-function logWp(text){dziennik.unshift({t:text,d:now(),ts:Date.now()});if(dziennik.length>80)dziennik.pop();saveJSON('r_dz',dziennik);if($('dzHist'))showDziennik()}
+function logWp(text){dziennik.unshift({t:text,d:now(),ts:Date.now()});if(dziennik.length>80)dziennik.pop();saveJSON('r_dz',dziennik);dopiszArchiwum(now()+' | '+(text||''));if($('dzHist'))showDziennik()}
+function dopiszArchiwum(line){
+  var a=load('r_arch','');
+  a=(a?a+'\n':'')+line;
+  try{localStorage.setItem('r_arch',a)}catch(e){}
+}
+function pobierzArchiwum(){
+  var a=load('r_arch','');
+  if(!a){alert('Archiwum puste');return}
+  var blob=new Blob([a],{type:'text/plain'});
+  var u=URL.createObjectURL(blob);
+  var x=document.createElement('a');
+  x.href=u;x.download='historia.txt';
+  document.body.appendChild(x);x.click();x.remove();
+  setTimeout(function(){URL.revokeObjectURL(u)},1000);
+}
 function showHist(){
   if(!hist.length){$('hist').innerHTML='<em>Brak</em>';return}
   var s='';for(var i=0;i<hist.length;i++)s+='<strong>'+hist[i].t+'</strong> — '+hist[i].g+' | '+hist[i].d+'<br>';
@@ -742,7 +759,7 @@ function bind(){
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
   $('btnCtrl').onclick=function(){if(last&&last.ctrlH)zamelduj(last.ctrlH,'hCtrl')};
   $('btnRozlicz').onclick=rozliczDzien;$('btnPodsum').onclick=podsumujDzien;$('btnKary').onclick=nalozKary;if($('karaSel'))$('karaSel').onchange=syncKaraSel;if($('karaPkt'))$('karaPkt').oninput=updateSumaKar;
-  $('btnOdrob').onclick=zaliczOdrob;if($('btnOdrobWlasne'))$('btnOdrobWlasne').onclick=zaliczOdrobWlasne;$('btnDz').onclick=zapiszDziennik;if($('btnExpDz'))$('btnExpDz').onclick=eksportDziennik;
+  $('btnOdrob').onclick=zaliczOdrob;if($('btnOdrobWlasne'))$('btnOdrobWlasne').onclick=zaliczOdrobWlasne;$('btnDz').onclick=zapiszDziennik;if($('btnExpDz'))$('btnExpDz').onclick=eksportDziennik;if($('btnArch'))$('btnArch').onclick=pobierzArchiwum;
   document.addEventListener('change',function(e){if(e.target&&e.target.classList&&e.target.classList.contains('kara'))updateSumaKar()});
 }
 function init(){
@@ -761,7 +778,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.38</span>');
+    bootMsg('<span class="green">Gotowe v3.9.40</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
