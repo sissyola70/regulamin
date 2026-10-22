@@ -55,7 +55,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 3.9.41</p>
+  <p class="sub">Wersja 3.9.42</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -77,7 +77,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
-    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 20<div id="pktInfo" class="small"></div></div>
+    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 24<div id="pktInfo" class="small"></div></div>
     <div class="box" style="display:none">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/2</div>
     <div class="box small" id="askInfo" style="display:none">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
@@ -200,7 +200,7 @@ function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=clock(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext,kombAsk,kombAskDate,lastKombAsk;
+var CEL=24,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext,kombAsk,kombAskDate,lastKombAsk;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
@@ -270,7 +270,8 @@ function updateOdrob(){
   if(odrobToday!==todayStr()){odrobPkt=0;odrobDone={};odrobToday=todayStr();save('r_odD',odrobToday);save('r_odP','0');saveJSON('r_odK',{})}
   $('odrobInfo').innerHTML=odrobPkt;if($('odrobInfo2'))$('odrobInfo2').innerHTML=odrobPkt;
 }
-function addPkt(p,powod){punkty+=p;save('r_pkt',punkty);updatePkt();addHist(powod,(p>0?'+':'')+p+' pkt')}
+function oznaczBrud(){var d=loadJSON('r_dirty',{});d[todayStr()]=true;saveJSON('r_dirty',d)}
+function addPkt(p,powod){punkty+=p;save('r_pkt',punkty);updatePkt();addHist(powod,(p>0?'+':'')+p+' pkt');if(p<0)oznaczBrud()}
 function addHist(g,d){hist.unshift({t:now(),g:g,d:d,ts:Date.now()});if(hist.length>40)hist.pop();saveJSON('r_hist',hist);showHist();logWp((g||'')+' | '+(d||''))}
 function logWp(text){dziennik.unshift({t:text,d:now(),ts:Date.now()});if(dziennik.length>80)dziennik.pop();saveJSON('r_dz',dziennik);dopiszArchiwum(now()+' | '+(text||''));if($('dzHist'))showDziennik()}
 function dopiszArchiwum(line){
@@ -293,6 +294,20 @@ function showHist(){
   var s='';for(var i=0;i<hist.length;i++)s+='<strong>'+hist[i].t+'</strong> — '+hist[i].g+' | '+hist[i].d+'<br>';
   $('hist').innerHTML=s;
 }
+function dniTygodnia(){
+  var n=clock(),day=n.getDay();if(day===0)day=7;
+  var mon=new Date(n);mon.setDate(n.getDate()-(day-1));
+  var out=[];
+  for(var i=0;i<7;i++){var d=new Date(mon);d.setDate(mon.getDate()+i);out.push(d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2))}
+  return out;
+}
+function karaCzyste(){
+  if(load('r_czyste','')===weekNum())return;
+  var dirty=loadJSON('r_dirty',{}),n=0,dzis=todayStr();
+  dniTygodnia().forEach(function(d){if(d<=dzis&&!dirty[d])n++});
+  if(n)addPkt(-n,'Czyste dni tygodnia');
+  save('r_czyste',weekNum());
+}
 function checkWeek(){
   var w=weekNum();
   if(week!==w){
@@ -300,6 +315,7 @@ function checkWeek(){
       if(punkty<0){karnyLeft=2;save('r_karnyL','2')}
       else if(punkty<CEL){karnyLeft=1;save('r_karnyL','1')}
     }
+    saveJSON('r_dirty',{});save('r_czyste','');
     if(punkty>0)punkty=0;
     save('r_pkt',punkty);save('r_week',w);week=w;karaCount={};saveJSON('r_karac',karaCount);
   }
@@ -327,6 +343,7 @@ function updateDayGuards(){
   if(h>=17.25&&!meldunki.podsum&&!meldunki.karaSkip&&dzienZBledem()){
     meldunki.karaSkip=true;saveJSON('r_meld',meldunki);addPkt(-1,'Pominiete podsumowanie przy bledzie');msg=(msg?msg+' | ':'')+'Pominiete podsumowanie = -1';
   }
+  if(clock().getDay()===0&&h>=17)karaCzyste();
   if(h>=17)msg=(msg?msg+' | ':'')+'Po 17:00 zablokowane';
   else if(!srvOk)msg=(msg?msg+' | ':'')+'Brak danych z serwera';
   else if(losDate===todayStr())msg=(msg?msg+' | ':'')+'Dzis juz losowano';
@@ -421,7 +438,11 @@ function zamelduj(g,key){
   var t=hour(),a=g-0.25,b=g+0.25;
   if(t<a){alert('Za wczesnie. Od '+fmt(a));return}
   if(t<=b){meldunki[key]='ok';saveJSON('r_meld',meldunki);addHist('Meldunek '+fmt(g),'OK');alert('Punktualny')}
-  else{meldunki[key]='late';saveJSON('r_meld',meldunki);addPkt(-1,'Meldunek '+fmt(g)+' spozniony');alert('Spozniony = -1')}
+  else{
+    var ile=0;['h9','h12','h15','hCtrl'].forEach(function(k){if(meldunki[k]==='late')ile++});
+    var kara=ile>=1?-2:-1;
+    meldunki[key]='late';saveJSON('r_meld',meldunki);addPkt(kara,'Meldunek '+fmt(g)+' spozniony');alert('Spozniony = '+kara);
+  }
   showMeldunki();showStatus();
 }
 function rozliczDzien(){
@@ -516,6 +537,7 @@ function losuj(){
   }else{det=losujRaj(temp);godz=blokada?'17:00':fmt(14+Math.random()*3);pkt+=1}
 
   var kolejny=(losDate===todayStr());
+  if(pkt>2)pkt=2;
   if(!kolejny){addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':'')+' / '+spod+' / '+buty+(det?(' / '+det+' do '+godz):' / stopki')+' / kontrola '+fmt(ctrl));addHist('Sezon/temp',sezon+' '+temp+' C');}
   else addHist('Losowanie TEST','bez pkt (kolejne w dniu)');
   var dopisek='';
@@ -546,7 +568,7 @@ function pytajKomb(){
   if(lastKombAsk&&Date.now()-lastKombAsk<3600000){addPkt(-1,'Kombinezon za wczesnie');alert('Za wczesnie = -1. Nie liczy sie jako pytanie.');return}
   lastKombAsk=Date.now();save('r_kat',String(lastKombAsk));
   kombAsk++;save('r_kac',String(kombAsk));
-  addPkt(-1,'Prosba o kombinezon');
+  addPkt(-kombAsk,'Prosba o kombinezon');
   if(Math.random()<0.5){
     last.komb=false;
     last.gorna=String(last.gorna||'').replace(' + kombinezon','');
@@ -569,7 +591,7 @@ function pytaj(){
   if(lastAsk&&Date.now()-lastAsk<3600000){addPkt(-1,'Rajstopy za wczesnie');res.innerHTML='<p class="red">Za wczesnie = -1. Nie liczy sie.</p>';res.className='mandatory';return}
   if(hour()<10){res.innerHTML='<p class="red">Przed 10:00 nie</p>';res.className='mandatory';return}
   lastAsk=Date.now();save('r_ask',lastAsk);askCount++;save('r_askc',String(askCount));updateAskInfo();
-  addPkt(-1,'Pytanie o zgode');passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
+  addPkt(-askCount,'Pytanie o zgode');passa=0;lastViol=todayStr();save('r_passa','0');save('r_viol',lastViol);updatePkt();
   if(Math.random()<0.10){res.innerHTML='<p class="green">ZGODA</p>';res.className='ok'}
   else{res.innerHTML='<p class="red">NIE</p>';res.className='mandatory'}
   setTimeout(pokazOstatniStroj,4000);
@@ -796,7 +818,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.41</span>');
+    bootMsg('<span class="green">Gotowe v3.9.42</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
