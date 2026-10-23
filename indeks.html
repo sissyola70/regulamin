@@ -409,7 +409,7 @@ function pokazOstatniStroj(){
     else{html+=lin('🧦','rajstopy',last.det||'—','red');html+=lin('📷','zdjecie',last.godz||'—','red');res.className='mandatory'}
     html+=lin('👟','buty',last.buty);
     if(last.dopisek)html+=lin('➕','dopisek',last.dopisek,'red');
-    if(last.zadanie)html+=lin('⚡','zadanie',last.zadanie,'red');
+    if(last.zadanie)html+=lin(last.zadanieTyp==='+'?'🟢':'⚡', last.zadanieTyp==='+'?'luz':'zadanie', last.zadanie, last.zadanieTyp==='+'?'green':'red');
     html+='<div class="mini">kontrola '+(last.ctrlH?fmt(last.ctrlH):'—')+'</div>';
   }
   var kx=karaDnia();
@@ -446,7 +446,9 @@ function zamelduj(g,key){
   if(meldunki[key]){alert('Juz zameldowano');return}
   var t=hour(),a=g-0.25,b=g+0.25;
   if(t<a){alert('Za wczesnie. Od '+fmt(a));return}
-  if(t<=b){meldunki[key]='ok';saveJSON('r_meld',meldunki);addHist('Meldunek '+fmt(g),'OK');alert('Punktualny')}
+  if(t<=b){meldunki[key]='ok';saveJSON('r_meld',meldunki);addHist('Meldunek '+fmt(g),'OK');alert('Punktualny');
+    if(last&&!last.zadanie&&Math.random()<0.05){var z=losujZadanie();last.zadanie=z.txt;last.zadanieTyp=z.typ;saveJSON('r_last',last);addHist(z.typ==='+'?'LUZ':'ZADANIE',z.txt);alert((z.typ==='+'?'LUZ: ':'ZADANIE: ')+z.txt);pokazOstatniStroj();}
+  }
   else{
     var ile=0;['h9','h12','h15','hCtrl'].forEach(function(k){if(meldunki[k]==='late')ile++});
     var kara=ile>=1?-2:-1;
@@ -621,18 +623,33 @@ function doOpis(){
   showOpis();
 }
 function losujZadanie(){
-  var pula=['dodatkowe rajstopy do 17','biale baletki','kombinezon zapiety na maks','jaskrawe zamiast wylosowanego koloru','zakaz prosby do 17','druga para majtek albo body string','rajstopy do 17','obuwie ciasniejsze','zakaz odrabiania','rajstopy polarowe albo legginsy na rajstopy'];
-  return pula[Math.floor(Math.random()*pula.length)];
+  var minus=[
+    'dodatkowe rajstopy do 17',
+    'biale baletki',
+    'kombinezon zapiety na maks',
+    'jaskrawe zamiast wylosowanego koloru',
+    'zakaz prosby do 17',
+    'druga para majtek albo body string',
+    'rajstopy do 17',
+    'obuwie ciasniejsze',
+    'zakaz odrabiania',
+    'rajstopy polarowe albo legginsy na rajstopy',
+    'bez zdjecia do 17, nawet jak byla zgoda'
+  ];
+  var plus=[
+    'dzis masz szczescie — mozesz zdjac rajstopy',
+    'mozesz sie rozebrac, meldunki dalej obowiazuja',
+    'luz na kombinezon — wolno rozpiac',
+    'wolno zdjac obuwie do konca dnia',
+    'jedna prosba bez kary',
+    'koniec obowiazku rajstop od teraz'
+  ];
+  if(Math.random()<0.35) return {typ:'+', txt:plus[Math.floor(Math.random()*plus.length)]};
+  return {typ:'-', txt:minus[Math.floor(Math.random()*minus.length)]};
 }
 function potwierdzStroj(){
   if(!last){alert('Brak losowania');return}
   potwierdzone=true;save('r_potw',todayStr());addHist('Potwierdzenie','OK');
-  if(!last.zadanie&&Math.random()<0.05){
-    last.zadanie=losujZadanie();
-    saveJSON('r_last',last);
-    addHist('ZADANIE',last.zadanie);
-    alert('ZADANIE: '+last.zadanie);
-  }
   $('btnPotwierdz').style.display='none';pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());showStatus();updateDayGuards();
 }
 function resetPkt(){
