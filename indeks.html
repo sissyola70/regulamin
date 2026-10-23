@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v4.0</title>
+<title>Pani Regulamin v4.1</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#0b0f14;color:#e8eef6;padding:0;min-height:100vh}
@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.0</p>
+  <p class="sub">Wersja 4.1</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -81,6 +81,16 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
       <button type="button" class="main-btn" id="askBtn">Prośba o zdjęcie rajstop</button>
       <button type="button" class="main-btn gray" id="askKomb">Prośba o zdjęcie kombinezonu</button>
+      <div id="randBox" style="display:none;margin-top:8px">
+        <div class="small" id="randInfo"></div>
+        <input type="text" id="randInput" placeholder="wpisz dokładnie">
+        <button type="button" class="main-btn" id="btnRand">Potwierdz meldunek</button>
+      </div>
+      <div id="opisBox" style="display:none;margin-top:8px">
+        <div class="small" id="opisInfo"></div>
+        <textarea id="opisInput" placeholder="gora / rajstopy / buty"></textarea>
+        <button type="button" class="main-btn" id="btnOpis">Zapisz opis stroju</button>
+      </div>
     </div>
     <div id="areaTrack" style="display:none">
       <p class="small">Odhacz wszystko. Brak = -2</p>
@@ -91,6 +101,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       <button type="button" class="main-btn" id="btnTrack">Zapisz wykonanie</button>
     </div>
     <button type="button" class="main-btn gray" id="btnTxt">Pobierz TXT</button>
+
 
     <div id="result"></div>
     <p class="small" id="czas"></p>
@@ -241,7 +252,7 @@ function go(name){
   if(name==='dziennik'){showDziennik();showHist();}
   if(name==='kontrola'){showMeldunki();updateDayGuards();}
   if(name==='kary'){updateSumaKar();showKaraHist();}
-  if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();updateDayGuards();updateAskInfo()}}
+  if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());updateDayGuards();updateAskInfo()}}
 }
 function setMode(m){
   tryb=m;save('r_tryb',m);
@@ -496,7 +507,7 @@ function startKarny(){
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);potwierdzone=false;save('r_potw','');
   karnyLeft=Math.max(0,(parseInt(load('r_karnyL','0'),10)||0)-1);save('r_karnyL',String(karnyLeft));
   addPkt(0,'Dzien karny / kostium bialy + kombinezon / BODY STRING / baletki biale / jaskrawe BIALE do 17 / kontrola '+fmt(ctrl));
-  pokazOstatniStroj();updateDayGuards();showStatus();showMeldunki();
+  pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());updateDayGuards();showStatus();showMeldunki();
 }
 function dzienWyjazdowy(){
   if(load('r_wyjD','')===todayStr()){alert('Dzis juz zaznaczony dzien wyjazdowy');return}
@@ -506,13 +517,13 @@ function dzienWyjazdowy(){
   addPkt(po?-7:-5,'Dzien wyjazdowy'+(po?' PO losowaniu -7':' -5'));
   last={gorna:'DZIEN WYJAZDOWY',spod:'nie obowiazuje',buty:'dowolne',det:'',godz:'-',stopki:true,komb:false,sezon:sezon,ctrlH:null,temp:srvTemp,t:now(),wyjazd:true};
   saveJSON('r_last',last);
-  pokazOstatniStroj();showStatus();updatePkt();
+  pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());showStatus();updatePkt();
   alert('Dzien wyjazdowy. '+(po?'-7 (po losowaniu)':'-5')+'. Nastepne losowanie: kombinezon obowiazkowy.');
 }
 function losuj(){
-    if(!srvOk||isNaN(srvTemp)){alert('Najpierw odswiez temperature z serwera');return}
   if(hour()>=17){alert('Po 17:00 nie wolno');return}
   if(losDate===todayStr()){alert('Dzis juz bylo losowanie. Raz i dosc.');return}
+    if(!srvOk||isNaN(srvTemp)){alert('Najpierw odswiez temperature z serwera');return}
   var temp=srvTemp,res=$('result'),ask=$('askBtn');
   if($('temp'))$('temp').value=temp;
   if(isNaN(temp)){res.innerHTML='<p class="red">Brak temperatury z serwera</p>';res.className='mandatory';return}
@@ -541,6 +552,8 @@ function losuj(){
   if(!kolejny){addPkt(pkt,'Losowanie: '+gorna+(komb?' + kombinezon':'')+' / '+spod+' / '+buty+(det?(' / '+det+' do '+godz):' / stopki')+' / kontrola '+fmt(ctrl));addHist('Sezon/temp',sezon+' '+temp+' C');}
   else addHist('Losowanie TEST','bez pkt (kolejne w dniu)');
   var dopisek='';
+  var times = genRandTimes();
+  addHist('Losowe', 'meldunek '+fmt(times.r1)+(times.r2?' i '+fmt(times.r2):'')+' | opis '+fmt(times.opisStart));
   if(!stopki && Math.random()<0.20){
     dopisek=losujDopisek(det,godz,buty);
     if(dopisek==='biale baletki')buty='baletki biale';
@@ -548,10 +561,64 @@ function losuj(){
     else det='40 den — '+dopisek;
     addHist('DOPISEK',dopisek+' | rajstopy '+(det||'-')+' | buty '+buty+' | do '+godz);
   }
-  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,zip:zip,sezon:sezon,ctrlH:ctrl,temp:temp,dopisek:dopisek,zadanie:'',t:now()};
+  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,zip:zip,sezon:sezon,ctrlH:ctrl,temp:temp,dopisek:dopisek,zadanie:'',rand:{r1:times.r1,r2:times.r2},opisWin:{start:times.opisStart,end:times.opisEnd},t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');
-  pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
+  pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
+}
+
+function genRandTimes(){
+  var t1 = +(10 + Math.random()*5).toFixed(2);
+  var t2 = Math.random()<0.30 ? +(10 + Math.random()*5).toFixed(2) : null;
+  var start = +(10 + Math.random()*5).toFixed(2);
+  return {r1:t1, r2:t2, opisStart:start, opisEnd:start+0.33};
+}
+function checkSilence(){
+  var h = hour();
+  if(h>=14.25 && !load('r_open14')){
+    var opened = load('r_lastOpen','');
+    if(!opened || opened < todayStr()+' 10:00'){
+      addPkt(-2,'Brak otwarcia 10-14');
+      save('r_open14','1');
+    }
+  }
+}
+function showRand(){
+  var box=$('randBox'), info=$('randInfo');
+  if(!last||!last.rand){if(box)box.style.display='none';return}
+  var h=hour(), r=last.rand;
+  var active=false, txt='';
+  if(Math.abs(h-r.r1)<0.17){active=true;txt='Meldunek losowy 1: wpisz „jestem w stroju”';}
+  else if(r.r2 && Math.abs(h-r.r2)<0.17){active=true;txt='Meldunek losowy 2: wpisz „jestem”';}
+  if(box){box.style.display=active?'block':'none'; if(info)info.innerHTML=txt;}
+}
+function doRand(){
+  var v=($('randInput')&&$('randInput').value||'').trim().toLowerCase();
+  var h=hour(), r=last.rand;
+  var need = (Math.abs(h-r.r1)<0.17) ? 'jestem w stroju' : 'jestem';
+  if(v!==need){addPkt(-3,'Zly tekst meldunku losowego');alert('Zly tekst = -3');return}
+  addHist('Meldunek losowy','OK');
+  $('randInput').value='';
+  alert('Przyjęte');
+  showRand();
+}
+function showOpis(){
+  var box=$('opisBox');
+  if(!last||!last.opisWin){if(box)box.style.display='none';return}
+  var h=hour(), w=last.opisWin;
+  var active = h>=w.start && h<=w.end;
+  if(box){box.style.display=active?'block':'none';
+    if($('opisInfo'))$('opisInfo').innerHTML='Okno opisu stroju: '+fmt(w.start)+'-'+fmt(w.end);}
+}
+function doOpis(){
+  var v=($('opisInput')&&$('opisInput').value||'').trim().toLowerCase();
+  if(!v){addPkt(-2,'Brak opisu stroju');alert('Brak = -2');return}
+  var expect = (last.gorna+' '+ (last.det||'') +' '+last.buty).toLowerCase();
+  if(v.indexOf(last.gorna.toLowerCase().split(' ')[0])<0){addPkt(-2,'Opis stroju niezgodny');alert('Niezgodny = -2');return}
+  addHist('Opis stroju','OK');
+  $('opisInput').value='';
+  alert('Opis przyjęty');
+  showOpis();
 }
 function losujZadanie(){
   var pula=['dodatkowe rajstopy do 17','biale baletki','kombinezon zapiety na maks','jaskrawe zamiast wylosowanego koloru','zakaz prosby do 17','druga para majtek albo body string','rajstopy do 17','obuwie ciasniejsze','zakaz odrabiania','rajstopy polarowe albo legginsy na rajstopy'];
@@ -566,7 +633,7 @@ function potwierdzStroj(){
     addHist('ZADANIE',last.zadanie);
     alert('ZADANIE: '+last.zadanie);
   }
-  $('btnPotwierdz').style.display='none';pokazOstatniStroj();showStatus();updateDayGuards();
+  $('btnPotwierdz').style.display='none';pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());showStatus();updateDayGuards();
 }
 function resetPkt(){
   if(!confirm('Wyzerowac punkty?'))return;
@@ -593,7 +660,7 @@ function pytajKomb(){
     if(res){res.innerHTML='<p class="red">KOMBINEZON — NIE</p>';res.className='mandatory'}
     alert('NIE. Zostaje do 17:00.');
   }
-  pokazOstatniStroj();
+  pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());
   setTimeout(pokazOstatniStroj,4000);
 }
 function pytaj(){
@@ -742,7 +809,7 @@ function nalozKary(){
   var txt=label+' -'+suma+(mult>1?' (x'+mult+')':'')+(opis?' | ZA CO: '+opis:'')+(dop?' | DZIŚ: '+dop:'')+(extra?' | '+extra:'')+(kor?' | korekta TAK':' | korekta NIE');
   saveJSON('r_karaX',{date:todayStr(),txt:txt,extra:extra,dop:dop,opis:opis,key:key});
   addPkt(-suma,'Kara: '+txt);
-  pokazOstatniStroj();
+  pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());
   passa=0;lastViol=todayStr();karaToday=todayStr();
   save('r_passa','0');save('r_viol',lastViol);save('r_karaD',karaToday);updatePkt();
   if($('karaOpis'))$('karaOpis').value='';
@@ -807,7 +874,7 @@ function bind(){
   $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
   $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
+  $('btnLosuj').onclick=losuj;if($('btnRand'))$('btnRand').onclick=doRand;if($('btnOpis'))$('btnOpis').onclick=doOpis;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
@@ -830,9 +897,9 @@ function init(){
     karnyLeft=parseInt(load('r_karnyL','0'),10)||0;blokada=false;kombNext=(load('r_kombN','')==='1');
     bind();setMode(tryb);pokazSezon();pobierzSerwer().then(function(){updateDayGuards();showStatus()}).catch(function(){updateDayGuards()});
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
-    pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
+    pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.0</span>');
+    bootMsg('<span class="green">Gotowe v4.1</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
