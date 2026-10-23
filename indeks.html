@@ -3,59 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v3.9.34</title>
+<title>Pani Regulamin v4.0</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#07000f;color:#ffe6ff;padding:12px;min-height:100vh}
-.container{max-width:460px;margin:0 auto;background:#100018;border:1px solid #ff2bd6;border-radius:22px;padding:16px;box-shadow:0 0 28px rgba(255,43,214,.35),inset 0 0 40px rgba(255,0,170,.08)}
-h1{color:#fff;text-align:center;font-size:1.55rem;margin:4px 0 2px;letter-spacing:.02em;text-shadow:0 0 16px #ff2bd6}
-.sub{text-align:center;color:#d9a3ff;font-size:.8rem;margin-bottom:12px}
-.tabs{display:flex;gap:2px;justify-content:space-between;margin:14px 0 4px;background:#160022;border:1px solid #ff2bd6;border-radius:18px;padding:8px;box-shadow:0 0 18px rgba(255,43,214,.3)}
-.tab{flex:1;padding:12px 4px;border:1px solid #ff2bd6;background:transparent;color:#ffe6ff;border-radius:12px;font-size:.78rem;font-weight:700;touch-action:manipulation}
-.tab.active{background:#ff2bd6;color:#fff;box-shadow:0 0 16px #ff2bd6}
-.panel{display:none}.panel.active{display:block}
-.box{background:#16001f;border:1px solid #ff2bd6;border-radius:16px;padding:12px;margin-bottom:10px;text-align:center;box-shadow:0 0 12px rgba(255,43,214,.18)}
-.points{font-size:1.7rem;color:#ff4de0;font-weight:800;text-shadow:0 0 12px #ff2bd6}
-.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px}
-.btn{padding:12px 14px;border:1px solid #ff2bd6;background:#220028;color:#ffd6ff;border-radius:12px;font-weight:bold;touch-action:manipulation}
-.btn.active{background:#ff2bd6;color:#fff;box-shadow:0 0 12px #ff2bd6}
-.main-btn{width:100%;padding:15px 16px;background:transparent;color:#ff4de0;border:1.5px solid #ff2bd6;border-radius:22px;font-size:1rem;font-weight:800;margin:8px 0;touch-action:manipulation;box-shadow:0 0 18px rgba(255,43,214,.55);letter-spacing:.02em}
-.main-btn.green{background:#146614;color:#fff}.main-btn.red{background:#b00040;color:#fff;border-color:#ff6699}.main-btn.gray{background:transparent}
-.main-btn:disabled{background:#333;opacity:.6;box-shadow:none}
-input[type=number],textarea,select{width:100%;padding:14px;font-size:16px;text-align:center;background:#1a0028;border:1px solid #ff2bd6;color:#ffe6ff;border-radius:12px;margin-bottom:8px}
-textarea{text-align:left;min-height:70px}
-#result{margin-top:12px;padding:0;border-radius:16px;min-height:90px;line-height:1.35;background:#14001c;border:1px solid #ff2bd6;overflow:hidden;text-align:left;box-shadow:0 0 16px rgba(255,43,214,.2)}
-.karta .lin{display:flex;gap:10px;align-items:center;padding:12px;border-bottom:1px solid #3a0048;font-size:.95rem}
-.mini{padding:8px 12px;color:#c9a6ff;font-size:.78rem}
-.karta .ico{width:28px;text-align:center;color:#ff4de0;font-size:1.05rem}
-.karta .nag{display:flex;justify-content:space-between;align-items:center}
-.karta .dt{color:#c9a6ff;font-size:.75rem;letter-spacing:0}
-.pktrow{display:flex;justify-content:space-between;align-items:center;padding:12px;color:#ff8ae6}
-.pktrow span{color:#ff4de0;font-size:1.35rem;font-weight:800}
-.karta .lin:last-child{border-bottom:none}
-.karta .lbl{flex:0 0 84px;color:#ff8ae6;font-size:.78rem;text-transform:lowercase}
-.karta .val{flex:1;font-weight:700;color:#fff;text-align:right}
-.karta .val.red{color:#ff6b8a}.karta .val.orange{color:#ffb347}.karta .val.green{color:#7dffb3}
-.karta .nag{background:#22002c;padding:10px 12px;font-size:.82rem;color:#ff4de0;letter-spacing:.08em;border-bottom:1px solid #ff2bd6}
-.mandatory{background:#2a0018;border:2px solid #ff3366}
-.ok{background:#001a10;border:2px solid #22cc77}
-.no{background:#14001c;border:2px solid #666}
-.red{color:#ff4466;font-weight:bold}.green{color:#66ff99;font-weight:bold}.orange{color:#ffaa44;font-weight:bold}
-.small{color:#ffb3e6;font-size:.85rem;font-style:normal}
-h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
-.check{display:flex;align-items:flex-start;gap:10px;margin:8px 0;text-align:left;font-size:.92rem}
-.check input{width:22px;height:22px;flex-shrink:0;margin-top:2px}
-.history{margin-top:12px;padding:10px;background:#14001c;border:1px dashed #ff2bd6;border-radius:12px;font-size:.82rem;text-align:left;max-height:180px;overflow-y:auto}
-.kara-suma{text-align:center;margin:10px 0;color:#ff6b8a}
-.meldunek{background:#16001f;border:1px solid #ff2bd6;border-radius:16px;padding:12px;margin-bottom:10px;text-align:left;box-shadow:0 0 12px rgba(255,43,214,.2)}
-.alert{background:#3a0028;border:1px solid #ff4466;border-radius:12px;padding:10px;margin-bottom:10px;text-align:center;display:none}
-#baner{font-style:normal}
+body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#0b0f14;color:#e8eef6;padding:0;min-height:100vh}
+.container{max-width:480px;margin:0 auto;background:#121820;min-height:100vh;padding:0 0 24px}
+h1{color:#9fd;text-align:left;font-size:1.15rem;padding:14px 16px 0;letter-spacing:.04em}
+.sub{text-align:left;color:#7d8b99;font-size:.75rem;padding:2px 16px 10px}
+.tabs{display:flex;gap:0;position:sticky;top:0;z-index:5;background:#0e141c;border-bottom:1px solid #243040}
+.tab{flex:1;padding:14px 2px;border:none;border-bottom:3px solid transparent;background:transparent;color:#8aa;border-radius:0;font-size:.72rem;font-weight:700}
+.tab.active{color:#9fd;border-bottom-color:#3ecfb2;background:#162028}
+.panel{display:none;padding:12px}.panel.active{display:block}
+.box{background:#182230;border:1px solid #2a3a4a;border-radius:8px;padding:12px;margin-bottom:10px;text-align:left}
+.points{font-size:1.8rem;color:#3ecfb2;font-weight:800}
+.row{display:flex;gap:6px;margin-bottom:10px}
+.btn{padding:10px 12px;border:1px solid #3ecfb2;background:#122028;color:#cfe;border-radius:6px;font-weight:bold}
+.btn.active{background:#3ecfb2;color:#062018}
+.main-btn{width:100%;padding:13px;background:#1c2c38;color:#d7fff6;border:1px solid #3ecfb2;border-radius:8px;font-size:.95rem;font-weight:700;margin:6px 0}
+.main-btn.green{background:#146652;color:#fff;border-color:#1f8}.main-btn.red{background:#8a243c;color:#fff;border-color:#e56}.main-btn.gray{background:#1a222c;color:#bcd;border-color:#456}
+.main-btn:disabled{opacity:.45}
+input[type=number],textarea,select{width:100%;padding:12px;font-size:16px;background:#0e1620;border:1px solid #345;color:#e8eef6;border-radius:6px;margin-bottom:8px}
+textarea{min-height:70px}
+#result{margin-top:10px;border-radius:8px;min-height:80px;background:#101820;border:1px solid #345;overflow:hidden}
+.karta .lin{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid #243040;font-size:.92rem}
+.mini{padding:6px 12px;color:#89a;font-size:.75rem}
+.karta .ico{width:24px;color:#3ecfb2}
+.karta .nag{display:flex;justify-content:space-between;background:#1a2836;padding:8px 12px;color:#9fd;border-bottom:1px solid #345}
+.karta .dt{color:#89a;font-size:.75rem}
+.pktrow{display:flex;justify-content:space-between;padding:10px 12px;color:#9fd}
+.pktrow span{color:#3ecfb2;font-size:1.2rem;font-weight:800}
+.karta .lbl{flex:0 0 78px;color:#89a;font-size:.75rem}
+.karta .val{flex:1;font-weight:700;text-align:right}
+.karta .val.red{color:#f66}.karta .val.orange{color:#fa6}.karta .val.green{color:#6d6}
+.mandatory{background:#2a1218;border-color:#e56}.ok{background:#102820;border-color:#3c6}.no{background:#101820}
+.red{color:#f66;font-weight:bold}.green{color:#6d6;font-weight:bold}.orange{color:#fa6;font-weight:bold}
+.small{color:#89a;font-size:.82rem}
+h2{margin:4px 0;font-size:1rem;color:#9fd}
+.check{display:flex;gap:8px;margin:8px 0;text-align:left}
+.check input{width:20px;height:20px}
+.history{margin-top:10px;padding:8px;background:#101820;border:1px dashed #345;border-radius:6px;font-size:.8rem;max-height:180px;overflow-y:auto}
+.kara-suma{margin:8px 0;color:#f88}
+.meldunek{background:#182230;border:1px solid #2a3a4a;border-radius:8px;padding:10px;margin-bottom:8px}
+.alert{background:#3a1820;border:1px solid #e56;border-radius:6px;padding:8px;margin-bottom:8px;display:none}
+#baner{display:none}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 3.9.42</p>
+  <p class="sub">Wersja 4.0</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -64,10 +60,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
     <button type="button" class="tab" id="t5">Dziennik</button>
   </div>
 
-  <div id="baner" class="box">
-    <button type="button" class="main-btn gray" id="askPal" style="margin:0">Prośba o papierosa</button>
-    <div class="small" id="palInfo">Losowa zgoda • za wcześnie = −1</div>
-  </div>
+  <div id="baner" class="box"></div>
   <div id="boot" class="box" style="display:none">Ladowanie...</div>
   <div id="alertBox" class="alert"></div>
 
@@ -98,6 +91,7 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
       <button type="button" class="main-btn" id="btnTrack">Zapisz wykonanie</button>
     </div>
     <button type="button" class="main-btn gray" id="btnTxt">Pobierz TXT</button>
+
     <div id="result"></div>
     <p class="small" id="czas"></p>
   </div>
@@ -126,7 +120,10 @@ h2{margin:6px 0 2px;font-size:1.05rem;color:#ff4de0}
         <option value="wyrzut" data-pkt="3">Rajstopy do wyrzucenia</option>
         <option value="brak" data-pkt="3">Brak wylosowanego ubioru</option>
         <option value="but" data-pkt="3">Inne obuwie</option>
-        <option value="kolor" data-pkt="3">Podmiana koloru</option>
+        <option value="kolor" data-pkt="3">Podmiana koloru bez zgody</option>
+        <option value="calosc" data-pkt="7">Zdjecie calosci przed czasem</option>
+        <option value="wytrysk" data-pkt="30">Nieuzasadniony wytrysk</option>
+        <option value="rozpiety" data-pkt="1">Rozpiety kombinezon</option>
         <option value="wielo" data-pkt="3">Wielokrotne losowanie</option>
         <option value="brak_korekty" data-pkt="3">Brak korekty do 17:00</option>
         <option value="raj" data-pkt="2">Zdjecie rajstop bez zgody</option>
@@ -396,11 +393,12 @@ function pokazOstatniStroj(){
     html+='<div class="nag"><span>📅 Dzień</span><span class="dt">'+(last.t||'').split(',')[0]+'</span></div>';
     html+=lin('👕','gora',String(last.gorna).toUpperCase());
     html+=lin('👗','spod',last.spod);
-    html+=lin('📚','warstwa',last.komb?'KOMBINEZON':'brak');
+    html+=lin('📚','warstwa',last.komb?('KOMBINEZON'+(last.zip?(' • '+last.zip):'')):'brak');
     if(last.stopki){html+=lin('🧦','nogi','nieobowiazkowe • stopki','green');res.className='no'}
     else{html+=lin('🧦','rajstopy',last.det||'—','red');html+=lin('📷','zdjecie',last.godz||'—','red');res.className='mandatory'}
     html+=lin('👟','buty',last.buty);
     if(last.dopisek)html+=lin('➕','dopisek',last.dopisek,'red');
+    if(last.zadanie)html+=lin('⚡','zadanie',last.zadanie,'red');
     html+='<div class="mini">kontrola '+(last.ctrlH?fmt(last.ctrlH):'—')+'</div>';
   }
   var kx=karaDnia();
@@ -460,12 +458,12 @@ function rozliczDzien(){
 }
 function losujGorna(){
   var r=Math.random();
-  if(sezon==='zimowa'){if(r<0.55)return 'Body z dlugim rekawem';return 'Kostium gimnastyczny'}
+  if(sezon==='zimowa'){if(r<0.45)return 'Body z dlugim rekawem';if(r<0.80)return 'Kostium gimnastyczny';return 'Romper'}
   if(r<0.55)return 'Body z dlugim rekawem';
   if(r<0.80)return 'Kostium gimnastyczny';
   return 'Romper';
 }
-function losujSpod(){return Math.random()<0.50?'MAJTKI':'BODY'}
+function losujSpod(){return (punkty<0)?'BODY':'MAJTKI'}
 var JASK=['BIALE','ROZOWE','ZOLTE','LIMONKA','CZERWONE','FIOLETOWE','BLEKIT KROLEWSKI'];
 var CIEMNE=['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','CIELISTE','ZIELONE BUTELKOWE'];
 function kolorRaj(temp){
@@ -512,9 +510,9 @@ function dzienWyjazdowy(){
   alert('Dzien wyjazdowy. '+(po?'-7 (po losowaniu)':'-5')+'. Nastepne losowanie: kombinezon obowiazkowy.');
 }
 function losuj(){
+    if(!srvOk||isNaN(srvTemp)){alert('Najpierw odswiez temperature z serwera');return}
   if(hour()>=17){alert('Po 17:00 nie wolno');return}
   if(losDate===todayStr()){alert('Dzis juz bylo losowanie. Raz i dosc.');return}
-  if(!srvOk||isNaN(srvTemp)){alert('Najpierw odswiez temperature z serwera');return}
   var temp=srvTemp,res=$('result'),ask=$('askBtn');
   if($('temp'))$('temp').value=temp;
   if(isNaN(temp)){res.innerHTML='<p class="red">Brak temperatury z serwera</p>';res.className='mandatory';return}
@@ -527,6 +525,8 @@ function losuj(){
   ask.disabled=blokada;
   var buty=losujButy(temp,blokada),ctrl=+(10.5+Math.random()*4).toFixed(2);
   komb=(sezon==='letnia')?(Math.random()<0.15):(Math.random()<0.50);
+  var zip='';
+  if(komb)zip=(Math.random()<0.5)?'zapięty na maks':'luz';
   if(kombNext){if(!komb)addPkt(-5,'Brak kombinezonu mimo flagi wyjazdu');komb=true;kombNext=false;save('r_kombN','');}
   if(gorna==='Body')pkt+=1;else if(gorna==='Body z dlugim rekawem')pkt+=1;else pkt+=2;
   if(spod==='BODY')pkt+=0.5;if(komb)pkt+=(sezon==='letnia'?2:1);
@@ -548,15 +548,29 @@ function losuj(){
     else det='40 den — '+dopisek;
     addHist('DOPISEK',dopisek+' | rajstopy '+(det||'-')+' | buty '+buty+' | do '+godz);
   }
-  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,sezon:sezon,ctrlH:ctrl,temp:temp,dopisek:dopisek,t:now()};
+  last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,zip:zip,sezon:sezon,ctrlH:ctrl,temp:temp,dopisek:dopisek,zadanie:'',t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');
   pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
 }
+function losujZadanie(){
+  var pula=['dodatkowe rajstopy do 17','biale baletki','kombinezon zapiety na maks','jaskrawe zamiast wylosowanego koloru','zakaz prosby do 17','druga para majtek albo body string','rajstopy do 17','obuwie ciasniejsze','zakaz odrabiania','rajstopy polarowe albo legginsy na rajstopy'];
+  return pula[Math.floor(Math.random()*pula.length)];
+}
 function potwierdzStroj(){
-  if(!last||losDate!==todayStr()){alert('Brak dzisiejszego losowania');return}
+  if(!last){alert('Brak losowania');return}
   potwierdzone=true;save('r_potw',todayStr());addHist('Potwierdzenie','OK');
+  if(!last.zadanie&&Math.random()<0.05){
+    last.zadanie=losujZadanie();
+    saveJSON('r_last',last);
+    addHist('ZADANIE',last.zadanie);
+    alert('ZADANIE: '+last.zadanie);
+  }
   $('btnPotwierdz').style.display='none';pokazOstatniStroj();showStatus();updateDayGuards();
+}
+function resetPkt(){
+  if(!confirm('Wyzerowac punkty?'))return;
+  punkty=0;save('r_pkt',0);updatePkt();addHist('RESET','punkty 0');alert('Punkty 0');
 }
 
 function pytajKomb(){
@@ -793,7 +807,7 @@ function bind(){
   $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
   $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;if($('askPal'))$('askPal').onclick=pytajPal;
+  $('btnLosuj').onclick=losuj;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
@@ -818,7 +832,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v3.9.42</span>');
+    bootMsg('<span class="green">Gotowe v4.0</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
