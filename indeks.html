@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v4.3.1</title>
+<title>Pani Regulamin v4.3.2</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#0b0f14;color:#e8eef6;padding:0;min-height:100vh}
@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.3.1</p>
+  <p class="sub">Wersja 4.3.2</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -448,7 +448,7 @@ function zamelduj(g,key){
   var t=hour(),a=g-0.25,b=g+0.25;
   if(t<a){alert('Za wczesnie. Od '+fmt(a));return}
   if(t<=b){meldunki[key]='ok';saveJSON('r_meld',meldunki);addHist('Meldunek '+fmt(g),'OK');alert('Punktualny');
-    if(last&&!last.zadanie&&Math.random()<0.05){var z=losujZadanie();last.zadanie=z.txt;last.zadanieTyp=z.typ;saveJSON('r_last',last);addHist(z.typ==='+'?'SZCZESCIE':'PECH',z.txt);alert((z.typ==='+'?'suka ma dziś szczęście: ':'suka ma dziś pecha: ')+z.txt);pokazOstatniStroj();}
+    if(last&&!last.zadanie&&Math.random()<0.05){var z=losujZadanie();last.zadanie=z.txt;last.zadanieTyp=z.typ;if(z.typ==='-')last.pech=true;saveJSON('r_last',last);addHist(z.typ==='+'?'SZCZESCIE':'PECH',z.txt);alert((z.typ==='+'?'suka ma dziś szczęście: ':'suka ma dziś pecha: ')+z.txt);pokazOstatniStroj();}
   }
   else{
     var ile=0;['h9','h12','h15','hCtrl'].forEach(function(k){if(meldunki[k]==='late')ile++});
@@ -663,7 +663,7 @@ function losujZadanie(){
     'jedna prosba bez kary',
     'koniec obowiazku rajstop od teraz'
   ];
-  if(Math.random()<0.35) return {typ:'+', txt:plus[Math.floor(Math.random()*plus.length)]};
+  if(!last.pech && Math.random()<0.15) return {typ:'+', txt:plus[Math.floor(Math.random()*plus.length)]};
   return {typ:'-', txt:minus[Math.floor(Math.random()*minus.length)]};
 }
 function potwierdzStroj(){
@@ -935,7 +935,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showRand();showOpis();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.3.1</span>');
+    bootMsg('<span class="green">Gotowe v4.3.2</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
