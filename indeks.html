@@ -595,11 +595,16 @@ function showRand(){
   if(box){box.style.display=active?'block':'none'; if(info)info.innerHTML=txt;}
 }
 function doRand(){
-  var v=($('randInput')&&$('randInput').value||'').trim().toLowerCase();
-  var h=hour(), r=last.rand;
-  var need = (Math.abs(h-r.r1)<0.17) ? 'jestem w stroju' : 'jestem';
-  if(v!==need){addPkt(-3,'Zly tekst meldunku losowego');alert('Zly tekst = -3');return}
-  addHist('Meldunek losowy','OK');
+  var v=($('randInput')&&$('randInput').value||'').trim().toLowerCase().replace(/\s+/g,' ');
+  var h=hour(), r=last.rand||{};
+  var in1=Math.abs(h-(r.r1||0))<0.2;
+  var in2=r.r2&&Math.abs(h-r.r2)<0.2;
+  var ok=false;
+  if(in1 && (v==='jestem w stroju'||v.indexOf('jestem w stroju')>=0)) ok=true;
+  else if(in2 && (v==='jestem'||v==='jestem w stroju')) ok=true;
+  else if(v==='jestem w stroju'||v==='jestem') ok=true;
+  if(!ok){addPkt(-3,'Zly tekst meldunku losowego');alert('Zly tekst = -3\nWpisano: '+v);return}
+  addHist('Meldunek losowy','OK '+v);
   $('randInput').value='';
   alert('Przyjęte');
   showRand();
