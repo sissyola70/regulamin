@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v4.2.3</title>
+<title>Pani Regulamin v4.3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#0b0f14;color:#e8eef6;padding:0;min-height:100vh}
@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.2.3</p>
+  <p class="sub">Wersja 4.3</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -70,7 +70,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
-    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 24<div id="pktInfo" class="small"></div></div>
+    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 20<div id="pktInfo" class="small"></div></div>
     <div class="box" style="display:none">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/2</div>
     <div class="box small" id="askInfo" style="display:none">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
@@ -88,7 +88,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       </div>
       <div id="opisBox" style="display:none;margin-top:8px">
         <div class="small" id="opisInfo"></div>
-        <textarea id="opisInput" placeholder="gora / rajstopy / buty"></textarea>
+        <textarea id="opisInput" placeholder="suka obecna"></textarea>
         <button type="button" class="main-btn" id="btnOpis">Zapisz opis stroju</button>
       </div>
     </div>
@@ -209,7 +209,7 @@ function hour(){var n=clock();return n.getHours()+n.getMinutes()/60}
 function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);if(mm===60){hh++;mm=0}return hh+':'+(mm<10?'0':'')+mm}
 function weekNum(){var n=clock(),o=new Date(n.getFullYear(),0,1);return Math.ceil((((n-o)/86400000)+o.getDay()+1)/7)+'-'+n.getFullYear()}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
-var CEL=24,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext,kombAsk,kombAskDate,lastKombAsk;
+var CEL=20,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastViol,dziennik,meldunki,potwierdzone,losDate,karaCount,blokada,karaToday,odrobToday,odrobPkt,odrobDone,karnyLeft,palOdm,palDate,lastPal,kombNext,kombAsk,kombAskDate,lastKombAsk;
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
@@ -600,8 +600,8 @@ function showRand(){
   if(!last||!last.rand){if(box)box.style.display='none';return}
   var h=hour(), r=last.rand;
   var active=false, txt='';
-  if(Math.abs(h-r.r1)<0.17){active=true;txt='Meldunek losowy 1: wpisz „jestem w stroju”';}
-  else if(r.r2 && Math.abs(h-r.r2)<0.17){active=true;txt='Meldunek losowy 2: wpisz „jestem w stroju”';}
+  if(Math.abs(h-r.r1)<0.17){active=true;txt='Meldunek: wpisz „suka obecna”';}
+  else if(r.r2 && Math.abs(h-r.r2)<0.17){active=true;txt='Meldunek: wpisz „suka obecna”';}
   if(box){box.style.display=active?'block':'none'; if(info)info.innerHTML=txt;}
 }
 function doRand(){
@@ -610,9 +610,7 @@ function doRand(){
   var in1=Math.abs(h-(r.r1||0))<0.2;
   var in2=r.r2&&Math.abs(h-r.r2)<0.2;
   var ok=false;
-  if(in1 && (v==='jestem w stroju'||v.indexOf('jestem w stroju')>=0)) ok=true;
-  else if(in2 && v.indexOf('jestem w stroju')>=0) ok=true;
-  else if(v==='jestem w stroju'||v==='jestem') ok=true;
+  if(v==='suka obecna'||v.indexOf('suka obecna')>=0) ok=true;
   if(!ok){addPkt(-3,'Zly tekst meldunku losowego');alert('Zly tekst = -3\nWpisano: '+v);return}
   addHist('Meldunek losowy','OK '+v);
   $('randInput').value='';
@@ -628,13 +626,11 @@ function showOpis(){
     if($('opisInfo'))$('opisInfo').innerHTML='Okno opisu stroju: '+fmt(w.start)+'-'+fmt(w.end);}
 }
 function doOpis(){
-  var v=($('opisInput')&&$('opisInput').value||'').trim().toLowerCase();
-  if(!v){addPkt(-2,'Brak opisu stroju');alert('Brak = -2');return}
-  var expect = (last.gorna+' '+ (last.det||'') +' '+last.buty).toLowerCase();
-  if(v.indexOf(last.gorna.toLowerCase().split(' ')[0])<0){addPkt(-2,'Opis stroju niezgodny');alert('Niezgodny = -2');return}
-  addHist('Opis stroju','OK');
+  var v=($('opisInput')&&$('opisInput').value||'').trim().toLowerCase().replace(/\s+/g,' ');
+  if(v!=='suka obecna' && v.indexOf('suka obecna')<0){addPkt(-2,'Zly opis');alert('Wpisz: suka obecna');return}
+  addHist('Opis','OK');
   $('opisInput').value='';
-  alert('Opis przyjęty');
+  alert('Przyjęte');
   showOpis();
 }
 function losujZadanie(){
@@ -918,7 +914,7 @@ function bind(){
 function init(){
   try{
     sezon=load('r_sezon','letnia');tryb=load('r_tryb','los');
-    punkty=parseFloat(load('r_pkt','0'))||0;week=load('r_week','');
+    if(!load('r_reset43')){localStorage.removeItem('r_resetOnce');save('r_reset43','1')} punkty=parseFloat(load('r_pkt','0'))||0;week=load('r_week','');
     hist=loadJSON('r_hist',[]);last=loadJSON('r_last',null);
     lastAsk=parseInt(load('r_ask','0'),10)||0;askCount=parseInt(load('r_askc','0'),10)||0;askDate=load('r_askd','');palOdm=parseInt(load('r_palO','0'),10)||0;palDate=load('r_palD','');lastPal=parseInt(load('r_palT','0'),10)||0;kombAsk=parseInt(load('r_kac','0'),10)||0;kombAskDate=load('r_kad','');lastKombAsk=parseInt(load('r_kat','0'),10)||0;
     passa=parseInt(load('r_passa','0'),10)||0;lastViol=load('r_viol','');
@@ -931,7 +927,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.2.3</span>');
+    bootMsg('<span class="green">Gotowe v4.3</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
