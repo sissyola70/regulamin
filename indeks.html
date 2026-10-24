@@ -101,6 +101,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       <button type="button" class="main-btn" id="btnTrack">Zapisz wykonanie</button>
     </div>
     <button type="button" class="main-btn gray" id="btnTxt">Pobierz TXT</button>
+    <button type="button" class="main-btn red" id="btnResetOnce">Jednorazowy reset na 2</button>
 
 
     <div id="result"></div>
@@ -591,7 +592,7 @@ function showRand(){
   var h=hour(), r=last.rand;
   var active=false, txt='';
   if(Math.abs(h-r.r1)<0.17){active=true;txt='Meldunek losowy 1: wpisz „jestem w stroju”';}
-  else if(r.r2 && Math.abs(h-r.r2)<0.17){active=true;txt='Meldunek losowy 2: wpisz „jestem”';}
+  else if(r.r2 && Math.abs(h-r.r2)<0.17){active=true;txt='Meldunek losowy 2: wpisz „jestem w stroju”';}
   if(box){box.style.display=active?'block':'none'; if(info)info.innerHTML=txt;}
 }
 function doRand(){
@@ -601,7 +602,7 @@ function doRand(){
   var in2=r.r2&&Math.abs(h-r.r2)<0.2;
   var ok=false;
   if(in1 && (v==='jestem w stroju'||v.indexOf('jestem w stroju')>=0)) ok=true;
-  else if(in2 && (v==='jestem'||v==='jestem w stroju')) ok=true;
+  else if(in2 && v.indexOf('jestem w stroju')>=0) ok=true;
   else if(v==='jestem w stroju'||v==='jestem') ok=true;
   if(!ok){addPkt(-3,'Zly tekst meldunku losowego');alert('Zly tekst = -3\nWpisano: '+v);return}
   addHist('Meldunek losowy','OK '+v);
@@ -896,7 +897,7 @@ function bind(){
   $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
   $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;if($('btnRand'))$('btnRand').onclick=doRand;if($('btnOpis'))$('btnOpis').onclick=doOpis;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
+  $('btnLosuj').onclick=losuj;if($('btnResetOnce'))$('btnResetOnce').onclick=function(){if(load('r_resetOnce')){alert('Reset juz wykorzystany');return}if(!confirm('Ustawic punkty na 2? Jednorazowo.'))return;punkty=2;save('r_pkt',2);save('r_resetOnce','1');updatePkt();addHist('RESET','jednorazowo na 2');alert('Punkty = 2');$('btnResetOnce').disabled=true;};if($('btnRand'))$('btnRand').onclick=doRand;if($('btnOpis'))$('btnOpis').onclick=doOpis;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
