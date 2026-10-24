@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pani Regulamin v4.2.1</title>
+<title>Pani Regulamin v4.2.3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#0b0f14;color:#e8eef6;padding:0;min-height:100vh}
@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.2.1</p>
+  <p class="sub">Wersja 4.2.3</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -507,7 +507,16 @@ function startKarny(){
   var ctrl=+(10.5+Math.random()*4).toFixed(2);
   if(kombNext){kombNext=false;save('r_kombN','');}
   last={gorna:'DZIEN KARNY — kostium bialy + kombinezon',spod:'BODY STRING',buty:'baletki biale',det:'40 den — jaskrawe BIALE',godz:'17:00',stopki:false,komb:true,sezon:sezon,ctrlH:ctrl,t:now()};
-  saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);potwierdzone=false;save('r_potw','');
+  saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
+  var prev=loadJSON('r_prev',null);
+  var kolor=function(d){return String(d||'').replace(/\d+[^—]*—\s*/,'').trim().toUpperCase()};
+  if(prev && kolor(prev.det) && kolor(prev.det)===kolor(last.det)){
+    addPkt(-2,'Powtorka koloru rajstop');
+    last.dopisek=(last.dopisek?last.dopisek+' | ':'')+'DODATKOWE czarne zimowe na wylosowane';
+    saveJSON('r_last',last);
+    addHist('POWTORKA','dodatkowe czarne zimowe na '+kolor(last.det));
+  }
+  saveJSON('r_prev',{det:last.det});potwierdzone=false;save('r_potw','');
   karnyLeft=Math.max(0,(parseInt(load('r_karnyL','0'),10)||0)-1);save('r_karnyL',String(karnyLeft));
   addPkt(0,'Dzien karny / kostium bialy + kombinezon / BODY STRING / baletki biale / jaskrawe BIALE do 17 / kontrola '+fmt(ctrl));
   pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());updateDayGuards();showStatus();showMeldunki();
@@ -922,7 +931,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showRand();showOpis();checkSilence();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.2.1</span>');
+    bootMsg('<span class="green">Gotowe v4.2.3</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
