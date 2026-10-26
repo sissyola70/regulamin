@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.5.1</p>
+  <p class="sub">Wersja 4.6</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -458,6 +458,16 @@ function zamelduj(g,key){
     meldunki[key]='late';saveJSON('r_meld',meldunki);addPkt(kara,'Meldunek '+fmt(g)+' spozniony');alert('Spozniony = '+kara);
   }
   showMeldunki();showStatus();
+}
+
+function bonusTygodniowy(){
+  if(load('r_bonusWeek')===weekNum())return;
+  var blad=load('r_brud')===todayStr();
+  if(!blad && potwierdzone && meldunki.h9==='ok' && meldunki.h12==='ok' && meldunki.h15==='ok'){
+    addPkt(5,'Bonus tygodniowy: dzien bez bledu');
+    save('r_bonusWeek',weekNum());
+    alert('Bonus +5 za dzien bez bledu');
+  }
 }
 function rozliczDzien(){
   ensureMeldunki();
@@ -973,7 +983,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showRand();showOpis();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.5.1</span>');
+    bootMsg('<span class="green">Gotowe v4.6</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
