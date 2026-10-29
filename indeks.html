@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.6</p>
+  <p class="sub">Wersja 4.7</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -170,6 +170,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       <div class="check"><label><input type="checkbox" class="odrob" data-pkt="2" data-key="gora_wyzej"> Dobrowolnie kostium/romper (+2)</label></div>
       <div class="check"><label><input type="checkbox" class="odrob" data-pkt="0.5" data-key="opis"> Extra meldunek + opis (+0.5)</label></div>
       <div class="check"><label><input type="checkbox" class="odrob" data-pkt="0.5" data-key="pranie"> Pranie/skladanie kompletu (+0.5)</label></div>
+      <div class="check"><label><input type="checkbox" class="odrob" data-pkt="2" data-key="wkladki"> Wkladki 34 mm min. 30 min (+2)</label></div>
       <button type="button" class="main-btn green" id="btnOdrob">Zaliczy zaznaczone</button>
       <p class="small" style="margin-top:12px">Wlasne punkty — max lacznie 2 / dzien. Bez opisu = -3, bez dnia kary.</p>
       <input type="number" id="odrobIle" placeholder="Ile pkt" step="0.5" min="0.5" max="2">
@@ -983,7 +984,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showRand();showOpis();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.6</span>');
+    bootMsg('<span class="green">Gotowe v4.7</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
