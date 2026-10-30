@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.7.2</p>
+  <p class="sub">Wersja 4.7.3</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -627,6 +627,9 @@ function checkStale(){
 
 
 function zakonczDzien(){
+  var h=hour();
+  if(h<17){alert('Zakoncz dzien od 17:00');return}
+  if(h>=18){alert('Po 18:00 za pozno');return}
   if(load('r_zakoncz')===todayStr()){alert('Dzien juz zamkniety');return}
   if(!confirm('Zakonczyc dzien? Po tym brak punktow dodatnich.'))return;
   save('r_zakoncz',todayStr());
@@ -637,9 +640,13 @@ function zakonczDzien(){
 function updateZakoncz(){
   var z=load('r_zakoncz')===todayStr();
   if($('btnZakoncz'))$('btnZakoncz').disabled=z;
-  if($('zakonczInfo'))$('zakonczInfo').innerHTML=z?'Dzien zamkniety':'Do 18:00. Brak = -5. Po kliknieciu brak plusow.';
+  if($('zakonczInfo'))$('zakonczInfo').innerHTML=z?'Dzien zamkniety':(hour()>=17?'Zakoncz dzien — do 18:00':'Do 18:00. Brak = -5');
 }
 function checkZakoncz(){
+  if(hour()>=18 && load('r_zakoncz')!==todayStr()){
+    save('r_zakoncz',todayStr());
+    if(load('r_zakonczKara')!==todayStr()){addPkt(-5,'Auto zamkniecie 18:00');save('r_zakonczKara',todayStr());}
+  }
   if(hour()>=18 && load('r_zakoncz')!==todayStr() && load('r_zakonczKara')!==todayStr()){
     addPkt(-5,'Brak zakonczenia dnia do 18:00');
     save('r_zakonczKara',todayStr());
@@ -1036,7 +1043,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.7.2</span>');
+    bootMsg('<span class="green">Gotowe v4.7.3</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
