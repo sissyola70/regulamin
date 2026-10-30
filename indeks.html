@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.7.1</p>
+  <p class="sub">Wersja 4.7.2</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -123,6 +123,8 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       <button type="button" class="main-btn" id="btnSuka">Potwierdz</button>
     </div>
     <button type="button" class="main-btn green" id="btnRozlicz">Rozlicz dzien</button>
+    <button type="button" class="main-btn red" id="btnZakoncz">Zakoncz dzien</button>
+    <p class="small" id="zakonczInfo">Do 18:00. Brak = -5. Po kliknieciu brak plusow.</p>
     <button type="button" class="main-btn" id="btnPodsum" style="background:#660066">Podsumowanie 17:00-17:15</button>
     <p class="small" id="podsumInfo">Opcjonalne. Bez bledu +1, blad -1. Pominiecie = 0.</p>
   </div>
@@ -261,7 +263,7 @@ function go(name){
   if(name==='dziennik'){showDziennik();showHist();}
   if(name==='kontrola'){showMeldunki();updateDayGuards();}
   if(name==='kary'){updateSumaKar();showKaraHist();}
-  if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();showSuka();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();updateAskInfo()}}
+  if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();updateAskInfo()}}
 }
 function setMode(m){
   tryb=m;save('r_tryb',m);
@@ -288,7 +290,7 @@ function updateOdrob(){
   $('odrobInfo').innerHTML=odrobPkt;if($('odrobInfo2'))$('odrobInfo2').innerHTML=odrobPkt;
 }
 function oznaczBrud(){var d=loadJSON('r_dirty',{});d[todayStr()]=true;saveJSON('r_dirty',d)}
-function addPkt(p,powod){punkty+=p;save('r_pkt',punkty);updatePkt();addHist(powod,(p>0?'+':'')+p+' pkt');if(p<0)oznaczBrud()}
+function addPkt(p,powod){if(p>0 && load("r_zakoncz")===todayStr()){alert("Dzien zamkniety — brak plusow");return}punkty+=p;save('r_pkt',punkty);updatePkt();addHist(powod,(p>0?'+':'')+p+' pkt');if(p<0)oznaczBrud()}
 function addHist(g,d){hist.unshift({t:now(),g:g,d:d,ts:Date.now()});if(hist.length>40)hist.pop();saveJSON('r_hist',hist);showHist();logWp((g||'')+' | '+(d||''))}
 function logWp(text){dziennik.unshift({t:text,d:now(),ts:Date.now()});if(dziennik.length>80)dziennik.pop();saveJSON('r_dz',dziennik);dopiszArchiwum(now()+' | '+(text||''));if($('dzHist'))showDziennik()}
 function dopiszArchiwum(line){
@@ -537,7 +539,7 @@ function startKarny(){
   saveJSON('r_prev',{det:last.det});potwierdzone=false;save('r_potw','');
   karnyLeft=Math.max(0,(parseInt(load('r_karnyL','0'),10)||0)-1);save('r_karnyL',String(karnyLeft));
   addPkt(0,'Dzien karny / kostium bialy + kombinezon / BODY STRING / baletki biale / jaskrawe BIALE do 17 / kontrola '+fmt(ctrl));
-  pokazOstatniStroj();showSuka();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();showStatus();showMeldunki();
+  pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();showStatus();showMeldunki();
 }
 function dzienWyjazdowy(){
   if(load('r_wyjD','')===todayStr()){alert('Dzis juz zaznaczony dzien wyjazdowy');return}
@@ -547,7 +549,7 @@ function dzienWyjazdowy(){
   addPkt(po?-7:-5,'Dzien wyjazdowy'+(po?' PO losowaniu -7':' -5'));
   last={gorna:'DZIEN WYJAZDOWY',spod:'nie obowiazuje',buty:'dowolne',det:'',godz:'-',stopki:true,komb:false,sezon:sezon,ctrlH:null,temp:srvTemp,t:now(),wyjazd:true};
   saveJSON('r_last',last);
-  pokazOstatniStroj();showSuka();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updatePkt();
+  pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updatePkt();
   alert('Dzien wyjazdowy. '+(po?'-7 (po losowaniu)':'-5')+'. Nastepne losowanie: kombinezon obowiazkowy.');
 }
 function losuj(){
@@ -594,7 +596,7 @@ function losuj(){
   last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,zip:zip,sezon:sezon,ctrlH:ctrl,temp:temp,dopisek:dopisek,zadanie:'',rand:{r1:times.r1,r2:times.r2},opisWin:{start:times.opisStart,end:times.opisEnd},stale:+(11+Math.random()*4).toFixed(2),t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');
-  pokazOstatniStroj();showSuka();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
+  pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
 }
 
 function genRandTimes(){
@@ -623,6 +625,27 @@ function checkStale(){
   }
 }
 
+
+function zakonczDzien(){
+  if(load('r_zakoncz')===todayStr()){alert('Dzien juz zamkniety');return}
+  if(!confirm('Zakonczyc dzien? Po tym brak punktow dodatnich.'))return;
+  save('r_zakoncz',todayStr());
+  addHist('ZAKONCZENIE','dzien zamkniety');
+  alert('Dzien zamkniety. Brak plusow.');
+  updateZakoncz();
+}
+function updateZakoncz(){
+  var z=load('r_zakoncz')===todayStr();
+  if($('btnZakoncz'))$('btnZakoncz').disabled=z;
+  if($('zakonczInfo'))$('zakonczInfo').innerHTML=z?'Dzien zamkniety':'Do 18:00. Brak = -5. Po kliknieciu brak plusow.';
+}
+function checkZakoncz(){
+  if(hour()>=18 && load('r_zakoncz')!==todayStr() && load('r_zakonczKara')!==todayStr()){
+    addPkt(-5,'Brak zakonczenia dnia do 18:00');
+    save('r_zakonczKara',todayStr());
+    alert('Brak Zakoncz dzien do 18:00 = -5');
+  }
+}
 function showSuka(){
   var info=$('sukaInfo'), box=$('sukaBox');
   if(!last){if(info)info.innerHTML='brak losu';return}
@@ -643,7 +666,7 @@ function doSuka(){
   addHist('Suka obecna','OK');
   if($('sukaInput'))$('sukaInput').value='';
   alert('Przyjęte');
-  showSuka();
+  showSuka();updateZakoncz();checkZakoncz();
 }
 function showRand(){
   var box=$('randBox'), info=$('randInfo');
@@ -747,7 +770,7 @@ function losujZadanie(){
 function potwierdzStroj(){
   if(!last){alert('Brak losowania');return}
   potwierdzone=true;save('r_potw',todayStr());addHist('Potwierdzenie','OK');
-  $('btnPotwierdz').style.display='none';pokazOstatniStroj();showSuka();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();
+  $('btnPotwierdz').style.display='none';pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();
 }
 function resetPkt(){
   if(!confirm('Wyzerowac punkty?'))return;
@@ -774,7 +797,7 @@ function pytajKomb(){
     if(res){res.innerHTML='<p class="red">KOMBINEZON — NIE</p>';res.className='mandatory'}
     alert('NIE. Zostaje do 17:00.');
   }
-  pokazOstatniStroj();showSuka();checkSilence();checkStale();save('r_lastOpen',now());
+  pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());
   setTimeout(pokazOstatniStroj,4000);
 }
 function pytaj(){
@@ -923,7 +946,7 @@ function nalozKary(){
   var txt=label+' -'+suma+(mult>1?' (x'+mult+')':'')+(opis?' | ZA CO: '+opis:'')+(dop?' | DZIŚ: '+dop:'')+(extra?' | '+extra:'')+(kor?' | korekta TAK':' | korekta NIE');
   saveJSON('r_karaX',{date:todayStr(),txt:txt,extra:extra,dop:dop,opis:opis,key:key});
   addPkt(-suma,'Kara: '+txt);
-  pokazOstatniStroj();showSuka();checkSilence();checkStale();save('r_lastOpen',now());
+  pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());
   passa=0;lastViol=todayStr();karaToday=todayStr();
   save('r_passa','0');save('r_viol',lastViol);save('r_karaD',karaToday);updatePkt();
   if($('karaOpis'))$('karaOpis').value='';
@@ -988,7 +1011,7 @@ function bind(){
   $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
   $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;if($('btnJutro'))$('btnJutro').onclick=losNaJutro;if($('btnRezygnacja'))$('btnRezygnacja').onclick=rezygnacja;pokazJutro();if($('btnSuka'))$('btnSuka').onclick=doSuka;if($('btnOpis'))$('btnOpis').onclick=doOpis;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
+  $('btnLosuj').onclick=losuj;if($('btnJutro'))$('btnJutro').onclick=losNaJutro;if($('btnRezygnacja'))$('btnRezygnacja').onclick=rezygnacja;pokazJutro();if($('btnSuka'))$('btnSuka').onclick=doSuka;if($('btnZakoncz'))$('btnZakoncz').onclick=zakonczDzien;if($('btnOpis'))$('btnOpis').onclick=doOpis;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
@@ -1011,9 +1034,9 @@ function init(){
     karnyLeft=parseInt(load('r_karnyL','0'),10)||0;blokada=false;kombNext=(load('r_kombN','')==='1');
     bind();setMode(tryb);pokazSezon();pobierzSerwer().then(function(){updateDayGuards();showStatus()}).catch(function(){updateDayGuards()});
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
-    pokazOstatniStroj();showSuka();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
+    pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.7.1</span>');
+    bootMsg('<span class="green">Gotowe v4.7.2</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
