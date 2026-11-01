@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.8</p>
+  <p class="sub">Wersja 4.8.1</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -1031,6 +1031,11 @@ function init(){
   try{
     sezon=load('r_sezon','letnia');tryb=load('r_tryb','los');
     if(!load('r_reset43')){localStorage.removeItem('r_resetOnce');save('r_reset43','1')} punkty=parseFloat(load('r_pkt','0'))||0;
+if(!load('r_locktober10')){
+  punkty+=10; save('r_pkt',punkty); save('r_locktober10','1');
+  addHist('Locktober','+10 pkt');
+  setTimeout(function(){updatePkt();alert('Locktober zaliczony: +10');},500);
+}
 if(!load('r_locktober10')){addPkt(10,'Locktober 2026 zaliczony');save('r_locktober10','1');}
 week=load('r_week','');
     hist=loadJSON('r_hist',[]);last=loadJSON('r_last',null);
@@ -1045,7 +1050,7 @@ week=load('r_week','');
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.8</span>');
+    bootMsg('<span class="green">Gotowe v4.8.1</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
