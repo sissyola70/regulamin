@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.7.3</p>
+  <p class="sub">Wersja 4.8</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -324,7 +324,7 @@ function karaCzyste(){
   if(load('r_czyste','')===weekNum())return;
   var dirty=loadJSON('r_dirty',{}),n=0,dzis=todayStr();
   dniTygodnia().forEach(function(d){if(d<=dzis&&!dirty[d])n++});
-  if(n)addPkt(-n,'Czyste dni tygodnia');
+  if(n)
   save('r_czyste',weekNum());
 }
 function checkWeek(){
@@ -1030,7 +1030,9 @@ function bind(){
 function init(){
   try{
     sezon=load('r_sezon','letnia');tryb=load('r_tryb','los');
-    if(!load('r_reset43')){localStorage.removeItem('r_resetOnce');save('r_reset43','1')} punkty=parseFloat(load('r_pkt','0'))||0;week=load('r_week','');
+    if(!load('r_reset43')){localStorage.removeItem('r_resetOnce');save('r_reset43','1')} punkty=parseFloat(load('r_pkt','0'))||0;
+if(!load('r_locktober10')){addPkt(10,'Locktober 2026 zaliczony');save('r_locktober10','1');}
+week=load('r_week','');
     hist=loadJSON('r_hist',[]);last=loadJSON('r_last',null);
     lastAsk=parseInt(load('r_ask','0'),10)||0;askCount=parseInt(load('r_askc','0'),10)||0;askDate=load('r_askd','');palOdm=parseInt(load('r_palO','0'),10)||0;palDate=load('r_palD','');lastPal=parseInt(load('r_palT','0'),10)||0;kombAsk=parseInt(load('r_kac','0'),10)||0;kombAskDate=load('r_kad','');lastKombAsk=parseInt(load('r_kat','0'),10)||0;
     passa=parseInt(load('r_passa','0'),10)||0;lastViol=load('r_viol','');
@@ -1043,7 +1045,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.7.3</span>');
+    bootMsg('<span class="green">Gotowe v4.8</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
