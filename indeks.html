@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.7.3</p>
+  <p class="sub">Wersja 4.7.4</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -324,7 +324,7 @@ function karaCzyste(){
   if(load('r_czyste','')===weekNum())return;
   var dirty=loadJSON('r_dirty',{}),n=0,dzis=todayStr();
   dniTygodnia().forEach(function(d){if(d<=dzis&&!dirty[d])n++});
-  if(n)addPkt(-n,'Czyste dni tygodnia');
+  
   save('r_czyste',weekNum());
 }
 function checkWeek(){
@@ -1043,7 +1043,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();showSuka();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.7.3</span>');
+    bootMsg('<span class="green">Gotowe v4.7.4</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
