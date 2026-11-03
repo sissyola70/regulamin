@@ -11,7 +11,7 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#0b0f14;color:#e
 h1{color:#9fd;text-align:left;font-size:1.15rem;padding:14px 16px 0;letter-spacing:.04em}
 .sub{text-align:left;color:#7d8b99;font-size:.75rem;padding:2px 16px 10px}
 .tabs{display:flex;gap:0;position:sticky;top:0;z-index:5;background:#0e141c;border-bottom:1px solid #243040}
-.tab{flex:1;padding:18px 6px;min-height:52px;touch-action:manipulation;border:none;border-bottom:3px solid transparent;background:transparent;color:#8aa;border-radius:0;font-size:.72rem;font-weight:700}
+.tab{flex:1;padding:14px 2px;border:none;border-bottom:3px solid transparent;background:transparent;color:#8aa;border-radius:0;font-size:.72rem;font-weight:700}
 .tab.active{color:#9fd;border-bottom-color:#3ecfb2;background:#162028}
 .panel{display:none;padding:12px}.panel.active{display:block}
 .box{background:#182230;border:1px solid #2a3a4a;border-radius:8px;padding:12px;margin-bottom:10px;text-align:left}
@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.9.2</p>
+  <p class="sub">Wersja 4.7.7</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -90,7 +90,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       </div>
       <div id="opisBox" style="display:none;margin-top:8px">
         <div class="small" id="opisInfo"></div>
-        <textarea id="opisInput" placeholder="suka obecna"></textarea>
+        <textarea id="opisInput" placeholder=""></textarea>
         <button type="button" class="main-btn" id="btnOpis">Zapisz opis stroju</button>
       </div>
     </div>
@@ -116,11 +116,8 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
     <div class="meldunek"><strong>12:00</strong><div id="st1200" class="small">brak</div><button type="button" class="main-btn" id="btn1200">Zamelduj 12:00</button></div>
     <div class="meldunek"><strong id="lblCtrl">Kontrola dodatkowa</strong><div id="stCtrl" class="small">brak</div><button type="button" class="main-btn" id="btnCtrl">Zamelduj kontrole</button></div>
     <div class="meldunek"><strong>15:00</strong><div id="st1500" class="small">brak</div><button type="button" class="main-btn" id="btn1500">Zamelduj 15:00</button></div>
-        <input type="text" id="sukaInput" placeholder="suka obecna">
-      <button type="button" class="main-btn" id="btnSuka">Potwierdz</button>
-    </div>
     <button type="button" class="main-btn green" id="btnRozlicz">Rozlicz dzien</button>
-    <button type="button" class="main-btn" id="btnPodsum" style="background:#660066">Podsumowanie 17:00-17:15</button>
+        <button type="button" class="main-btn" id="btnPodsum" style="background:#660066">Podsumowanie 17:00-17:15</button>
     <p class="small" id="podsumInfo">Opcjonalne. Bez bledu +1, blad -1. Pominiecie = 0.</p>
   </div>
 
@@ -258,7 +255,7 @@ function go(name){
   if(name==='dziennik'){showDziennik();showHist();}
   if(name==='kontrola'){showMeldunki();updateDayGuards();}
   if(name==='kary'){updateSumaKar();showKaraHist();}
-  if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();updateAskInfo()}}
+  if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();updateAskInfo()}}
 }
 function setMode(m){
   tryb=m;save('r_tryb',m);
@@ -534,7 +531,7 @@ function startKarny(){
   saveJSON('r_prev',{det:last.det});potwierdzone=false;save('r_potw','');
   karnyLeft=Math.max(0,(parseInt(load('r_karnyL','0'),10)||0)-1);save('r_karnyL',String(karnyLeft));
   addPkt(0,'Dzien karny / kostium bialy + kombinezon / BODY STRING / baletki biale / jaskrawe BIALE do 17 / kontrola '+fmt(ctrl));
-  pokazOstatniStroj();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();showStatus();showMeldunki();
+  pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();showStatus();showMeldunki();
 }
 function dzienWyjazdowy(){
   if(load('r_wyjD','')===todayStr()){alert('Dzis juz zaznaczony dzien wyjazdowy');return}
@@ -544,7 +541,7 @@ function dzienWyjazdowy(){
   addPkt(po?-7:-5,'Dzien wyjazdowy'+(po?' PO losowaniu -7':' -5'));
   last={gorna:'DZIEN WYJAZDOWY',spod:'nie obowiazuje',buty:'dowolne',det:'',godz:'-',stopki:true,komb:false,sezon:sezon,ctrlH:null,temp:srvTemp,t:now(),wyjazd:true};
   saveJSON('r_last',last);
-  pokazOstatniStroj();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updatePkt();
+  pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updatePkt();
   alert('Dzien wyjazdowy. '+(po?'-7 (po losowaniu)':'-5')+'. Nastepne losowanie: kombinezon obowiazkowy.');
 }
 function losuj(){
@@ -591,7 +588,7 @@ function losuj(){
   last={gorna:gorna+(komb?' + kombinezon':''),spod:spod,buty:buty,det:det,godz:godz,stopki:stopki,komb:komb,zip:zip,sezon:sezon,ctrlH:ctrl,temp:temp,dopisek:dopisek,zadanie:'',rand:{r1:times.r1,r2:times.r2},opisWin:{start:times.opisStart,end:times.opisEnd},stale:+(11+Math.random()*4).toFixed(2),t:now()};
   saveJSON('r_last',last);losDate=todayStr();save('r_losd',losDate);
   potwierdzone=false;save('r_potw','');
-  pokazOstatniStroj();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
+  pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
 }
 
 function genRandTimes(){
@@ -630,7 +627,7 @@ function zakonczDzien(){
   save('r_zakoncz',todayStr());
   addHist('ZAKONCZENIE','dzien zamkniety');
   alert('Dzien zamkniety. Brak plusow.');
-  
+  updateZakoncz();
 }
 function updateZakoncz(){
   var z=load('r_zakoncz')===todayStr();
@@ -668,7 +665,7 @@ function doSuka(){
   addHist('Suka obecna','OK');
   if($('sukaInput'))$('sukaInput').value='';
   alert('Przyjęte');
-  
+  updateZakoncz();checkZakoncz();
 }
 function showRand(){
   var box=$('randBox'), info=$('randInfo');
@@ -772,7 +769,7 @@ function losujZadanie(){
 function potwierdzStroj(){
   if(!last){alert('Brak losowania');return}
   potwierdzone=true;save('r_potw',todayStr());addHist('Potwierdzenie','OK');
-  $('btnPotwierdz').style.display='none';pokazOstatniStroj();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();
+  $('btnPotwierdz').style.display='none';pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();
 }
 function resetPkt(){
   if(!confirm('Wyzerowac punkty?'))return;
@@ -799,7 +796,7 @@ function pytajKomb(){
     if(res){res.innerHTML='<p class="red">KOMBINEZON — NIE</p>';res.className='mandatory'}
     alert('NIE. Zostaje do 17:00.');
   }
-  pokazOstatniStroj();checkSilence();checkStale();save('r_lastOpen',now());
+  pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());
   setTimeout(pokazOstatniStroj,4000);
 }
 function pytaj(){
@@ -948,7 +945,7 @@ function nalozKary(){
   var txt=label+' -'+suma+(mult>1?' (x'+mult+')':'')+(opis?' | ZA CO: '+opis:'')+(dop?' | DZIŚ: '+dop:'')+(extra?' | '+extra:'')+(kor?' | korekta TAK':' | korekta NIE');
   saveJSON('r_karaX',{date:todayStr(),txt:txt,extra:extra,dop:dop,opis:opis,key:key});
   addPkt(-suma,'Kara: '+txt);
-  pokazOstatniStroj();checkSilence();checkStale();save('r_lastOpen',now());
+  pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());
   passa=0;lastViol=todayStr();karaToday=todayStr();
   save('r_passa','0');save('r_viol',lastViol);save('r_karaD',karaToday);updatePkt();
   if($('karaOpis'))$('karaOpis').value='';
@@ -1009,12 +1006,9 @@ function pobierz(){
   a.click();
 }
 function bind(){
-  ['t1','t2','t3','t4','t5'].forEach(function(id,i){
-    var names=['losowanie','kontrola','kary','odrabianie','dziennik'];
-    var el=$(id); if(!el)return;
-    el.addEventListener('click',function(e){e.preventDefault();go(names[i])});
-    el.addEventListener('touchend',function(e){e.preventDefault();go(names[i])});
-  });
+  $('t1').onclick=function(){go('losowanie')};$('t2').onclick=function(){go('kontrola')};
+  $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
+  $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
   $('btnLosuj').onclick=losuj;if($('btnJutro'))$('btnJutro').onclick=losNaJutro;if($('btnRezygnacja'))$('btnRezygnacja').onclick=rezygnacja;pokazJutro();if($('btnSuka'))$('btnSuka').onclick=doSuka;if($('btnZakoncz'))$('btnZakoncz').onclick=zakonczDzien;if($('btnOpis'))$('btnOpis').onclick=doOpis;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
@@ -1039,9 +1033,9 @@ function init(){
     karnyLeft=parseInt(load('r_karnyL','0'),10)||0;blokada=false;kombNext=(load('r_kombN','')==='1');
     bind();setMode(tryb);pokazSezon();pobierzSerwer().then(function(){updateDayGuards();showStatus()}).catch(function(){updateDayGuards()});
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
-    pokazOstatniStroj();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
+    pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.9.2</span>');
+    bootMsg('<span class="green">Gotowe v4.7.7</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
