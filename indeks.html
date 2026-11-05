@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.7.8</p>
+  <p class="sub">Wersja 4.7.9</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -850,7 +850,7 @@ function zaliczOdrob(){
     var key=list[i].getAttribute('data-key');
     if(odrobDone[key])continue;
     var p=parseFloat(list[i].getAttribute('data-pkt'));
-    if(odrobPkt+suma+p>2.001){alert('Limit +2 na dzien');break}
+    if(odrobPkt+suma+p>5.001){alert('Limit +5 na dzien');break}
     suma+=p;opis.push(list[i].parentNode.textContent.replace(/\s+/g,' ').trim());
     odrobDone[key]=true;
   }
@@ -872,7 +872,7 @@ function zaliczOdrobWlasne(){
     return;
   }
   if(isNaN(ile)||ile<=0){alert('Podaj liczbe punktow');return}
-  if(odrobPkt+ile>2.001){alert('Limit +2 na dzien (zostalo '+(2-odrobPkt).toFixed(1)+')');return}
+  if(odrobPkt+ile>5.001){alert('Limit +5 na dzien (zostalo '+(5-odrobPkt).toFixed(1)+')');return}
   odrobPkt=+(odrobPkt+ile).toFixed(2);
   save('r_odP',String(odrobPkt));save('r_odD',todayStr());
   addPkt(ile,'Odrabianie wlasne: '+opis+' (+'+ile+')');
@@ -1031,7 +1031,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.7.8</span>');
+    bootMsg('<span class="green">Gotowe v4.7.9</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
