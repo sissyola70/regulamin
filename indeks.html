@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#d4b8ff}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.8.1</p>
+  <p class="sub">Wersja 4.8.2</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -225,25 +225,23 @@ function losujButy(temp,twarda){
 
 function setNetInfo(s){var el=$('netInfo');if(el)el.innerHTML=s}
 function pobierzSerwer(){
-  var pogoda=fetch('https://api.open-meteo.com/v1/forecast?latitude=50.294&longitude=18.671&current=temperature_2m&timezone=Europe%2FWarsaw').then(function(r){if(!r.ok)throw new Error('pogoda');return r.json()});
-  var czas=fetch('https://worldtimeapi.org/api/timezone/Europe/Warsaw').then(function(r){return r.ok?r.json():null}).catch(function(){return null});
-  return Promise.all([pogoda,czas]).then(function(arr){
-      var j=arr[0],ct=arr[1],cur=j.current||{};
-      if(ct&&ct.datetime){srvDate=new Date(ct.datetime)}
-      else if(cur.time){srvDate=new Date(cur.time)}
-      else srvDate=new Date();
-      if(isNaN(srvDate.getTime()))srvDate=new Date();
+  return fetch('https://api.open-meteo.com/v1/forecast?latitude=50.294&longitude=18.671&current=temperature_2m&timezone=Europe%2FWarsaw')
+    .then(function(r){if(!r.ok)throw new Error('pogoda '+r.status);return r.json()})
+    .then(function(j){
+      var cur=j.current||{};
       var raw=parseFloat(cur.temperature_2m);
-      srvTemp=isNaN(raw)?raw:(Math.round((raw-2)*10)/10);
+      if(isNaN(raw))throw new Error('brak temp');
+      srvTemp=Math.round((raw-2)*10)/10;
       srvOk=true;
-      if($('temp')&&!isNaN(srvTemp))$('temp').value=srvTemp;
-      setNetInfo('API '+raw+' C → losowanie '+srvTemp+' C (−2) • '+now()+(ct&&ct.datetime?' • czas worldtime':' • czas meteo'));
+      srvDate=new Date();
+      if($('temp'))$('temp').value=srvTemp;
+      setNetInfo('API '+raw+' C → losowanie '+srvTemp+' C (−2)');
       pokazSezon();
       return srvTemp;
     })
     .catch(function(e){
-      srvOk=false;srvDate=new Date();
-      setNetInfo('<span class="red">Brak serwera. Losowanie zablokowane. '+e.message+'</span>');
+      srvOk=false;
+      setNetInfo('<span class="red">Blad: '+e.message+'. Sprobuj jeszcze raz.</span>');
       throw e;
     });
 }
@@ -1045,7 +1043,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.8.1</span>');
+    bootMsg('<span class="green">Gotowe v4.8.2</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
