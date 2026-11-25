@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.7.12</p>
+  <p class="sub">Wersja 4.10.1</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -70,15 +70,15 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
       <button type="button" class="btn active" id="bLos">Losowanie</button>
       <button type="button" class="btn" id="bTrack">Sledzenie</button>
     </div>
-    <div class="box">Punkty: <span class="points" id="pkt">0</span> / 20<div id="pktInfo" class="small"></div></div>
+    <div class="box" id="pktBox" style="display:none">Punkty: <span class="points" id="pkt">0</span> / 24<div id="pktInfo" class="small"></div></div>
     <div class="box" style="display:none">Passa: <strong id="passa">0</strong> • Odrabianie: <strong id="odrobInfo">0</strong>/3</div>
     <div class="box small" id="askInfo" style="display:none">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
       <div class="box small" id="netInfo" style="display:none">Serwer: pobieranie...</div>
-      <input type="number" id="temp" style="display:none" placeholder="Temp z serwera" step="0.1" inputmode="decimal" readonly>
+      <input type="number" id="temp" style="display:none" style="display:none" placeholder="Temp z serwera" step="0.1" inputmode="decimal" readonly>
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
       <button type="button" class="main-btn gray" id="btnJutro">Los na jutro (-2)</button>
-      <button type="button" class="main-btn gray" id="btnRezygnacja" style="display:none">Rezygnacja — zostaw jutrzejszy</button>
+      
       <button type="button" class="main-btn gray" id="btnWyjazd">Dzien wyjazdowy</button>
       <button type="button" class="main-btn green" id="btnPotwierdz" style="display:none">Zalozylem stroj - potwierdzam</button>
       <button type="button" class="main-btn" id="askBtn">Prośba o zdjęcie rajstop</button>
@@ -217,7 +217,7 @@ var CEL=24,sezon,tryb,punkty,week,hist,last,lastAsk,askCount,askDate,passa,lastV
 var BUTY_BAL=['baletki czarne','baletki lososiowe','baletki biale','baleriny klasyczne','baleriny z paskiem CROSS','baleriny klasyczne CROSS','baleriny zapinane BONPRIX','baleriny klasyczne z zapięciem wokół kostki'];
 var BUTY_LUZ=['wywrotki','tenisowki'];
 function losujButy(temp,twarda){
-  if(Math.random()<0.40)return 'nowe balerinki';
+  if(Math.random()<0.60)return 'nowe balerinki';
   if(twarda){if(Math.random()<0.15)return 'baletki czarne';return pick(BUTY_BAL.slice(1))}
   if(Math.random()<0.15)return 'baletki czarne';return pick(BUTY_BAL.slice(1).concat(BUTY_LUZ));
 }
@@ -255,7 +255,7 @@ function go(name){
     var p=$('p-'+n[i]); if(p)p.className='panel'+(n[i]===name?' active':'');
     var t=$('t'+(i+1)); if(t)t.className='tab'+(n[i]===name?' active':'');
   }
-  if(name==='dziennik'){showDziennik();showHist();}
+  if(name==='dziennik'){showDziennik();showHist();if($('pktBox'))$('pktBox').style.display='block'}
   if(name==='kontrola'){showMeldunki();updateDayGuards();}
   if(name==='kary'){updateSumaKar();showKaraHist();}
   if(name==='odrabianie'||name==='losowanie'){updateOdrob();if(name==='losowanie'){pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());updateDayGuards();updateAskInfo()}}
@@ -402,6 +402,7 @@ function karaDnia(){
 }
 function lin(ico,lbl,val,cls){return '<div class="lin"><div class="ico">'+ico+'</div><div class="lbl">'+lbl+'</div><div class="val'+(cls?(' '+cls):'')+'">'+(val||'—')+'</div></div>'}
 function pokazOstatniStroj(){
+  if(hour()>=17){var r=$('result'); if(r)r.innerHTML='<div class="box"><p class="red">Dzien zakonczony</p></div>';return}
   var res=$('result'),ask=$('askBtn');
   if(!res)return;
   var html='<div class="karta">';
@@ -473,7 +474,7 @@ function bonusTygodniowy(){
     alert('Bonus +5 za dzien bez bledu');
   }
 }
-function rozliczDzien(){save('r_rozlicz',todayStr());
+function rozliczDzien(){save('r_rozlicz',todayStr());if($('pktBox'))$('pktBox').style.display='block';
   ensureMeldunki();
   if(meldunki.rozliczone){alert('Juz rozliczono');return}
   var ok=0,br=0;
@@ -493,12 +494,12 @@ function losujGorna(){
   if(r<0.80)return 'Kostium gimnastyczny';
   return 'Romper';
 }
-function losujSpod(){var r=Math.random();if(r<0.60)return 'MAJTKI';if(r<0.95)return 'MAJTKI STRING';return 'BODY STRING'}
+function losujSpod(){var r=Math.random();if(r<0.45)return 'MAJTKI';if(r<0.90)return 'MAJTKI STRING';return 'BODY STRING'}
 var JASK=['BIALE','ROZOWE','ZOLTE','LIMONKA','CZERWONE','FIOLETOWE','BLEKIT KROLEWSKI'];
 var CIEMNE=['CZARNE','GRAFITOWE','BORDOWE','GRANATOWE','CIELISTE','ZIELONE BUTELKOWE'];
 function kolorRaj(temp){
   var r=Math.random(),tr=(temp<15)?0.08:0.10;
-  if(r<0.25)return 'jaskrawe '+pick(JASK);
+  if(r<0.45)return 'jaskrawe '+pick(JASK);
   if(r<0.25+tr)return 'TRANSPARENTNE';
   return pick(CIEMNE);
 }
@@ -550,6 +551,7 @@ function dzienWyjazdowy(){
 function losuj(){
   if(hour()>=17){alert('Po 17:00 nie wolno');return}
   if(losDate===todayStr()){alert('Dzis juz bylo losowanie. Raz i dosc.');return}
+  
     if(!srvOk||isNaN(srvTemp)){alert('Najpierw odswiez temperature z serwera');return}
   var temp=srvTemp,res=$('result'),ask=$('askBtn');
   if($('temp'))$('temp').value=temp;
@@ -766,6 +768,7 @@ function losujZadanie(){
   return {typ:'-', txt:minus[Math.floor(Math.random()*minus.length)]};
 }
 function potwierdzStroj(){
+  var h=hour(); if(h<8||h>=8.5){alert('Potwierdzenie tylko 8:00-8:30');return}
   if(!last){alert('Brak losowania');return}
   potwierdzone=true;save('r_potw',todayStr());addHist('Potwierdzenie','OK');
   $('btnPotwierdz').style.display='none';pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();
@@ -1014,7 +1017,7 @@ function bind(){
   $('t3').onclick=function(){go('kary')};$('t4').onclick=function(){go('odrabianie')};
   $('t5').onclick=function(){go('dziennik')};
   $('bLos').onclick=function(){setMode('los')};$('bTrack').onclick=function(){setMode('track')};
-  $('btnLosuj').onclick=losuj;if($('btnJutro'))$('btnJutro').onclick=losNaJutro;if($('btnRezygnacja'))$('btnRezygnacja').onclick=rezygnacja;pokazJutro();if($('btnSuka'))$('btnSuka').onclick=doSuka;if($('btnZakoncz'))$('btnZakoncz').onclick=zakonczDzien;if($('btnOpis'))$('btnOpis').onclick=doOpis;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;if($('btnPotwierdzCtrl'))$('btnPotwierdzCtrl').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
+  $('btnLosuj').onclick=losuj;if($('btnJutro'))$('btnJutro').onclick=losNaJutro;pokazJutro();if($('btnSuka'))$('btnSuka').onclick=doSuka;if($('btnZakoncz'))$('btnZakoncz').onclick=zakonczDzien;if($('btnOpis'))$('btnOpis').onclick=doOpis;if($('btnWyjazd'))$('btnWyjazd').onclick=dzienWyjazdowy;if($('askKomb'))$('askKomb').onclick=pytajKomb;$('btnPotwierdz').onclick=potwierdzStroj;if($('btnPotwierdzCtrl'))$('btnPotwierdzCtrl').onclick=potwierdzStroj;$('askBtn').onclick=pytaj;
   $('btnTrack').onclick=zapiszTrack;$('btnTxt').onclick=pobierz;
   $('btn900').onclick=function(){zamelduj(9,'h9')};$('btn1200').onclick=function(){zamelduj(12,'h12')};
   $('btn1500').onclick=function(){zamelduj(15,'h15')};
@@ -1039,7 +1042,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.7.12</span>');
+    bootMsg('<span class="green">Gotowe v4.10.1</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
