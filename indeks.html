@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#d4b8ff}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.8.2</p>
+  <p class="sub">Wersja 4.8.3</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -75,8 +75,7 @@ h2{margin:4px 0;font-size:1rem;color:#d4b8ff}
     <div class="box small" id="askInfo" style="display:none">Pytania: 0/2 • koszt -1</div>
     <div id="areaLos">
       <div class="box small" id="netInfo" style="display:none">Serwer: pobieranie...</div>
-      <input type="number" id="temp" style="display:none" placeholder="Temp z serwera" step="0.1" inputmode="decimal" readonly>
-      <button type="button" class="main-btn gray" id="btnTemp">Odswiez temperature</button>
+      <input type="number" id="temp" placeholder="Temperatura C" step="0.1" inputmode="decimal">
       <button type="button" class="main-btn" id="btnLosuj">Egzekwuj decyzje</button>
       <button type="button" class="main-btn gray" id="btnJutro">Los na jutro (-2)</button>
       <button type="button" class="main-btn gray" id="btnRezygnacja" style="display:none">Rezygnacja — zostaw jutrzejszy</button>
@@ -553,8 +552,8 @@ function dzienWyjazdowy(){
 function losuj(){
   if(hour()>=17){alert('Po 17:00 nie wolno');return}
   if(losDate===todayStr()){alert('Dzis juz bylo losowanie. Raz i dosc.');return}
-    if(!srvOk||isNaN(srvTemp)){alert('Brak temperatury. Kliknij Odswiez temperature.');return}
-  var temp=srvTemp,res=$('result'),ask=$('askBtn');
+    var temp=parseFloat($('temp').value); if(isNaN(temp)){alert('Wpisz temperature');return}
+  var res=$('result'),ask=$('askBtn');
   if($('temp'))$('temp').value=temp;
   if(isNaN(temp)){res.innerHTML='<p class="red">Brak temperatury z serwera</p>';res.className='mandatory';return}
   sezon=sezonZTemp(temp);save('r_sezon',sezon);pokazSezon();
@@ -1043,7 +1042,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.8.2</span>');
+    bootMsg('<span class="green">Gotowe v4.8.3</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
