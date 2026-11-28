@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.10.2</p>
+  <p class="sub">Wersja 4.10.2b</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -429,7 +429,7 @@ function pokazOstatniStroj(){
     if(kx.dop)html+=lin('•','dopisek',kx.dop,'orange');
     res.className='mandatory';
   }
-  html+='<div class="pktrow">🏆 Punkty <span>'+(punkty||0).toFixed(1)+' / '+CEL+'</span></div>';
+  // punkty ukryte w tabeli losowania
   html+='</div>';
   res.innerHTML=html;
   var g=String(last.gorna||'');
@@ -584,7 +584,7 @@ function losuj(){
   else addHist('Losowanie TEST','bez pkt (kolejne w dniu)');
   var dopisek='';
   var times = genRandTimes();
-  addHist('Losowe', 'meldunek '+fmt(times.r1)+(times.r2?' i '+fmt(times.r2):'')+' | opis '+fmt(times.opisStart));
+  // addHist('Losowe'...) usuniete — godziny nie odpowiadaja rzeczywistym meldunkom
   if(!stopki && Math.random()<0.20){
     dopisek=losujDopisek(det,godz,buty);
     if(dopisek==='biale baletki')buty='baletki biale';
@@ -1044,7 +1044,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.10.2</span>');
+    bootMsg('<span class="green">Gotowe v4.10.2b</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
