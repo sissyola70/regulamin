@@ -51,7 +51,7 @@ h2{margin:4px 0;font-size:1rem;color:#9fd}
 <body>
 <div class="container">
   <h1>Pani Regulamin</h1>
-  <p class="sub">Wersja 4.10.1</p>
+  <p class="sub">Wersja 4.10.2</p>
   <div class="tabs">
     <button type="button" class="tab active" id="t1">Losowanie</button>
     <button type="button" class="tab" id="t2">Kontrola</button>
@@ -561,10 +561,12 @@ function losuj(){
   if(karnyLeft>0){startKarny();return}
 
   var gorna=losujGorna(),spod=losujSpod(),det='',godz='-',stopki=false,komb=false,pkt=0;
+  // v4.10.2: wyklucz romper + kombinezon
+  komb=(sezon==='letnia')?(Math.random()<0.15):(Math.random()<0.50);
+  if(komb && gorna==='Romper'){gorna='Kostium gimnastyczny';addHist('KOREKTA','romper+kombinezon → kostium gimnastyczny');}
   blokada=(gorna==='Kostium gimnastyczny'||gorna==='Romper');
   ask.disabled=blokada;
   var buty=losujButy(temp,blokada),ctrl=+(10.5+Math.random()*4).toFixed(2);
-  komb=(sezon==='letnia')?(Math.random()<0.15):(Math.random()<0.50);
   var zip='';
   if(komb)zip=(Math.random()<0.5)?'zapięty na maks':'luz';
   if(kombNext){if(!komb)addPkt(-5,'Brak kombinezonu mimo flagi wyjazdu');komb=true;kombNext=false;save('r_kombN','');}
@@ -1042,7 +1044,7 @@ function init(){
     checkWeek();showHist();updatePkt();updateAskInfo();updateOdrob();
     pokazOstatniStroj();updateZakoncz();checkZakoncz();checkSilence();checkStale();save('r_lastOpen',now());showStatus();updateDayGuards();showMeldunki();
     setInterval(function(){try{updateDayGuards()}catch(e){}},30000);
-    bootMsg('<span class="green">Gotowe v4.10.1</span>');
+    bootMsg('<span class="green">Gotowe v4.10.2</span>');
   }catch(e){bootMsg('<span class="red">Blad: '+(e&&e.message?e.message:e)+'</span>')}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
